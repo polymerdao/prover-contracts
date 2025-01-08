@@ -18,7 +18,9 @@
 pragma solidity 0.8.15;
 
 import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
-import {IAppStateVerifier, Ics23Proof, OpIcs23Proof} from "../interfaces/IProofVerifier.sol";
+
+import {IAppStateVerifier} from "../interfaces/IAppStateVerifier.sol";
+import {Ics23Proof, OpIcs23Proof} from "../libs/ReceiptParser.sol";
 
 /**
  * @title OptimisticProofVerifier

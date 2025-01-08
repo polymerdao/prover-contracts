@@ -16,7 +16,7 @@
  */
 pragma solidity ^0.8.0;
 
-import {Ics23Proof} from "./IProofVerifier.sol";
+import {Ics23Proof} from "../libs/ReceiptParser.sol";
 
 enum LightClientType {
     SimTestLightClient, // Note: not deployed on any mainnets

@@ -20,12 +20,12 @@ pragma solidity 0.8.15;
 import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {MerkleTrie} from "optimism/libraries/trie/MerkleTrie.sol";
 import {Bytes} from "optimism/libraries/Bytes.sol";
-import {ReceiptParser} from "../../libs/ReceiptParser.sol";
-import {AppStateVerifier} from "../../base/AppStateVerifier.sol";
-import {ICrossL2Prover} from "../../interfaces/ICrossL2Prover.sol";
-import {Ics23Proof} from "../../interfaces/IProofVerifier.sol";
-import {ISignatureVerifier} from "../../interfaces/ISignatureVerifier.sol";
-import {LightClientType} from "../../interfaces/IClientUpdates.sol";
+import {ReceiptParser} from "../libs/ReceiptParser.sol";
+import {AppStateVerifier} from "../base/AppStateVerifier.sol";
+import {ICrossL2Prover} from "../interfaces/ICrossL2Prover.sol";
+import {Ics23Proof} from "../libs/ReceiptParser.sol";
+import {ISignatureVerifier} from "../interfaces/ISignatureVerifier.sol";
+import {LightClientType} from "../interfaces/IClientUpdates.sol";
 
 contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant

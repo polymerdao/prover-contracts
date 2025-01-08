@@ -16,8 +16,8 @@
  */
 pragma solidity ^0.8.0;
 
-import {Ics23Proof} from "./IProofVerifier.sol";
 import {IClientUpdates} from "./IClientUpdates.sol";
+import {Ics23Proof} from "../libs/ReceiptParser.sol";
 
 /**
  * @title ICrossL2Prover

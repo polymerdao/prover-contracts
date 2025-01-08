@@ -16,34 +16,7 @@
  */
 pragma solidity ^0.8.0;
 
-// OpIcs23ProofPath represents a commitment path in an ICS23 proof, which consists of a commitment prefix and a suffix.
-struct OpIcs23ProofPath {
-    bytes prefix;
-    bytes suffix;
-}
-
-// OpIcs23Proof represents an ICS23 proof
-struct OpIcs23Proof {
-    OpIcs23ProofPath[] path;
-    bytes key;
-    bytes value;
-    bytes prefix;
-}
-
-// the Ics23 proof related structs are used to do membership verification. These are not the actual Ics23
-// format but a "solidity friendly" version of it - data is the same just packaged differently
-struct Ics23Proof {
-    OpIcs23Proof[] proof;
-    uint256 height;
-}
-
-// This is the proof we use to verify the apphash (state) updates.
-struct OpL2StateProof {
-    bytes[] accountProof;
-    bytes[] outputRootProof;
-    bytes32 l2OutputProposalKey;
-    bytes32 l2BlockHash;
-}
+import {Ics23Proof} from "../libs/ReceiptParser.sol";
 
 // The `header` field is a list of RLP encoded L1 header fields. Both stateRoot and number are not
 // encoded for easy usage. They must match with their RLP encoded counterparty versions.
@@ -86,4 +59,3 @@ interface IAppStateVerifier {
      */
     function verifyNonMembership(bytes32 appHash, bytes calldata key, Ics23Proof calldata proof) external pure;
 }
-

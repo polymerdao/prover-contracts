@@ -16,7 +16,7 @@
  */
 pragma solidity ^0.8.0;
 
-import {IAppStateVerifier} from "./AppStateverifier.sol";
+import {IAppStateVerifier} from "./IAppStateVerifier.sol";
 
 /**
  * @title ISignatureVerifier

@@ -19,14 +19,59 @@ pragma solidity ^0.8.0;
 
 import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {Bytes} from "optimism/libraries/Bytes.sol";
-import {ProtoChannel, ProtoCounterparty} from "proto/channel.sol";
-import {Base64} from "base64/base64.sol";
 
+// OpIcs23ProofPath represents a commitment path in an ICS23 proof, which consists of a commitment prefix and a suffix.
+struct OpIcs23ProofPath {
+    bytes prefix;
+    bytes suffix;
+}
+
+// OpIcs23Proof represents an ICS23 proof
+struct OpIcs23Proof {
+    OpIcs23ProofPath[] path;
+    bytes key;
+    bytes value;
+    bytes prefix;
+}
+
+// the Ics23 proof related structs are used to do membership verification. These are not the actual Ics23
+// format but a "solidity friendly" version of it - data is the same just packaged differently
+struct Ics23Proof {
+    OpIcs23Proof[] proof;
+    uint256 height;
+}
 
 /**
  * A library for helpers for proving peptide state
  */
 library ReceiptParser {
+    error invalidAddressBytes();
+
+    function toStr(uint256 _number) public pure returns (string memory outStr) {
+        if (_number == 0) {
+            return "0";
+        }
+
+        uint256 length;
+        uint256 number = _number;
+
+        // Determine the length of the string
+        while (number != 0) {
+            length++;
+            number /= 10;
+        }
+
+        bytes memory buffer = new bytes(length);
+
+        // Convert each digit to its ASCII representation
+        for (uint256 i = length; i > 0; i--) {
+            buffer[i - 1] = bytes1(uint8(48 + (_number % 10)));
+            _number /= 10;
+        }
+
+        outStr = string(buffer);
+    }
+
     function bytesToAddr(bytes memory a) public pure returns (address addr) {
         if (a.length != 20) {
             revert invalidAddressBytes();
@@ -35,8 +80,6 @@ library ReceiptParser {
             addr := mload(add(a, 20))
         }
     }
-
-
 
     function parseLog(uint256 logIndex, bytes memory receiptRLP)
         internal
