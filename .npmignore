@@ -1,0 +1,32 @@
+# specific to npm package
+deployments
+
+# Auto generated code Go bindings 
+bindings/go
+
+.coderabit.yml
+node_modules
+.env
+coverage
+coverage.json
+report
+lcov.info
+
+typechain
+typechain-types
+
+#Hardhat files
+cache
+artifacts
+
+# Foundry files
+forge-cache/
+
+*.tgz
+src/contracts.template.ts
+
+.idea/
+.direnv/
+
+bun.lockb
+

@@ -1,0 +1,52 @@
+# Spec for deploying contracts and configuring them via txs within a single run 
+
+# NOTE:
+# {{name}} is replaced with one of the following, whichever matches first
+# - the deployed contract address whose name matches `name` (not factoryName)
+# - variables of the running chain, e.g. {{chain.chainName}}, {{chain.chainId}}
+# - deployment factory names from written deployment files
+# NOTE: order of the contracts matters, as some contracts depend on others
+# contracts with no deps should be placed before those with deps
+
+# Spec items can either be a ContractItemSchema, or TxItemSchema type: 
+
+###### ContractItemSchema TYPE ######
+# This spec can be used for deploying a contract, either from proof contracts or external contracts. 
+
+## The following arguments can be specified in ContractItemSchema spec:
+# name: name of key that will be stored in the contract registry
+# deployer: must be # name of key that will be stored in the contract registry a valid name in accountRegistry; default to 'default' if not specified
+# description: description to be stored in the contract registry
+# factoryName: the name of the typechain factory used to deploy the contract
+# deployer: deployer key, should correspond to either a private key or one that can be looked up in the evm.accounts.yaml
+# libraries: if a contract depends on libraries, the location of the library file & the deployed library address can be specified here, as an array with 2 elements
+# deployArgs: The arguments that will be called in the contract constructor. Note: if $INITARGS is passed in as an argument, it will be abi.encode the arguments passed to the init paramater
+# init: any arguments that need to be abi encoded (e.g. for calling upgradeToAndCall for ERC1967Proxy). These will be rendered in the place of $INITARGS
+
+###### TxItemSchema TYPE ######
+# This spec can be used for sending any tx to a contract, including proxy upgrades, calling setters, transferring ownership, etc.
+
+## The following arguments can be specified in tx spec: 
+# name: name of entry that will be stored in tx registry
+# description: description in tx registry
+# factoryName: factory to use to read abi to send tx
+# deployer: can be set in the accounts.yaml 
+# address: address of contract to call method on 
+# signature: signature of method to call for this tx
+# args: args to make the function call with, need to be compatible with the signature
+
+- name: SequencerSigVerifier
+  description: 'SequencerSignatureVerifier'
+  factoryName: 'SequencerSignatureVerifier'
+  deployer: 'KEY_DEPLOYER'
+  deployArgs:
+    - '{{SEQUENCER_SIGNER}}'
+    - '{{CHAIN_ID}}'
+
+- name: ProofApiLightClient 
+  description: 'ProofApiCrossL2Inbox'
+  factoryName: 'CrossL2Prover'
+  deployer: 'KEY_DEPLOYER'
+  deployArgs:
+    - '{{SequencerSigVerifier}}'
+    - 'peptide-client' 
