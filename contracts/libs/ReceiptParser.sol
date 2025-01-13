@@ -41,6 +41,14 @@ struct Ics23Proof {
     uint256 height;
 }
 
+// This is the proof we use to verify the apphash (state) updates.
+struct OpL2StateProof {
+    bytes[] accountProof;
+    bytes[] outputRootProof;
+    bytes32 l2OutputProposalKey;
+    bytes32 l2BlockHash;
+}
+
 /**
  * A library for helpers for proving peptide state
  */
