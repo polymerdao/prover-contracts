@@ -34,7 +34,7 @@ build-contracts:
 #
 # 	ABIGen issue ref: https://github.com/ethereum/solidity/issues/9278
 bindings-gen-go: build-contracts
-	echo "Generating Go vIBC bindings..."; \
+	echo "Generating Go Prover contract bindings..."; \
 	rm -rfd ./bindings/go/* ; \
 	for abi_file in $(CONTRACT_ABI_FILES); do \
 		abi_base=$$(basename $$(dirname $$abi_file)); \

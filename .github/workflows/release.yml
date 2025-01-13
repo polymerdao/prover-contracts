@@ -1,3 +1,4 @@
+# Build bytecode bindings publish npm package, and also update go registry
 name: Release
 
 on:
@@ -22,11 +23,11 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Tests
-        run: forge test --no-match-contract DispatcherDeployTest
-
       - name: Check contract sizes
-        run: rm -rf out && forge build contracts/ --sizes --deny-warnings
+        run: forge build --force contracts/ --sizes --deny-warnings
+
+      - name: Contract Unit Tests
+        run: forge test 
 
       - name: Save compiled contracts and ABIs
         if: success()
@@ -94,10 +95,6 @@ jobs:
       - name: Setup Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Install ABIGen
-        run: |
-          go install github.com/ethereum/go-ethereum/cmd/abigen@v1.13.5
-
       - uses: actions/setup-node@v4
         with:
           node-version: '22.3.0'
@@ -106,11 +103,10 @@ jobs:
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
 
-      # Ensure /v4 is updated as the major version changes
-      - name: Update Go Registry
+      - name: Check Co registry 
         run: |
           GOPROXY=proxy.golang.org go list \
-          -m github.com/open-ibc/vibc-core-smart-contracts/v4@${{ steps.version.outputs.release }}
+          -m github.com/polymerdao/prover-contracts@${{ steps.version.outputs.release }}
 
       - name: Update NPM Registry
         run: |
