@@ -16,8 +16,6 @@
  */
 pragma solidity ^0.8.0;
 
-import {Ics23Proof} from "../libs/ReceiptParser.sol";
-
 enum LightClientType {
     SimTestLightClient, // Note: not deployed on any mainnets
     OptimisticLightClient, // Our native opstack light client
