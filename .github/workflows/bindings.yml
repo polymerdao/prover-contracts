@@ -29,13 +29,9 @@ jobs:
         run: |
           go install github.com/ethereum/go-ethereum/cmd/abigen@v1.13.5
 
-      - name: Generate Bindings
-        run: |
-          bun install
-          bun run build
-
       - name: Check for Bindings Changes
         run: |
+          make bindings-gen-go
           changes=$( git status --porcelain -- ./bindings )
           if [ -n "$changes" ]; then
             echo -e "Changes in Generated Bindings:\n$changes"
