@@ -79,7 +79,6 @@ contract Venus {
         bytes[] memory expectedTopics,
         bytes calldata expectedUnindexedData
     ) external {
-
         // Now that we have validated the receipt, we can trust the rlp encoded receipt bytes. Now we unpack the event
         // data from these rlp encoded receipt bytes and validate it.
         (string memory proofChainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData) =
