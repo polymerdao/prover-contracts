@@ -23,11 +23,6 @@ jobs:
       
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
-      
-      - name: Generate Bindings
-        run: |
-          bun install
-          bun run build
 
       - name: Check contract sizes
         run: forge build --sizes --deny-warnings
