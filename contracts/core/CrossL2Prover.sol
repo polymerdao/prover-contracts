@@ -17,9 +17,7 @@
 
 pragma solidity 0.8.15;
 
-import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {MerkleTrie} from "optimism/libraries/trie/MerkleTrie.sol";
-import {Bytes} from "optimism/libraries/Bytes.sol";
 import {ReceiptParser} from "../libs/ReceiptParser.sol";
 import {AppStateVerifier} from "../base/AppStateVerifier.sol";
 import {ICrossL2Prover} from "../interfaces/ICrossL2Prover.sol";
@@ -42,6 +40,33 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     constructor(ISignatureVerifier verifier_, string memory clientType_) {
         verifier = verifier_;
         clientType = clientType_;
+    }
+
+    /**
+     * @dev Adds an appHash to the internal store, after verifying the client update proof associated with the light
+     * client implementation.
+     * @param peptideAppHash App hash (state root) to be verified
+     * @param proof An array of bytes that contain the l1blockhash and the sequencer's signature. The first 32 bytes of
+     * this argument should be the l1BlockHash, and the remaining bytes should be the sequencer signature which attests
+     * to the peptide AppHash
+     * for that l1BlockHash
+     */
+    function updateClient(bytes calldata proof, uint256 peptideHeight, uint256 peptideAppHash) external {
+        _updateClient(proof, peptideHeight, peptideAppHash);
+    }
+
+    function validateEvent(uint256 logIndex, bytes calldata proof)
+        external
+        view
+        returns (string memory chainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData)
+    {
+        bytes memory receiptRLP;
+        (chainId, receiptRLP) = validateReceipt(proof);
+        (emittingContract, topics, unindexedData) = ReceiptParser.parseLog(logIndex, receiptRLP);
+    }
+
+    function getState(uint256 height) external view returns (uint256) {
+        return _getPeptideAppHash(height);
     }
 
     /**
@@ -78,37 +103,6 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
         return (srcChainId, MerkleTrie.get(receiptIndex, receiptMMPTProof, receiptRoot));
     }
 
-    function validateEvent(uint256 logIndex, bytes calldata proof)
-        external
-        view
-        returns (string memory chainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData)
-    {
-        bytes memory receiptRLP;
-        (chainId, receiptRLP) = validateReceipt(proof);
-        (emittingContract, topics, unindexedData) = ReceiptParser.parseLog(logIndex, receiptRLP);
-    }
-
-    /**
-     * @dev Adds an appHash to the internal store, after verifying the client update proof associated with the light
-     * client implementation.
-     * @param peptideAppHash App hash (state root) to be verified
-     * @param proof An array of bytes that contain the l1blockhash and the sequencer's signature. The first 32 bytes of
-     * this argument should be the l1BlockHash, and the remaining bytes should be the sequencer signature which attests
-     * to the peptide AppHash
-     * for that l1BlockHash
-     */
-    function updateClient(bytes calldata proof, uint256 peptideHeight, uint256 peptideAppHash) external {
-        _updateClient(proof, peptideHeight, peptideAppHash);
-    }
-
-    function getState(uint256 height) external view returns (uint256) {
-        return _getPeptideAppHash(height);
-    }
-
-    function _getPeptideAppHash(uint256 _height) internal view returns (uint256) {
-        return peptideAppHashes[_height];
-    }
-
     function _updateClient(bytes calldata proof, uint256 peptideHeight, uint256 peptideAppHash) internal {
         if (peptideAppHashes[peptideHeight] != 0) {
             // Note: we don't cache peptideAppHash[peptideHeight] in mem for gas savings here because this if
@@ -122,5 +116,9 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
         }
         verifier.verifyStateUpdate(peptideHeight, bytes32(peptideAppHash), bytes32(proof[:32]), proof[32:]);
         peptideAppHashes[peptideHeight] = peptideAppHash;
+    }
+
+    function _getPeptideAppHash(uint256 _height) internal view returns (uint256) {
+        return peptideAppHashes[_height];
     }
 }
