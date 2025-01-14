@@ -91,7 +91,7 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
                 // verified against state root (app hash) from block H - 1. this means the relayer must have updated the
                 // contract with the app hash from the previous block and that is why we use proof.height - 1 here.
             ReceiptParser.receiptRootKey(srcChainId, clientType, eventHeight),
-            abi.encodePacked(receiptRoot),
+            receiptRoot,
             peptideAppProof
         );
 
