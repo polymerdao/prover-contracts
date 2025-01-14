@@ -46,7 +46,7 @@ abstract contract AppStateVerifier is IAppStateVerifier {
      * The cosmos SDK and ics23 support chained proofs to switch between different proof specs.
      * Custom proof specs are not supported here. Only Iavl and Tendermint or similar proof specs are supported.
      */
-    function verifyMembership(bytes32 appHash, bytes memory key, bytes memory value, Ics23Proof calldata proofs)
+    function verifyMembership(bytes32 appHash, bytes memory key, bytes32 value, Ics23Proof calldata proofs)
         public
         pure
     {
@@ -54,7 +54,7 @@ abstract contract AppStateVerifier is IAppStateVerifier {
         if (keccak256(key) != keccak256(proofs.proof[0].key)) {
             revert InvalidProofKey();
         }
-        if (keccak256(value) != keccak256(proofs.proof[0].value)) revert InvalidProofValue();
+        if (keccak256(abi.encodePacked(value)) != keccak256(proofs.proof[0].value)) revert InvalidProofValue();
         // proofs are chained backwards. First proof in the list (proof[0]) corresponds to the packet proof, meaning
         // that can be checked against the next subroot value (i.e. ibc root). Once the first proof is verified,
         // we can check the second that corresponds to the ibc proof, that is checked against the app hash (app root)
