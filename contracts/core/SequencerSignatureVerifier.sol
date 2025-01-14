@@ -20,7 +20,6 @@ pragma solidity 0.8.15;
 import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {ISignatureVerifier} from "../interfaces/ISignatureVerifier.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import {AppStateVerifier} from "../base/AppStateVerifier.sol";
 
 /**
  * @title SequencerSignatureVerifier
@@ -28,7 +27,7 @@ import {AppStateVerifier} from "../base/AppStateVerifier.sol";
  * signatures on client updates.
  * @author Polymer Labs
  */
-contract SequencerSignatureVerifier is AppStateVerifier, ISignatureVerifier {
+contract SequencerSignatureVerifier is ISignatureVerifier {
     using RLPReader for RLPReader.RLPItem;
     using RLPReader for bytes;
 

@@ -16,14 +16,12 @@
  */
 pragma solidity ^0.8.0;
 
-import {IAppStateVerifier} from "./IAppStateVerifier.sol";
-
 /**
  * @title ISignatureVerifier
  * @author Polymer Labs
  * @notice An interface that abstracts away proof verification logic for light clients
  */
-interface ISignatureVerifier is IAppStateVerifier {
+interface ISignatureVerifier {
     error InvalidSequencerSignature();
 
     function verifyStateUpdate(uint256 l2BlockNumber, bytes32 appHash, bytes32 l1BlockHash, bytes calldata signature)
