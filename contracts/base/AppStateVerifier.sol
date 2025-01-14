@@ -77,8 +77,8 @@ abstract contract AppStateVerifier is IAppStateVerifier {
             )
         );
 
-        for (uint256 i = 0; i < proof.path.length; i++) {
-            computed = sha256(abi.encodePacked(proof.path[i].prefix, computed, proof.path[i].suffix));
+        for (uint256 i = 0; i < proof.proofSuffix.length; i++) {
+            computed = sha256(abi.encodePacked(proof.proofPrefix[i], computed, proof.proofSuffix[i]));
         }
     }
 

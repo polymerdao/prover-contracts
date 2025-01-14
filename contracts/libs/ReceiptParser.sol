@@ -20,15 +20,10 @@ pragma solidity ^0.8.0;
 import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {Bytes} from "optimism/libraries/Bytes.sol";
 
-// OpIcs23ProofPath represents a commitment path in an ICS23 proof, which consists of a commitment prefix and a suffix.
-struct OpIcs23ProofPath {
-    bytes prefix;
-    bytes suffix;
-}
-
 // OpIcs23Proof represents an ICS23 proof
 struct OpIcs23Proof {
-    OpIcs23ProofPath[] path;
+    bytes[] proofPrefix;
+    bytes[] proofSuffix;
     bytes key;
     bytes value;
     bytes prefix;
@@ -39,14 +34,6 @@ struct OpIcs23Proof {
 struct Ics23Proof {
     OpIcs23Proof[] proof;
     uint256 height;
-}
-
-// This is the proof we use to verify the apphash (state) updates.
-struct OpL2StateProof {
-    bytes[] accountProof;
-    bytes[] outputRootProof;
-    bytes32 l2OutputProposalKey;
-    bytes32 l2BlockHash;
 }
 
 /**
