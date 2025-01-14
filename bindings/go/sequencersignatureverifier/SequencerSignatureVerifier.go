@@ -29,29 +29,9 @@ var (
 	_ = abi.ConvertType
 )
 
-// Ics23Proof is an auto generated low-level Go binding around an user-defined struct.
-type Ics23Proof struct {
-	Proof  []OpIcs23Proof
-	Height *big.Int
-}
-
-// OpIcs23Proof is an auto generated low-level Go binding around an user-defined struct.
-type OpIcs23Proof struct {
-	Path   []OpIcs23ProofPath
-	Key    []byte
-	Value  []byte
-	Prefix []byte
-}
-
-// OpIcs23ProofPath is an auto generated low-level Go binding around an user-defined struct.
-type OpIcs23ProofPath struct {
-	Prefix []byte
-	Suffix []byte
-}
-
 // SequencerSignatureVerifierMetaData contains all meta data concerning the SequencerSignatureVerifier contract.
 var SequencerSignatureVerifierMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"sequencer_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"chainId_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SEQUENCER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"verifyMembership\",\"inputs\":[{\"name\":\"appHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"value\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"proofs\",\"type\":\"tuple\",\"internalType\":\"structIcs23Proof\",\"components\":[{\"name\":\"proof\",\"type\":\"tuple[]\",\"internalType\":\"structOpIcs23Proof[]\",\"components\":[{\"name\":\"path\",\"type\":\"tuple[]\",\"internalType\":\"structOpIcs23ProofPath[]\",\"components\":[{\"name\":\"prefix\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"suffix\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"name\":\"key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"value\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"prefix\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"name\":\"height\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"outputs\":[],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"verifyNonMembership\",\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"\",\"type\":\"tuple\",\"internalType\":\"structIcs23Proof\",\"components\":[{\"name\":\"proof\",\"type\":\"tuple[]\",\"internalType\":\"structOpIcs23Proof[]\",\"components\":[{\"name\":\"path\",\"type\":\"tuple[]\",\"internalType\":\"structOpIcs23ProofPath[]\",\"components\":[{\"name\":\"prefix\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"suffix\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"name\":\"key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"value\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"prefix\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"name\":\"height\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"outputs\":[],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"verifyStateUpdate\",\"inputs\":[{\"name\":\"l2BlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"appHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l1BlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"signature\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"view\"},{\"type\":\"error\",\"name\":\"InvalidAppHash\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidIbcStateProof\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidL1BlockHash\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidL1BlockNumber\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidPacketProof\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofKey\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofValue\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidRLPEncodedL1BlockNumber\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidRLPEncodedL1StateRoot\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidSequencerSignature\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"MethodNotImplemented\",\"inputs\":[]}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"sequencer_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"chainId_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SEQUENCER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"verifyStateUpdate\",\"inputs\":[{\"name\":\"l2BlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"appHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l1BlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"signature\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"view\"},{\"type\":\"error\",\"name\":\"InvalidSequencerSignature\",\"inputs\":[]}]",
 }
 
 // SequencerSignatureVerifierABI is the input ABI used to generate the binding from.
@@ -260,64 +240,6 @@ func (_SequencerSignatureVerifier *SequencerSignatureVerifierSession) SEQUENCER(
 // Solidity: function SEQUENCER() view returns(address)
 func (_SequencerSignatureVerifier *SequencerSignatureVerifierCallerSession) SEQUENCER() (common.Address, error) {
 	return _SequencerSignatureVerifier.Contract.SEQUENCER(&_SequencerSignatureVerifier.CallOpts)
-}
-
-// VerifyMembership is a free data retrieval call binding the contract method 0xc2f0329f.
-//
-// Solidity: function verifyMembership(bytes32 appHash, bytes key, bytes value, (((bytes,bytes)[],bytes,bytes,bytes)[],uint256) proofs) pure returns()
-func (_SequencerSignatureVerifier *SequencerSignatureVerifierCaller) VerifyMembership(opts *bind.CallOpts, appHash [32]byte, key []byte, value []byte, proofs Ics23Proof) error {
-	var out []interface{}
-	err := _SequencerSignatureVerifier.contract.Call(opts, &out, "verifyMembership", appHash, key, value, proofs)
-
-	if err != nil {
-		return err
-	}
-
-	return err
-
-}
-
-// VerifyMembership is a free data retrieval call binding the contract method 0xc2f0329f.
-//
-// Solidity: function verifyMembership(bytes32 appHash, bytes key, bytes value, (((bytes,bytes)[],bytes,bytes,bytes)[],uint256) proofs) pure returns()
-func (_SequencerSignatureVerifier *SequencerSignatureVerifierSession) VerifyMembership(appHash [32]byte, key []byte, value []byte, proofs Ics23Proof) error {
-	return _SequencerSignatureVerifier.Contract.VerifyMembership(&_SequencerSignatureVerifier.CallOpts, appHash, key, value, proofs)
-}
-
-// VerifyMembership is a free data retrieval call binding the contract method 0xc2f0329f.
-//
-// Solidity: function verifyMembership(bytes32 appHash, bytes key, bytes value, (((bytes,bytes)[],bytes,bytes,bytes)[],uint256) proofs) pure returns()
-func (_SequencerSignatureVerifier *SequencerSignatureVerifierCallerSession) VerifyMembership(appHash [32]byte, key []byte, value []byte, proofs Ics23Proof) error {
-	return _SequencerSignatureVerifier.Contract.VerifyMembership(&_SequencerSignatureVerifier.CallOpts, appHash, key, value, proofs)
-}
-
-// VerifyNonMembership is a free data retrieval call binding the contract method 0x2a6ded74.
-//
-// Solidity: function verifyNonMembership(bytes32 , bytes , (((bytes,bytes)[],bytes,bytes,bytes)[],uint256) ) pure returns()
-func (_SequencerSignatureVerifier *SequencerSignatureVerifierCaller) VerifyNonMembership(opts *bind.CallOpts, arg0 [32]byte, arg1 []byte, arg2 Ics23Proof) error {
-	var out []interface{}
-	err := _SequencerSignatureVerifier.contract.Call(opts, &out, "verifyNonMembership", arg0, arg1, arg2)
-
-	if err != nil {
-		return err
-	}
-
-	return err
-
-}
-
-// VerifyNonMembership is a free data retrieval call binding the contract method 0x2a6ded74.
-//
-// Solidity: function verifyNonMembership(bytes32 , bytes , (((bytes,bytes)[],bytes,bytes,bytes)[],uint256) ) pure returns()
-func (_SequencerSignatureVerifier *SequencerSignatureVerifierSession) VerifyNonMembership(arg0 [32]byte, arg1 []byte, arg2 Ics23Proof) error {
-	return _SequencerSignatureVerifier.Contract.VerifyNonMembership(&_SequencerSignatureVerifier.CallOpts, arg0, arg1, arg2)
-}
-
-// VerifyNonMembership is a free data retrieval call binding the contract method 0x2a6ded74.
-//
-// Solidity: function verifyNonMembership(bytes32 , bytes , (((bytes,bytes)[],bytes,bytes,bytes)[],uint256) ) pure returns()
-func (_SequencerSignatureVerifier *SequencerSignatureVerifierCallerSession) VerifyNonMembership(arg0 [32]byte, arg1 []byte, arg2 Ics23Proof) error {
-	return _SequencerSignatureVerifier.Contract.VerifyNonMembership(&_SequencerSignatureVerifier.CallOpts, arg0, arg1, arg2)
 }
 
 // VerifyStateUpdate is a free data retrieval call binding the contract method 0xe8d90039.

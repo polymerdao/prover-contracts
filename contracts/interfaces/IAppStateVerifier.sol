@@ -46,7 +46,7 @@ interface IAppStateVerifier {
      * @param value value to be proven
      * @param proof ICS23 membership proof
      */
-    function verifyMembership(bytes32 appHash, bytes calldata key, bytes calldata value, Ics23Proof calldata proof)
+    function verifyMembership(bytes32 appHash, bytes calldata key, bytes32 value, Ics23Proof calldata proof)
         external
         pure;
 
