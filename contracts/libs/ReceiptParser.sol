@@ -17,6 +17,7 @@
 
 pragma solidity ^0.8.0;
 
+import "forge-std/Test.sol";
 import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {Bytes} from "optimism/libraries/Bytes.sol";
 
@@ -124,11 +125,11 @@ library ReceiptParser {
         }
     }
 
-    function receiptRootKey(string memory chainId, string memory clientType, uint256 height)
+    function receiptRootKey(bytes memory chainId, bytes32 clientType, bytes memory height)
         internal
         pure
         returns (bytes memory proofKey)
     {
-        proofKey = abi.encodePacked("chain/", chainId, "/storedReceipts/", clientType, "/receiptRoot/", toStr(height));
+        proofKey = abi.encodePacked("chain/", chainId, "/storedReceipts/", bytes9(clientType), "/receiptRoot/", height);
     }
 }

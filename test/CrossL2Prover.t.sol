@@ -50,12 +50,12 @@ contract CrossL2ProverTest is SigningBase {
 
     function setUp() public {
         peptideAppHash = hex"ebf1f4c1903364fef5ed8c01dfae471e3cad3c521faa4b555b091797ad3715fd";
-        crossProver = new CrossL2Prover(sigVerifier, "proof_api");
+        crossProver = new CrossL2Prover(sigVerifier, 0x70726f6f665f617069);
 
         OldIcs23Proof memory peptideAppProof;
         (proof) = load_proof("/test/payload/RLP/proof1.hex");
         (peptideAppProof, receiptMMPTProof, receiptRoot, eventHeight, srcChainId, receiptIndex) =
-        abi.decode(proof, (OldIcs23Proof, bytes[], bytes32, uint64, string, bytes));
+            abi.decode(proof, (OldIcs23Proof, bytes[], bytes32, uint64, string, bytes));
 
         rlpEncodedReceipt = load_bytes_from_hex("/test/payload/RLP/receipt1.hex");
 
@@ -103,6 +103,31 @@ contract CrossL2ProverTest is SigningBase {
         assertEq(crossProver.getState(iavlProof.height), 0);
     }
 
+    function toStr(uint256 _number) public pure returns (string memory outStr) {
+        if (_number == 0) {
+            return "0";
+        }
+
+        uint256 length;
+        uint256 number = _number;
+
+        // Determine the length of the string
+        while (number != 0) {
+            length++;
+            number /= 10;
+        }
+
+        bytes memory buffer = new bytes(length);
+
+        // Convert each digit to its ASCII representation
+        for (uint256 i = length; i > 0; i--) {
+            buffer[i - 1] = bytes1(uint8(48 + (_number % 10)));
+            _number /= 10;
+        }
+
+        outStr = string(buffer);
+    }
+
     // // Happy path for CrossEventProver.validateReceipt()
     function test_validate_receipt_success() public {
         OldIcs23Proof memory oldP = abi.decode(peptideAppProofBytes, (OldIcs23Proof));
@@ -129,8 +154,19 @@ contract CrossL2ProverTest is SigningBase {
 
         Ics23Proof memory iavlProof = Ics23Proof({proof: newProof, height: oldP.height});
 
-        bytes memory newProofBytes = abi.encode(iavlProof, receiptMMPTProof, receiptRoot, eventHeight, srcChainId, receiptIndex);
-        (string memory chainId, bytes memory RLPBytes) = crossProver.validateReceipt(newProofBytes);
+        bytes memory newProofBytes =
+            abi.encode(iavlProof, receiptMMPTProof, toStr(eventHeight), bytes(srcChainId), receiptIndex, receiptRoot);
+
+        //         (
+        //     Ics23Proof memory peptideAppProof,
+        //     bytes[] memory receiptMMPTProof,
+        //     bytes memory eventHeight,
+        //     bytes memory srcChainId,
+        //     bytes memory receiptIndex,
+        //     bytes32 receiptRoot
+        // ) = abi.decode(proof, (Ics23Proof, bytes[], bytes, bytes, bytes, bytes32));
+
+        (bytes memory chainId, bytes memory RLPBytes) = crossProver.validateReceipt(newProofBytes);
 
         assertEq(chainId, "11155420", "Chain ID mismatch");
         assertEq(RLPBytes, rlpEncodedReceipt, "RLP encoded receipt mismatch");
@@ -139,9 +175,9 @@ contract CrossL2ProverTest is SigningBase {
 
     // Happy path for CrossEventProver.validateEvent()
     function test_validate_event_success() public {
-        (string memory chainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData) =
+        (bytes memory chainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData) =
             crossProver.validateEvent(0, proof);
-        assertEq(chainId, "11155420", "Chain ID mismatch");
+        assertEq(chainId, bytes("11155420"), "Chain ID mismatch");
         assertEq(emittingContract, 0x464C8ec100F2F42fB4e42E07E203DA2324f9FC67);
     }
 

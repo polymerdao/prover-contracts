@@ -37,7 +37,7 @@ contract Venus {
     // Event that we emit on this local chain to indicate that we have received an event from the source chain
     event TransmissionReceived(bytes32 message, uint64 timestamp);
 
-    event SuccessfulReceipt(string srcChainId, bytes receiptRLP);
+    event SuccessfulReceipt(bytes srcChainId, bytes receiptRLP);
     event ValidCounterpartyEvent(address counterParty, bytes[] topics, bytes unindexed);
 
     error invalidProverAddress();
@@ -63,7 +63,7 @@ contract Venus {
      * otherwise.
      */
     function receiveReceipt(bytes calldata proof) external {
-        (string memory srcChainId, bytes memory receiptRLP) = prover.validateReceipt(proof);
+        (bytes memory srcChainId, bytes memory receiptRLP) = prover.validateReceipt(proof);
         emit SuccessfulReceipt(srcChainId, receiptRLP);
     }
 
@@ -81,10 +81,10 @@ contract Venus {
     ) external {
         // Now that we have validated the receipt, we can trust the rlp encoded receipt bytes. Now we unpack the event
         // data from these rlp encoded receipt bytes and validate it.
-        (string memory proofChainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData) =
+        (bytes memory proofChainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData) =
             prover.validateEvent(logIndex, proof);
 
-        if (!Bytes.equal(bytes(chainId), bytes(proofChainId))) {
+        if (!Bytes.equal(bytes(chainId), proofChainId)) {
             revert invalidChainId();
         }
         if (emittingContract != expectedEmitter) {
@@ -111,11 +111,11 @@ contract Venus {
      */
     function receiveTransmissionEvent(uint256 logIndex, bytes calldata proof, address expectedEmitter) external {
         // First, we validate the proof and log in one go, but have to validate the counterparty chain id.
-        (string memory proofChainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData) =
+        (bytes memory proofChainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData) =
             prover.validateEvent(logIndex, proof);
 
         // Once we validate the chain id, we can Now we unpack the event
-        if (!Bytes.equal(bytes(chainId), bytes(proofChainId))) {
+        if (!Bytes.equal(bytes(chainId), proofChainId)) {
             revert invalidChainId();
         }
 

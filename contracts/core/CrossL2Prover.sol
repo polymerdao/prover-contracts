@@ -29,7 +29,7 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
         // for cheap on-chain use
 
-    string public clientType;
+    bytes9 public immutable clientType;
     ISignatureVerifier public immutable verifier;
 
     // Store peptide apphashes for a given height
@@ -37,7 +37,7 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
 
     error CannotUpdateClientWithDifferentAppHash();
 
-    constructor(ISignatureVerifier verifier_, string memory clientType_) {
+    constructor(ISignatureVerifier verifier_, bytes9 clientType_) {
         verifier = verifier_;
         clientType = clientType_;
     }
@@ -58,7 +58,7 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     function validateEvent(uint256 logIndex, bytes calldata proof)
         external
         view
-        returns (string memory chainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData)
+        returns (bytes memory chainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData)
     {
         bytes memory receiptRLP;
         (chainId, receiptRLP) = validateReceipt(proof);
@@ -72,15 +72,15 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     /**
      * @inheritdoc ICrossL2Prover
      */
-    function validateReceipt(bytes calldata proof) public view returns (string memory, bytes memory) {
+    function validateReceipt(bytes calldata proof) public view returns (bytes memory, bytes memory) {
         (
             Ics23Proof memory peptideAppProof,
             bytes[] memory receiptMMPTProof,
-            bytes32 receiptRoot,
-            uint64 eventHeight,
-            string memory srcChainId,
-            bytes memory receiptIndex
-        ) = abi.decode(proof, (Ics23Proof, bytes[], bytes32, uint64, string, bytes));
+            bytes memory eventHeight,
+            bytes memory srcChainId,
+            bytes memory receiptIndex,
+            bytes32 receiptRoot
+        ) = abi.decode(proof, (Ics23Proof, bytes[], bytes, bytes, bytes, bytes32));
         // Before we can trust the receipt root, we first need to verify that the receipt root is indeed stored
         // on peptide at the given clientID and height.
 
