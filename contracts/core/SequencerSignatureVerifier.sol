@@ -28,7 +28,7 @@ import {AppStateVerifier} from "../base/AppStateVerifier.sol";
  * signatures on client updates.
  * @author Polymer Labs
  */
-contract SequencerSignatureVerifier is AppStateVerifier, ISignatureVerifier {
+contract SequencerSignatureVerifier is ISignatureVerifier {
     using RLPReader for RLPReader.RLPItem;
     using RLPReader for bytes;
 
