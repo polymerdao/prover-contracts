@@ -11,6 +11,26 @@ import {ICrossL2Prover} from "contracts/interfaces/ICrossL2Prover.sol";
 import {MerkleTrie} from "optimism/libraries/trie/MerkleTrie.sol";
 import {IAppStateVerifier} from "contracts/interfaces/IAppStateVerifier.sol";
 
+// OpIcs23ProofPath represents a commitment path in an ICS23 proof, which consists of a commitment prefix and a
+// suffix.
+struct OpIcs23ProofPath {
+    bytes prefix;
+    bytes suffix;
+}
+
+// OpIcs23Proof represents an ICS23 proof
+struct OldOpIcs23Proof {
+    OpIcs23ProofPath[] path;
+    bytes key;
+    bytes value;
+    bytes prefix;
+}
+
+struct OldIcs23Proof {
+    OldOpIcs23Proof[] proof;
+    uint256 height;
+}
+
 contract CrossL2ProverTest is SigningBase {
     using stdJson for string;
 
@@ -32,10 +52,10 @@ contract CrossL2ProverTest is SigningBase {
         peptideAppHash = hex"ebf1f4c1903364fef5ed8c01dfae471e3cad3c521faa4b555b091797ad3715fd";
         crossProver = new CrossL2Prover(sigVerifier, "proof_api");
 
-        Ics23Proof memory peptideAppProof;
+        OldIcs23Proof memory peptideAppProof;
         (proof) = load_proof("/test/payload/RLP/proof1.hex");
         (peptideAppProof, receiptMMPTProof, receiptRoot, eventHeight, srcChainId, receiptIndex) =
-            abi.decode(proof, (Ics23Proof, bytes[], bytes32, uint64, string, bytes));
+        abi.decode(proof, (OldIcs23Proof, bytes[], bytes32, uint64, string, bytes));
 
         rlpEncodedReceipt = load_bytes_from_hex("/test/payload/RLP/receipt1.hex");
 
@@ -85,9 +105,36 @@ contract CrossL2ProverTest is SigningBase {
 
     // // Happy path for CrossEventProver.validateReceipt()
     function test_validate_receipt_success() public {
-        (string memory chainId, bytes memory RLPBytes) = crossProver.validateReceipt(proof);
+        OldIcs23Proof memory oldP = abi.decode(peptideAppProofBytes, (OldIcs23Proof));
+
+        OpIcs23Proof[] memory newProof = new OpIcs23Proof[](oldP.proof.length);
+
+        for (uint256 i = 0; i < oldP.proof.length; i++) {
+            bytes[] memory proofPrefix = new bytes[](oldP.proof[i].path.length);
+            bytes[] memory proofSuffix = new bytes[](oldP.proof[i].path.length);
+
+            for (uint256 j = 0; j < oldP.proof[i].path.length; j++) {
+                proofPrefix[j] = oldP.proof[i].path[j].prefix;
+                proofSuffix[j] = oldP.proof[i].path[j].suffix;
+            }
+
+            newProof[i] = OpIcs23Proof({
+                proofPrefix: proofPrefix,
+                proofSuffix: proofSuffix,
+                key: oldP.proof[i].key,
+                value: oldP.proof[i].value,
+                prefix: oldP.proof[i].prefix
+            });
+        }
+
+        Ics23Proof memory iavlProof = Ics23Proof({proof: newProof, height: oldP.height});
+
+        bytes memory newProofBytes = abi.encode(iavlProof, receiptMMPTProof, receiptRoot, eventHeight, srcChainId, receiptIndex);
+        (string memory chainId, bytes memory RLPBytes) = crossProver.validateReceipt(newProofBytes);
+
         assertEq(chainId, "11155420", "Chain ID mismatch");
         assertEq(RLPBytes, rlpEncodedReceipt, "RLP encoded receipt mismatch");
+        crossProver.validateEvent(0, newProofBytes);
     }
 
     // Happy path for CrossEventProver.validateEvent()

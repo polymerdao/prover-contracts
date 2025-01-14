@@ -3,7 +3,29 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import {stdStorage, StdStorage} from "forge-std/Test.sol";
-import {Ics23Proof} from "../../contracts/libs/ReceiptParser.sol";
+// import {Ics23Proof} from "../../contracts/libs/ReceiptParser.sol";
+
+
+// OpIcs23ProofPath represents a commitment path in an ICS23 proof, which consists of a commitment prefix and a
+// suffix.
+struct OpIcs23ProofPath {
+    bytes prefix;
+    bytes suffix;
+}
+
+// OpIcs23Proof represents an ICS23 proof
+struct OldOpIcs23Proof {
+    OpIcs23ProofPath[] path;
+    bytes key;
+    bytes value;
+    bytes prefix;
+}
+
+struct OldIcs23Proof {
+    OldOpIcs23Proof[] proof;
+    uint256 height;
+}
+
 
 // Base contract for testing Dispatcher
 contract Base is Test {
@@ -22,14 +44,14 @@ contract Base is Test {
 
         (, receiptProof, receiptRoot,,, receiptIdx) = abi.decode(
             vm.parseBytes(vm.readFile(string.concat(rootDir, proofPath))),
-            (Ics23Proof, bytes[], bytes32, uint256, string, bytes)
+            (OldIcs23Proof, bytes[], bytes32, uint256, string, bytes)
         );
     }
 
     // Load a full proof bytes proof from a file into calldata
     function load_proof(string memory filepath) internal returns (bytes memory proof) {
         (
-            Ics23Proof memory iavlProof,
+            OldIcs23Proof memory iavlProof,
             bytes[] memory receiptProof,
             bytes32 receiptRoot,
             uint256 eventHeight,
@@ -37,7 +59,7 @@ contract Base is Test {
             bytes memory receiptIdx
         ) = abi.decode(
             vm.parseBytes(vm.readFile(string.concat(rootDir, filepath))),
-            (Ics23Proof, bytes[], bytes32, uint256, string, bytes)
+            (OldIcs23Proof, bytes[], bytes32, uint256, string, bytes)
         );
 
         // This Is how the contract decodes it:
