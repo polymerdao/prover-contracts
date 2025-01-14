@@ -2,14 +2,13 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
+import {Base} from "test/utils/Base.t.sol";
 import "../../contracts/core/SequencerSignatureVerifier.sol";
 import {RLPWriter} from "optimism/libraries/rlp/RLPWriter.sol";
 import {L1Header} from "../../contracts/interfaces/IAppStateVerifier.sol";
 
-contract SigningBase is Test {
+contract SigningBase is Base {
     using stdJson for string;
-
-    string rootDir = vm.projectRoot();
 
     bytes32 l1BlockHash;
     bytes32 peptideAppHash;
@@ -21,7 +20,6 @@ contract SigningBase is Test {
     bytes32 domain; // Domain will be empty so we can leave it as initialized to default 0x 32 bytes
 
     SequencerSignatureVerifier public sigVerifier;
-    bytes32 PEPTIDE_CHAIN_ID = bytes32(uint256(444));
 
     L1Header childl1Block; // Child block, represents the l1 origin of dest chain when peptide catches up to ancestor L1
         // block
