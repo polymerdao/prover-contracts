@@ -27,17 +27,29 @@ contract Base is Test {
     }
 
     // Load a full proof bytes proof from a file into calldata
-    function load_proof(string memory filepath, address lightClient) internal returns (Ics23Proof memory) {
-        (bytes32 apphash, Ics23Proof memory proof) =
-            abi.decode(vm.parseBytes(vm.readFile(string.concat(rootDir, filepath))), (bytes32, Ics23Proof));
+    function load_proof(string memory filepath) internal returns (bytes memory proof) {
+        (
+            Ics23Proof memory iavlProof,
+            bytes[] memory receiptProof,
+            bytes32 receiptRoot,
+            uint256 eventHeight,
+            string memory srcChainID,
+            bytes memory receiptIdx
+        ) = abi.decode(
+            vm.parseBytes(vm.readFile(string.concat(rootDir, filepath))),
+            (Ics23Proof, bytes[], bytes32, uint256, string, bytes)
+        );
 
+        // This Is how the contract decodes it:
+        //We have to encode it here:
+        proof = abi.encode(iavlProof, receiptProof, receiptRoot, eventHeight, srcChainID, receiptIdx);
+    }
+
+    // Store a peptide app hash in the prover contract at the given height
+    function store_peptide_apphash(bytes32 appHash, address proverContract, uint256 height) internal {
         // this loads the app hash we got from the testing data into the consensus state manager internals
         // at the height it's supposed to go. That is, a block less than where the proof was generated from.
-        stdstore.target(lightClient).sig("consensusStates(uint256)").with_key(proof.height - 1).checked_write(apphash);
-        // trick the fraud time window check
-        vm.warp(block.timestamp + 1);
-
-        return proof;
+        stdstore.target(proverContract).sig("peptideAppHashes(uint256)").with_key(height - 1).checked_write(appHash);
     }
 
     function load_bytes_from_hex(string memory filepath) internal returns (bytes memory) {
