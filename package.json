@@ -1,6 +1,6 @@
 {
   "name": "@polymerdao/prover-contracts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/index.js",
   "bin": {
     "verify-prover-contracts": "./dist/scripts/verify-contract-script.js",
@@ -8,6 +8,9 @@
     "polymer-prover-deploy-test": "./dist/scripts/fork-deployment-test.js",
     "polymer-prover-deploy-multisig": "./dist/scripts/deploy-multisig.js",
     "polymer-prover-execute-multisig-tx": "./dist/scripts/execute-multisig-tx.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "license": "MIT",
   "dependencies": {
