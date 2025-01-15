@@ -32,12 +32,14 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     string public clientType;
     uint256 public immutable RING_BUFFER_LENGTH; // Length of which we mod heights in storage slots
 
+    uint256 public latestHeight; // Used to prevent from griefing attacks that update to old heights
+
     ISignatureVerifier public immutable verifier;
 
     // Store peptide apphashes for a given height
     mapping(uint256 => uint256) public peptideAppHashes;
 
-    error CannotUpdateClientWithDifferentAppHash();
+    error CannotUpdateToOlderHeight();
 
     constructor(ISignatureVerifier verifier_, string memory clientType_, uint256 ringBufferLength_) {
         verifier = verifier_;
@@ -107,8 +109,13 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     }
 
     function _updateClient(bytes calldata proof, uint256 peptideHeight, uint256 peptideAppHash) internal {
+        if (peptideHeight <= latestHeight) {
+            revert CannotUpdateToOlderHeight();
+        }
+
         verifier.verifyStateUpdate(peptideHeight, bytes32(peptideAppHash), bytes32(proof[:32]), proof[32:]);
         peptideAppHashes[peptideHeight % RING_BUFFER_LENGTH] = peptideAppHash;
+        latestHeight = peptideHeight;
     }
 
     function _getPeptideAppHash(uint256 _height) internal view returns (uint256) {
