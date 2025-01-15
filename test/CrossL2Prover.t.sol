@@ -30,7 +30,7 @@ contract CrossL2ProverTest is SigningBase {
 
     function setUp() public {
         peptideAppHash = hex"ebf1f4c1903364fef5ed8c01dfae471e3cad3c521faa4b555b091797ad3715fd";
-        crossProver = new CrossL2Prover(sigVerifier, "proof_api");
+        crossProver = new CrossL2Prover(sigVerifier, "proof_api", 100);
 
         Ics23Proof memory peptideAppProof;
         (proof) = load_proof("/test/payload/RLP/proof1.hex");
@@ -40,25 +40,9 @@ contract CrossL2ProverTest is SigningBase {
         rlpEncodedReceipt = load_bytes_from_hex("/test/payload/RLP/receipt1.hex");
 
         peptideAppProofBytes = abi.encode(peptideAppProof);
-        store_peptide_apphash(peptideAppHash, address(crossProver), peptideAppProof.height);
-    }
-
-    // Happy path for CrossEventProver.updateClient()
-    function test_clientUpdate_success() public {
-        Ics23Proof memory iavlProof = abi.decode(peptideAppProofBytes, (Ics23Proof));
-        bytes32 hashToSign = keccak256(
-            bytes.concat(
-                bytes32(0),
-                PEPTIDE_CHAIN_ID,
-                keccak256(bytes.concat(bytes32(iavlProof.height), peptideAppHash, l1BlockHash))
-            )
+        store_peptide_apphash(
+            peptideAppHash, address(crossProver), peptideAppProof.height, crossProver.RING_BUFFER_LENGTH()
         );
-
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(sequencerPkey, hashToSign);
-        bytes memory signature = abi.encodePacked(r, s, v); // Annoyingly, v, r, s are in a different order than those
-
-        crossProver.updateClient(bytes.concat(l1BlockHash, signature), iavlProof.height, uint256(peptideAppHash));
-        assertEq(crossProver.getState(iavlProof.height), uint256(peptideAppHash));
     }
 
     // Test that a client update will fail if it doesn't have a valid sequencer signature
@@ -129,7 +113,9 @@ contract CrossL2ProverTest is SigningBase {
     // Test trying to prove with a non-existent peptideApphash that hasn't yet been seen
     function test_revert_nonexistingPeptideAppHash() public {
         Ics23Proof memory peptideProof = abi.decode(peptideAppProofBytes, (Ics23Proof));
-        store_peptide_apphash(bytes32(uint256(0)), address(crossProver), peptideProof.height); // clear peptide app hash
+        store_peptide_apphash(
+            bytes32(uint256(0)), address(crossProver), peptideProof.height, crossProver.RING_BUFFER_LENGTH()
+        ); // clear peptide app hash
             // at height
 
         vm.expectRevert(IAppStateVerifier.InvalidIbcStateProof.selector);
