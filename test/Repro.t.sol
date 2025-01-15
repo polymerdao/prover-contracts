@@ -44,7 +44,7 @@ contract ContractDebugReproTest is Test {
         vm.skip(true); // Comment this out when running tests!
         SequencerSignatureVerifier sigVerifier = new SequencerSignatureVerifier(devnetSigner, devnetPeptideClientId);
 
-        CrossL2Prover crossProver = new CrossL2Prover(sigVerifier, "proof_api");
+        CrossL2Prover crossProver = new CrossL2Prover(sigVerifier, "proof_api", 100);
         // Do contract client update
         (bool success, bytes memory returnData) = address(crossProver).call(clientUpdate);
         // Do receipt call using proof
@@ -57,7 +57,7 @@ contract ContractDebugReproTest is Test {
         // Comment below out
         SequencerSignatureVerifier sigVerifier = new SequencerSignatureVerifier(testnetSigner, testnetPeptideClientId);
 
-        CrossL2Prover crossProver = new CrossL2Prover(sigVerifier, "proof_api");
+        CrossL2Prover crossProver = new CrossL2Prover(sigVerifier, "proof_api", 100);
         // Do contract client update
         (bool success, bytes memory returnData) = address(crossProver).call(clientUpdate);
         // Do receipt call using proof

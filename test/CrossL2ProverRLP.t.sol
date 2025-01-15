@@ -20,7 +20,7 @@ contract CrossL2ProverDevnet is Base {
             bytes32(0x0000000000000000000000000000000000000000000000000000000000000385)
         );
 
-        prover = new CrossL2Prover(sigVerifier, "proof_api");
+        prover = new CrossL2Prover(sigVerifier, "proof_api", 100);
     }
 
     function test_RLP_1() public {

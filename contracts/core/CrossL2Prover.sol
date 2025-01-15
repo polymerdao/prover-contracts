@@ -30,6 +30,8 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
         // for cheap on-chain use
 
     string public clientType;
+    uint256 public immutable RING_BUFFER_LENGTH; // Length of which we mod heights in storage slots
+
     ISignatureVerifier public immutable verifier;
 
     // Store peptide apphashes for a given height
@@ -37,9 +39,10 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
 
     error CannotUpdateClientWithDifferentAppHash();
 
-    constructor(ISignatureVerifier verifier_, string memory clientType_) {
+    constructor(ISignatureVerifier verifier_, string memory clientType_, uint256 ringBufferLength_) {
         verifier = verifier_;
         clientType = clientType_;
+        RING_BUFFER_LENGTH = ringBufferLength_;
     }
 
     /**
@@ -104,21 +107,11 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     }
 
     function _updateClient(bytes calldata proof, uint256 peptideHeight, uint256 peptideAppHash) internal {
-        if (peptideAppHashes[peptideHeight] != 0) {
-            // Note: we don't cache peptideAppHash[peptideHeight] in mem for gas savings here because this if
-            // statement
-            // would not be triggered too often, and would make the more frequent branch more expensive due to mem
-            // allocation.
-            if (peptideAppHashes[peptideHeight] != peptideAppHash) {
-                revert CannotUpdateClientWithDifferentAppHash();
-            }
-            return;
-        }
         verifier.verifyStateUpdate(peptideHeight, bytes32(peptideAppHash), bytes32(proof[:32]), proof[32:]);
-        peptideAppHashes[peptideHeight] = peptideAppHash;
+        peptideAppHashes[peptideHeight % RING_BUFFER_LENGTH] = peptideAppHash;
     }
 
     function _getPeptideAppHash(uint256 _height) internal view returns (uint256) {
-        return peptideAppHashes[_height];
+        return peptideAppHashes[_height % RING_BUFFER_LENGTH];
     }
 }
