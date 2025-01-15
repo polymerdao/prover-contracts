@@ -29,3 +29,11 @@ jobs:
 
       - name: Tests
         run: forge test 
+
+      - name: Check formatting
+        run: forge fmt --check
+
+      - name: Install Dependencies
+        run: |
+          bun install
+          bun run lint
