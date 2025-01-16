@@ -23,7 +23,7 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: Check contract sizes
-        run: forge build --force contracts/ --sizes --deny-warnings
+        run: rm -rf out forge build --force contracts/ --sizes --deny-warnings
 
       - name: Contract Unit Tests
         run: forge test
