@@ -23,7 +23,7 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: Check contract sizes
-        run: rm -rf out && forge build --force contracts/ --sizes --deny-warnings
+        run: rm -rf out release-artifacts && forge build --force contracts/ --sizes --deny-warnings
 
       - name: Contract Unit Tests
         run: forge test
@@ -72,6 +72,7 @@ jobs:
   registries:
     runs-on: ubuntu-latest
     environment: release
+    needs: release
     steps:
       - name: Checkout
         uses: actions/checkout@v4
