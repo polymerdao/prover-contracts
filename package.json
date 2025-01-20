@@ -14,7 +14,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@commander-js/extra-typings": "^12.1.0",
+    "@commander-js/extra-typings": "^13.0.0",
     "@safe-global/api-kit": "^2.5.2",
     "@safe-global/protocol-kit": "^4.0.3",
     "@safe-global/safe-core-sdk-types": "^5.1.0",
