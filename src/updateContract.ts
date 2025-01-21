@@ -17,7 +17,8 @@ type UpdateContractsOpts = {
   forceDeployNewContracts?: boolean;
   writeContracts?: boolean;
   extraContractFactories?: Record<string, object>;
-}
+  create2Salt?: string;
+};
 
 // Combination of sendTxToChain and deployContracts. Can do both from a single deploy file, and uses zod to parse the schema.
 export async function updateContractsForChain(
@@ -31,6 +32,7 @@ export async function updateContractsForChain(
     forceDeployNewContracts: false, // True if you want to use existing deployments when possible
     writeContracts: true, // True if you want to save persisted artifact files.
     extraContractFactories: {},
+    create2Salt: undefined,
   }
 ) {
   const {
@@ -38,6 +40,7 @@ export async function updateContractsForChain(
     forceDeployNewContracts,
     writeContracts,
     extraContractFactories,
+    create2Salt,
   } = options;
 
   logger.info(
@@ -84,7 +87,8 @@ export async function updateContractsForChain(
         writeContracts,
         extraContractFactories,
         nonces,
-        env
+        env,
+        create2Salt
       );
       result.set(deployed.name, deployed);
       continue;
