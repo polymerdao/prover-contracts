@@ -1,8 +1,7 @@
-import { ethers } from "ethers";
+import { getCreate2Address, keccak256 } from "ethers";
 import {
   DeployedContractObject,
   StringToStringMap,
-  readDeploymentFilesIntoEnv,
   renderArgs,
   renderString,
   writeDeployedContractToFile,
@@ -10,8 +9,6 @@ import {
 import assert from "assert";
 import {
   SingleSigAccountRegistry,
-  connectProviderAccounts,
-  Wallet,
 } from "./evm/schemas/account";
 import {
   ContractRegistry,
@@ -19,7 +16,7 @@ import {
   ContractItem,
 } from "./evm/schemas/contract";
 import { Logger } from "./utils/cli";
-import { DEFAULT_DEPLOYER } from "./utils/constants";
+import { CREATE_2_FACTORY, DEFAULT_DEPLOYER } from "./utils/constants";
 import { Chain } from "./evm/chain";
 import * as proverContractFactories from "./evm/contracts/index";
 import { isMultisig } from "./evm/schemas/multisig";
@@ -98,14 +95,15 @@ const getDeployData = (
 
 export const deployContract = async (
   chain: Chain,
-  accountRegistry: SingleSigAccountRegistry|SendingAccountRegistry,
+  accountRegistry: SingleSigAccountRegistry | SendingAccountRegistry,
   contract: ContractItem,
   logger: Logger,
   dryRun: boolean = false,
   writeContracts: boolean = true, // True if you want to save persisted artifact files.
   extraContractFactories: Record<string, object> = {},
   nonces: Record<string, number> = {},
-  env: StringToStringMap = {}
+  env: StringToStringMap = {},
+  create2Salt: string | undefined = undefined
 ) => {
   // merge extra contracts into the registry
   const contractFactories = {
@@ -133,7 +131,7 @@ export const deployContract = async (
         contract.name
       } with args: [${constructorData.args}] with libraries: ${JSON.stringify(
         constructorData.libraries
-      )} `
+      )} ${create2Salt ? `and create2 salt: ${create2Salt}` : ""}`
     );
     let deployedAddr = `new.${contract.name}.address`;
     const deployer = accountRegistry.mustGet(
@@ -153,14 +151,33 @@ export const deployContract = async (
     );
     const nonce = updatedNonces[deployer.address];
     if (!dryRun) {
-      const overrides = {
-        nonce,
-      };
-      const deployed = await constructorData.factory
-        .connect(deployer)
-        .deploy(...constructorData.args, overrides);
-      await deployed.deploymentTransaction()?.wait(1);
-      deployedAddr = await deployed.getAddress();
+      if (create2Salt) {
+        // Make a call to create2factory instead of a normal eth deploy tx if create2Salt is provided
+        const initData = await constructorData.factory
+          .connect(deployer)
+          .getDeployTransaction(...constructorData.args);
+
+        const txResponse = await deployer.sendTransaction({
+          to: CREATE_2_FACTORY,
+          data: `${create2Salt}${initData.data.slice(2)}`,
+          nonce: nonce,
+        });
+        await txResponse.wait(1);
+        deployedAddr = getCreate2Address(
+          CREATE_2_FACTORY,
+          create2Salt,
+          keccak256(initData.data)
+        );
+      } else {
+        // Otherwise proceed with normal contract deployment
+        const deployed = await constructorData.factory
+          .connect(deployer)
+          .deploy(...constructorData.args, {
+            nonce,
+          });
+        await deployed.deploymentTransaction()?.wait(1);
+        deployedAddr = await deployed.getAddress();
+      }
     }
     // save deployed contract address for its dependencies
     logger.info(

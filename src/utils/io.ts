@@ -1,13 +1,13 @@
-import { fileURLToPath } from 'url';
-import fs from 'fs';
-import fsAsync from 'fs/promises';
-import path from 'path';
-import yaml from 'yaml';
-import { z } from 'zod';
-import nunjucks from 'nunjucks';
-import assert from 'assert';
-import { ProcessPromise } from 'zx';
-import { Chain, ChainConfigSchema, ChainFolderSchema } from '../evm/chain';
+import { fileURLToPath } from "url";
+import fs from "fs";
+import fsAsync from "fs/promises";
+import path from "path";
+import yaml from "yaml";
+import { z } from "zod";
+import nunjucks from "nunjucks";
+import assert from "assert";
+import { ProcessPromise } from "zx";
+import { Chain, ChainConfigSchema, ChainFolderSchema } from "../evm/chain";
 import {
   DEPLOYMENTS_PATH,
   ARTIFACTS_PATH,
@@ -22,13 +22,14 @@ import {
   EXTRA_BINDINGS_PATH,
   EXTRA_ARTIFACTS_PATH,
   EXTERNAL_CONTRACTS_PATH,
-} from './constants';
-import yargs from 'yargs/yargs';
-import { hideBin } from 'yargs/helpers';
-import { SingleSigAccountRegistry } from '../evm/schemas/account';
-import { ethers } from 'ethers';
-import { BigNumberish } from 'ethers';
-import { SendingAccountRegistry } from '../evm/schemas/sendingAccount';
+  CREATE2_SALT,
+} from "./constants";
+import yargs from "yargs/yargs";
+import { hideBin } from "yargs/helpers";
+import { SingleSigAccountRegistry } from "../evm/schemas/account";
+import { ethers } from "ethers";
+import { BigNumberish } from "ethers";
+import { SendingAccountRegistry } from "../evm/schemas/sendingAccount";
 
 export interface StringToStringMap {
   [key: string]: string | null | undefined;
@@ -36,7 +37,7 @@ export interface StringToStringMap {
 
 export type ChainFolder = {
   chainId: number;
-  deploymentEnvironment: 'local' | 'staging' | 'production' | 'mainnet';
+  deploymentEnvironment: "local" | "staging" | "production" | "mainnet";
 };
 
 export type LibraryMetadata = {
@@ -58,7 +59,7 @@ export type DeployedContractObject = {
 
 // readYamlFile reads a yaml file and returns the parsed object.
 export function readYamlFile(file: string): any {
-  return yaml.parse(fs.readFileSync(file, 'utf-8'));
+  return yaml.parse(fs.readFileSync(file, "utf-8"));
 }
 
 const writeYamlFile = (filePath: string, data: any) => {
@@ -81,17 +82,17 @@ export function contractNameToDeployFile(
  */
 export function parseObjFromFile(
   file: string,
-  options: BufferEncoding = 'utf8'
+  options: BufferEncoding = "utf8"
 ): any {
   if (!fs.existsSync(file)) {
     throw new Error(`file not found: ${file}`);
   }
   const ext = path.parse(file).ext;
   switch (ext) {
-    case '.json':
+    case ".json":
       return JSON.parse(fs.readFileSync(file, options));
-    case '.yaml':
-    case '.yml':
+    case ".yaml":
+    case ".yml":
       return yaml.parse(fs.readFileSync(file, options));
     default:
       throw new Error(
@@ -139,7 +140,7 @@ export function parseZodSchema<T>(
       throw new Error(
         `parsing ${className} failed. ${zErr.issues
           .map((i) => i.path)
-          .join(', ')}: ${zErr.message}\nconfig obj:\n${JSON.stringify(
+          .join(", ")}: ${zErr.message}\nconfig obj:\n${JSON.stringify(
           config,
           null,
           2
@@ -168,8 +169,8 @@ export function resetDir(dirPath: string) {
 export function setStdoutStderr(
   proc: ProcessPromise,
   wd: string,
-  stdoutName: string = 'stdout',
-  stderrName: string = 'stderr'
+  stdoutName: string = "stdout",
+  stderrName: string = "stderr"
 ): ProcessPromise {
   proc.pipe(fs.createWriteStream(path.resolve(wd, stdoutName)));
   proc.stderr.pipe(fs.createWriteStream(path.resolve(wd, stderrName)));
@@ -178,7 +179,7 @@ export function setStdoutStderr(
 }
 
 export function toEnvVarName(e: string) {
-  return e.replaceAll('-', '_').toUpperCase();
+  return e.replaceAll("-", "_").toUpperCase();
 }
 
 /** Reads a foundry build file given */
@@ -194,19 +195,19 @@ export async function readArtifactFile(
     return path.join(
       basePath,
       `${artifactName}.sol`,
-      `${artifactName}${solcVersion ? `.${solcVersion}` : ''}.json`
+      `${artifactName}${solcVersion ? `.${solcVersion}` : ""}.json`
     );
   });
   for (const path of paths) {
     try {
-      return await fsAsync.readFile(path, 'utf8');
+      return await fsAsync.readFile(path, "utf8");
     } catch (e) {
-  console.log(`no file found in ${path}: \n`, e);
+      console.log(`no file found in ${path}: \n`, e);
     }
   }
 
   console.error(`error reading from file in extra file ${path}: \n`);
-  return '';
+  return "";
 }
 
 /** Reads a deployment metadata rom a foundry build file. used to generate bytecode for deployment files*/
@@ -290,14 +291,14 @@ export async function readDeploymentFilesIntoEnv(env: any, chain: Chain) {
   try {
     files = await fsAsync.readdir(deploymentFolder);
   } catch (e) {
-    console.log('no files to read from');
+    console.log("no files to read from");
     return env;
   }
   for (const file of files) {
-    if (file.endsWith('.json')) {
+    if (file.endsWith(".json")) {
       try {
         const data = JSON.parse(
-          fs.readFileSync(path.join(deploymentFolder, file), 'utf8')
+          fs.readFileSync(path.join(deploymentFolder, file), "utf8")
         );
         env[data.name] = data.address;
       } catch (e) {
@@ -319,7 +320,7 @@ export async function readFromDeploymentFile(
     contractNameToDeployFile(deploymentName, chain.chainId)
   );
   try {
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
     return data;
   } catch (e) {
     console.error(`error reading file ${filePath}`, e);
@@ -331,10 +332,10 @@ const compileInitArgs = (
   env: StringToStringMap
 ) => {
   if (!init) {
-    return '';
+    return "";
   }
   const initArgs = init.args.map((arg: any) => {
-    return typeof arg === 'string' ? renderString(arg, env) : arg;
+    return typeof arg === "string" ? renderString(arg, env) : arg;
   });
   const iFace = new ethers.Interface([`function ${init.signature}`]);
   return iFace.encodeFunctionData(init.signature, initArgs);
@@ -356,10 +357,10 @@ export const renderArgs = (
 
   return args
     ? args.map((arg: any) => {
-        if (typeof arg !== 'string') return arg;
-        if (arg === '$INITARGS') {
-          if (initData === '')
-            throw new Error('Found $INITARGS but no args to replace it with.');
+        if (typeof arg !== "string") return arg;
+        if (arg === "$INITARGS") {
+          if (initData === "")
+            throw new Error("Found $INITARGS but no args to replace it with.");
           return initData;
         }
         return renderString(arg, env);
@@ -401,12 +402,14 @@ export async function parseArgsFromCLI() {
   const externalContractsPath =
     (argv1.EXTERNAL_CONTRACTS_PATH as string) || EXTERNAL_CONTRACTS_PATH;
 
+  const create2Salt = (argv1.CREATE2_SALT as string) || CREATE2_SALT;
+
   const chainParse = ChainConfigSchema.safeParse({
     rpc: rpcUrl,
     chainId,
     chainName,
-    vmType: 'evm',
-    description: 'local chain',
+    vmType: "evm",
+    description: "local chain",
     deploymentEnvironment,
   });
   if (!chainParse.success) {
@@ -430,6 +433,7 @@ export async function parseArgsFromCLI() {
     extraBindingsPath,
     extraArtifactsPath,
     externalContractsPath,
+    create2Salt,
   };
 }
 
@@ -458,7 +462,7 @@ export async function parseExecuteMultisigTxArgsFromCLI() {
     (argv1.ACCOUNT_SPECS_PATH as string) || ACCOUNT_SPECS_PATH;
 
   if (!executor || !TX_INDEX) {
-    throw new Error('executor and txIndex must be provided');
+    throw new Error("executor and txIndex must be provided");
   }
 
   return {
@@ -485,7 +489,7 @@ export const parseVerifyArgsFromCLI = async () => {
   const updateSpecs = (argv1.UPDATE_SPECS_PATH as string) || UPDATE_SPECS_PATH;
 
   if (!verifierUrl) {
-    throw new Error('Verifier URL not provided');
+    throw new Error("Verifier URL not provided");
   }
 
   const chainFolderParse = ChainFolderSchema.safeParse({
@@ -531,7 +535,7 @@ export const saveMultisigAddressToAccountsSpec = async (
       chainId,
       safeAddress: newSafeAddress,
       privateKey: account.privateKey,
-      txServiceUrl: account.txServiceUrl
+      txServiceUrl: account.txServiceUrl,
     };
   });
 

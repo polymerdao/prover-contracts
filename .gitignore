@@ -36,3 +36,4 @@ artifacts
 # Coverage Report
 report/
 lcov.info
+src/evm/contracts

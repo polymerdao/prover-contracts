@@ -8,9 +8,12 @@ export const DEFAULT_RPC_URL = "http://127.0.0.1:8545";
 export const DEFAULT_CHAIN_ID = "31337";
 export const DEFAULT_CHAIN_NAME = "local";
 export const DEFAULT_VERIFIER = "blockscout";
+export const CREATE_2_FACTORY = "0x4e59b44847b379578588920cA78FbF26c0B4956C";
 export const MODULE_ROOT_PATH =
   process.env.MODULE_ROOT_PATH || path.resolve(__dirname, "..", ".."); // Note: this is impacted by the tsup config since that can potential change where this file ends up being built to
-export const PARENT_MODULE_ROOT_PATH = path.dirname(path.resolve("package.json")); // Path of module using this package; path.resolve uses cwd so this should typically be the root of the module that's running the bin
+export const PARENT_MODULE_ROOT_PATH = path.dirname(
+  path.resolve("package.json")
+); // Path of module using this package; path.resolve uses cwd so this should typically be the root of the module that's running the bin
 const DEFAULT_ARTIFACTS_PATH = path.resolve(MODULE_ROOT_PATH, "out");
 const DEFAULT_DEPLOYMENTS_PATH = path.resolve(
   PARENT_MODULE_ROOT_PATH,
@@ -55,3 +58,6 @@ export const EXTRA_ARTIFACTS_PATH = process.env.EXTRA_ARTIFACTS_PATH;
 
 // Path where we can load an existing contract registry from 
 export const EXTERNAL_CONTRACTS_PATH= process.env.EXTERNAL_CONTRACTS_PATH;
+
+// Create2 salt for create2 deployments 
+export const CREATE2_SALT = process.env.CREATE2_SALT;

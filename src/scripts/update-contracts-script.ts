@@ -8,8 +8,14 @@ import { UPDATE_SPECS_PATH } from "../utils/constants";
 import { parseArgsFromCLI } from "../utils/io";
 
 async function main() {
-  const { chain, accounts, args, extraBindingsPath, externalContractsPath } =
-    await parseArgsFromCLI();
+  const {
+    chain,
+    accounts,
+    args,
+    extraBindingsPath,
+    externalContractsPath,
+    create2Salt,
+  } = await parseArgsFromCLI();
   const updateSpecs = (args.UPDATE_SPECS_PATH as string) || UPDATE_SPECS_PATH;
 
   const contractUpdates = loadContractUpdateRegistry(
@@ -42,6 +48,7 @@ async function main() {
       forceDeployNewContracts: false,
       writeContracts: true,
       extraContractFactories: extraContractFactories ?? undefined,
+      create2Salt,
     }
   );
 }
