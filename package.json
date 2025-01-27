@@ -39,7 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.11.0",
     "chai": "^5.1.1",
-    "eslint": "^8.57.1",
+    "eslint": "^9.19.0",
     "globals": "^15.9.0",
     "solidity-coverage": "^0.8.12",
     "tslib": "^2.7.0",
