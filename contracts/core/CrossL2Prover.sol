@@ -15,8 +15,11 @@
  * limitations under the License.
  */
 
+import "forge-std/Test.sol";
+
 pragma solidity 0.8.15;
 
+import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {MerkleTrie} from "optimism/libraries/trie/MerkleTrie.sol";
 import {ReceiptParser} from "../libs/ReceiptParser.sol";
 import {AppStateVerifier} from "../base/AppStateVerifier.sol";
@@ -106,6 +109,49 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
         // This is done through a Merkle proof.
 
         return (srcChainId, MerkleTrie.get(receiptIndex, receiptMMPTProof, receiptRoot));
+    }
+
+    function validateReceiptRLP(bytes calldata proof) public view returns (string memory, bytes memory) {
+        (
+            bytes memory peptideAppProof,
+            bytes[] memory receiptMMPTProof,
+            bytes32 receiptRoot,
+            uint64 eventHeight,
+            string memory srcChainId,
+            bytes memory receiptIndex
+        ) = abi.decode(proof, (bytes, bytes[], bytes32, uint64, string, bytes));
+        // Before we can trust the receipt root, we first need to verify that the receipt root is indeed stored
+        // on peptide at the given clientID and height.
+
+        RLPReader.RLPItem[] memory iavlProof = RLPReader.readList(peptideAppProof);
+
+        // VerifyMembership verifies the receipt root  through an ics23 proof of peptide state that attests that the
+        this.verifyMembershipRLP(
+            bytes32(_getPeptideAppHash(bytesToUint(RLPReader.readRawBytes(iavlProof[1])))), // a proof generated at height H can only be
+                // verified against state root (app hash) from block H - 1. this means the relayer must have updated the
+                // contract with the app hash from the previous block and that is why we use proof.height - 1 here.
+            ReceiptParser.receiptRootKey(srcChainId, clientType, eventHeight),
+            receiptRoot,
+            RLPReader.readRawBytes(iavlProof[0])
+        );
+
+        // given eventHeight has the receipt root at the peptide height
+        // Now that verifyMembership passed, we can now trust the receiptRoot.
+        // Now we just simply have to prove that raw receipt is indeed part of the receipt root at the given receipt
+        // index.
+        // This is done through a Merkle proof.
+
+        return (srcChainId, MerkleTrie.get(receiptIndex, receiptMMPTProof, receiptRoot));
+    }
+
+    // TO DO: USE external library
+    function bytesToUint(bytes memory b) public pure returns (uint256) {
+        
+        uint256 number;
+        for (uint256 i = 0; i < b.length; i++) {
+            number = number + uint8(b[i]) * (2 ** (8 * (b.length - (i + 1))));
+        }
+        return number;
     }
 
     function _updateClient(bytes calldata proof, uint256 peptideHeight, uint256 peptideAppHash) internal {

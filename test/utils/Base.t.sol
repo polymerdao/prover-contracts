@@ -28,21 +28,7 @@ contract Base is Test {
 
     // Load a full proof bytes proof from a file into calldata
     function load_proof(string memory filepath) internal returns (bytes memory proof) {
-        (
-            Ics23Proof memory iavlProof,
-            bytes[] memory receiptProof,
-            bytes32 receiptRoot,
-            uint256 eventHeight,
-            string memory srcChainID,
-            bytes memory receiptIdx
-        ) = abi.decode(
-            vm.parseBytes(vm.readFile(string.concat(rootDir, filepath))),
-            (Ics23Proof, bytes[], bytes32, uint256, string, bytes)
-        );
-
-        // This Is how the contract decodes it:
-        //We have to encode it here:
-        proof = abi.encode(iavlProof, receiptProof, receiptRoot, eventHeight, srcChainID, receiptIdx);
+        return  vm.parseBytes(vm.readFile(string.concat(rootDir, filepath)));
     }
 
     // Store a peptide app hash in the prover contract at the given height

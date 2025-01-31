@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+import "forge-std/Test.sol";
+
 pragma solidity 0.8.15;
 
 import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
@@ -50,6 +52,7 @@ abstract contract AppStateVerifier is IAppStateVerifier {
         public
         pure
     {
+        console2.log("key in verify membership: ", string(key), string(proofs.proof[0].key));
         // first check that the provided proof indeed proves the keys and values.
         if (keccak256(key) != keccak256(proofs.proof[0].key)) {
             revert InvalidProofKey();
@@ -60,6 +63,41 @@ abstract contract AppStateVerifier is IAppStateVerifier {
         // we can check the second that corresponds to the ibc proof, that is checked against the app hash (app root)
         if (bytes32(proofs.proof[1].value) != _verify(proofs.proof[0])) revert InvalidPacketProof();
         if (appHash != _verify(proofs.proof[1])) revert InvalidIbcStateProof();
+    }
+
+    function verifyMembershipRLP(bytes32 appHash, bytes memory key, bytes32 value, bytes memory proofs) public pure {
+        RLPReader.RLPItem[] memory opIcs23Proof = RLPReader.readList(proofs);
+        RLPReader.RLPItem[] memory proof0 = RLPReader.readList(opIcs23Proof[0]);
+        RLPReader.RLPItem[] memory proof1 = RLPReader.readList(opIcs23Proof[1]);
+
+        // Proof0 & proof1 are RLP versions of OpIcs23Proof:
+        // struct OpIcs23Proof {
+        //     OpIcs23ProofPath[] path;
+        //     bytes key;
+        //     bytes value;
+        //     bytes prefix;
+        // }
+
+        // struct OpIcs23ProofPath {
+        //     bytes prefix;
+        //     bytes suffix;
+        // }
+
+        console2.log("in vm bytes comparison expected:", string(key), "got", string(RLPReader.readBytes(((proof0[1])))));
+
+        // first check that the provided proof indeed proves the keys and values.
+        if (keccak256(key) != keccak256(RLPReader.readRawBytes(proof0[1]))) {
+            revert InvalidProofKey();
+        }
+
+        if (keccak256(abi.encodePacked(value)) != keccak256(RLPReader.readRawBytes(proof0[2]))) {
+            revert InvalidProofValue();
+        }
+        // proofs are chained backwards. First proof in the list (proof[0]) corresponds to the packet proof, meaning
+        // that can be checked against the next subroot value (i.e. ibc root). Once the first proof is verified,
+        // we can check the second that corresponds to the ibc proof, that is checked against the app hash (app root)
+        if (bytes32(RLPReader.readBytes(proof1[2])) != _verifyRLP(proof0)) revert InvalidPacketProof();
+        if (appHash != _verifyRLP(proof1)) revert InvalidIbcStateProof();
     }
 
     /**
@@ -79,6 +117,27 @@ abstract contract AppStateVerifier is IAppStateVerifier {
 
         for (uint256 i = 0; i < proof.path.length; i++) {
             computed = sha256(abi.encodePacked(proof.path[i].prefix, computed, proof.path[i].suffix));
+        }
+    }
+
+    function _verifyRLP(RLPReader.RLPItem[] memory opIcs23Proof) internal pure returns (bytes32 computed) {
+
+        bytes memory key = RLPReader.readRawBytes(opIcs23Proof[1]);
+        bytes memory value = RLPReader.readRawBytes(opIcs23Proof[2]);
+        bytes32 hashedData = sha256(value);
+        computed = sha256(
+            abi.encodePacked(
+                RLPReader.readRawBytes(opIcs23Proof[3]),
+                _encodeVarint(key.length),
+                key,
+                _encodeVarint(hashedData.length),
+                hashedData
+            )
+        );
+
+        RLPReader.RLPItem[] memory path = RLPReader.readList(opIcs23Proof[0]);
+        for (uint256 i = 0; i < path.length; i++) {
+            computed = sha256(abi.encodePacked(RLPReader.readBytes(path[0]), computed, RLPReader.readBytes(path[1])));
         }
     }
 
