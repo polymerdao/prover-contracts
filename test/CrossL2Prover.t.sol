@@ -29,15 +29,15 @@ contract CrossL2ProverTest is SigningBase {
     uint256 logIdx;
 
     function setUp() public {
-        peptideAppHash = hex"ebf1f4c1903364fef5ed8c01dfae471e3cad3c521faa4b555b091797ad3715fd";
+        peptideAppHash = hex"f3198683334bc574225bbadc18a07ff3c7496c5c844cf54d7b54a4341c63f004";
         crossProver = new CrossL2Prover(sigVerifier, "proof_api", 100);
 
         Ics23Proof memory peptideAppProof;
-        (proof) = load_proof("/test/payload/RLP/proof1.hex");
+        (proof) = load_proof("/test/payload/op-proof.hex");
         (peptideAppProof, receiptMMPTProof, receiptRoot, eventHeight, srcChainId, receiptIndex) =
             abi.decode(proof, (Ics23Proof, bytes[], bytes32, uint64, string, bytes));
 
-        rlpEncodedReceipt = load_bytes_from_hex("/test/payload/RLP/receipt1.hex");
+        rlpEncodedReceipt = load_bytes_from_hex("/test/payload/op-receipt.hex");
 
         peptideAppProofBytes = abi.encode(peptideAppProof);
         store_peptide_apphash(
@@ -79,7 +79,7 @@ contract CrossL2ProverTest is SigningBase {
         (string memory chainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData) =
             crossProver.validateEvent(0, proof);
         assertEq(chainId, "11155420", "Chain ID mismatch");
-        assertEq(emittingContract, 0x464C8ec100F2F42fB4e42E07E203DA2324f9FC67);
+        assertEq(emittingContract, 0xF221750e52aA080835d2957F2Eed0d5d7dDD8C38);
     }
 
     // Test valid peptide proof but invalid MMPT receipt proof
