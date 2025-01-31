@@ -127,7 +127,7 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
 
         // VerifyMembership verifies the receipt root  through an ics23 proof of peptide state that attests that the
         this.verifyMembershipRLP(
-            bytes32(_getPeptideAppHash(bytesToUint(RLPReader.readRawBytes(iavlProof[1])))), // a proof generated at
+            bytes32(_getPeptideAppHash(bytesToUint256(RLPReader.readBytes(iavlProof[1])) - 1)), // a proof generated at
                 // height H can only be
                 // verified against state root (app hash) from block H - 1. this means the relayer must have updated the
                 // contract with the app hash from the previous block and that is why we use proof.height - 1 here.
@@ -145,13 +145,17 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
         return (srcChainId, MerkleTrie.get(receiptIndex, receiptMMPTProof, receiptRoot));
     }
 
-    // TO DO: USE external library
-    function bytesToUint(bytes memory b) public pure returns (uint256) {
-        uint256 number;
-        for (uint256 i = 0; i < b.length; i++) {
-            number = number + uint8(b[i]) * (2 ** (8 * (b.length - (i + 1))));
+    function bytesToUint256(bytes memory b) public pure returns (uint256) {
+        require(b.length > 0 && b.length <= 32, "Byte array length must be between 1 and 32");
+        uint256 result;
+        assembly {
+            // Load 32 bytes starting from the memory address of `b`
+            result := mload(add(b, 32))
+            // Shift right to account for excess bytes (if b.length < 32)
+            let shift := mul(8, sub(32, mload(b))) // Calculate shift amount: (32 - b.length) * 8
+            result := shr(shift, result) // Shift the result to the right
         }
-        return number;
+        return result;
     }
 
     function _updateClient(bytes calldata proof, uint256 peptideHeight, uint256 peptideAppHash) internal {
