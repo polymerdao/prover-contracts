@@ -50,38 +50,65 @@ abstract contract AppStateVerifier is IAppStateVerifier {
      */
     function verifyMembership(bytes32 appHash, bytes memory key, bytes32 value, Ics23Proof calldata proofs)
         public
-        pure
+        view
     {
+        console2.log("  verifyMembershipABI 1", gasleft());
         //console2.log("key in verify membership: ", string(key), string(proofs.proof[0].key));
         // first check that the provided proof indeed proves the keys and values.
         if (keccak256(key) != keccak256(proofs.proof[0].key)) {
             revert InvalidProofKey();
         }
+        console2.log("  verifyMembershipABI 2", gasleft());
         if (keccak256(abi.encodePacked(value)) != keccak256(proofs.proof[0].value)) revert InvalidProofValue();
         // proofs are chained backwards. First proof in the list (proof[0]) corresponds to the packet proof, meaning
         // that can be checked against the next subroot value (i.e. ibc root). Once the first proof is verified,
         // we can check the second that corresponds to the ibc proof, that is checked against the app hash (app root)
         if (bytes32(proofs.proof[1].value) != _verify(proofs.proof[0])) revert InvalidPacketProof();
+        console2.log("  verifyMembershipABI 3", gasleft());
         if (appHash != _verify(proofs.proof[1])) revert InvalidIbcStateProof();
+        console2.log("  verifyMembershipABI 4", gasleft());
     }
 
-    function verifyMembershipRLP(bytes32 appHash, bytes memory key, bytes32 value, bytes memory proofs) public pure {
+    function verifyMembershipRLP(bytes32 appHash, bytes memory key, bytes32 value, bytes memory proofs) public view {
+        console2.log("  verifyMembershipRLP 1", gasleft());
         RLPReader.RLPItem[] memory opIcs23Proof = RLPReader.readList(proofs);
+
+        console2.log("  verifyMembershipRLP 2", gasleft());
         RLPReader.RLPItem[] memory iavl = RLPReader.readList(opIcs23Proof[0]);
+        console2.log("  verifyMembershipRLP 3", gasleft());
         RLPReader.RLPItem[] memory simple = RLPReader.readList(opIcs23Proof[1]);
+        console2.log("  verifyMembershipRLP 4", gasleft());
+
         // first check that the provided proof indeed proves the keys and values.
-        if (keccak256(key) != keccak256(RLPReader.readBytes(iavl[1]))) {
+        bytes memory keyRLP = RLPReader.readBytes(iavl[1]);
+        if (keccak256(key) != keccak256(keyRLP)) {
             revert InvalidProofKey();
         }
 
-        if (keccak256(abi.encodePacked(value)) != keccak256(RLPReader.readBytes(iavl[2]))) {
+        console2.log("  verifyMembershipRLP 5", gasleft());
+        bytes memory valueRLP = RLPReader.readBytes(iavl[2]);
+        if (keccak256(abi.encodePacked(value)) != keccak256(valueRLP)) {
             revert InvalidProofValue();
         }
+        console2.log("  verifyMembershipRLP 6", gasleft());
         // proofs are chained backwards. First proof in the list (proof[0]) corresponds to the packet proof, meaning
         // that can be checked against the next subroot value (i.e. ibc root). Once the first proof is verified,
         // we can check the second that corresponds to the ibc proof, that is checked against the app hash (app root)
-        if (bytes32(RLPReader.readBytes(simple[2])) != _verifyRLP(iavl)) revert InvalidPacketProof();
-        if (appHash != _verifyRLP(simple)) revert InvalidIbcStateProof();
+        if (
+            bytes32(RLPReader.readBytes(simple[2]))
+                != _verifyRLPOP(keyRLP, valueRLP, RLPReader.readBytes(iavl[3]), RLPReader.readList(iavl[0]))
+        ) revert InvalidPacketProof();
+        console2.log("  verifyMembershipRLP 7", gasleft());
+        if (
+            appHash
+                != _verifyRLPOP(
+                    RLPReader.readBytes(simple[1]),
+                    RLPReader.readBytes(simple[2]),
+                    RLPReader.readBytes(simple[3]),
+                    RLPReader.readList(simple[0])
+                )
+        ) revert InvalidIbcStateProof();
+        console2.log("  verifyMembershipRLP 8", gasleft());
     }
 
     /**
@@ -91,23 +118,32 @@ abstract contract AppStateVerifier is IAppStateVerifier {
      * @param proof The ICS23 proof to be verified.
      * @return computed The computed root hash.
      */
-    function _verify(OpIcs23Proof calldata proof) internal pure returns (bytes32 computed) {
+    function _verify(OpIcs23Proof calldata proof) internal view returns (bytes32 computed) {
+        console2.log("    verify abi 1b", gasleft());
         bytes32 hashedData = sha256(proof.value);
+        console2.log("    verify abi 2b", gasleft());
         computed = sha256(
             abi.encodePacked(
                 proof.prefix, _encodeVarint(proof.key.length), proof.key, _encodeVarint(hashedData.length), hashedData
             )
         );
+        console2.log("    verify abi 3b", gasleft());
 
         for (uint256 i = 0; i < proof.path.length; i++) {
+            console2.log("    verify abi 4b", gasleft());
             computed = sha256(abi.encodePacked(proof.path[i].prefix, computed, proof.path[i].suffix));
         }
+        console2.log("    verify abi 5b", gasleft());
     }
 
-    function _verifyRLP(RLPReader.RLPItem[] memory proof) internal pure returns (bytes32 computed) {
+    function _verifyRLP(RLPReader.RLPItem[] memory proof) internal view returns (bytes32 computed) {
+        console2.log("    verify RLP 1b", gasleft());
         bytes memory key = RLPReader.readBytes(proof[1]);
+        console2.log("   verify RLP 2b", gasleft());
         bytes memory value = RLPReader.readBytes(proof[2]);
+        console2.log("   verify RLP 3b", gasleft());
         bytes32 hashedData = sha256(value);
+        console2.log("   verify RLP 4b", gasleft());
         computed = sha256(
             abi.encodePacked(
                 RLPReader.readBytes(proof[3]),
@@ -117,8 +153,36 @@ abstract contract AppStateVerifier is IAppStateVerifier {
                 hashedData
             )
         );
+        console2.log("   verify RLP 5b", gasleft());
 
         RLPReader.RLPItem[] memory paths = RLPReader.readList(proof[0]);
+        console2.log("    verify RLP 6b", gasleft());
+        for (uint256 i = 0; i < paths.length; i++) {
+            console2.log("    verify RLP 7b", gasleft());
+            RLPReader.RLPItem[] memory path = RLPReader.readList(paths[i]);
+            console2.log("    verify RLP 8b", gasleft());
+            computed = sha256(abi.encodePacked(RLPReader.readBytes(path[0]), computed, RLPReader.readBytes(path[1])));
+            console2.log("    verify RLP 9b", gasleft());
+        }
+        console2.log("    verify RLP 10b", gasleft());
+    }
+
+    function _verifyRLPOP(bytes memory key, bytes memory value, bytes memory prefix, RLPReader.RLPItem[] memory paths)
+        internal
+        pure
+        returns (bytes32 computed)
+    {
+        bytes32 hashedData = sha256(value);
+        computed = sha256(
+            abi.encodePacked(
+                prefix,
+                _encodeVarint(key.length),
+                key,
+                _encodeVarint(hashedData.length),
+                hashedData
+            )
+        );
+
         for (uint256 i = 0; i < paths.length; i++) {
             RLPReader.RLPItem[] memory path = RLPReader.readList(paths[i]);
             computed = sha256(abi.encodePacked(RLPReader.readBytes(path[0]), computed, RLPReader.readBytes(path[1])));

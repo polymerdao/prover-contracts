@@ -81,6 +81,8 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
      * @inheritdoc ICrossL2Prover
      */
     function validateReceipt(bytes calldata proof) public view returns (string memory, bytes memory) {
+        console2.log(" validateReceiptABI 1", gasleft());
+
         (
             Ics23Proof memory peptideAppProof,
             bytes[] memory receiptMMPTProof,
@@ -89,6 +91,7 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
             string memory srcChainId,
             bytes memory receiptIndex
         ) = abi.decode(proof, (Ics23Proof, bytes[], bytes32, uint64, string, bytes));
+        console2.log(" validateReceiptABI 2", gasleft());
         // Before we can trust the receipt root, we first need to verify that the receipt root is indeed stored
         // on peptide at the given clientID and height.
 
@@ -102,6 +105,7 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
             receiptRoot,
             peptideAppProof
         );
+        console2.log(" validateReceiptABI 3", gasleft());
 
         // Now that verifyMembership passed, we can now trust the receiptRoot.
         // Now we just simply have to prove that raw receipt is indeed part of the receipt root at the given receipt
@@ -112,6 +116,7 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     }
 
     function validateReceiptRLP(bytes calldata proof) public view returns (string memory, bytes memory) {
+        console2.log(" validateReceiptRLP1", gasleft());
         (
             bytes memory peptideAppProof,
             bytes[] memory receiptMMPTProof,
@@ -120,13 +125,15 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
             string memory srcChainId,
             bytes memory receiptIndex
         ) = abi.decode(proof, (bytes, bytes[], bytes32, uint64, string, bytes));
+        console2.log(" validateReceiptRLP2", gasleft());
         // Before we can trust the receipt root, we first need to verify that the receipt root is indeed stored
         // on peptide at the given clientID and height.
 
         RLPReader.RLPItem[] memory iavlProof = RLPReader.readList(peptideAppProof);
+        console2.log(" validateReceiptRLP3", gasleft());
 
         // VerifyMembership verifies the receipt root  through an ics23 proof of peptide state that attests that the
-        this.verifyMembershipRLP(
+        this.verifyMembershipRLP{gas: 500000}(
             bytes32(_getPeptideAppHash(bytesToUint256(RLPReader.readBytes(iavlProof[1])) - 1)), // a proof generated at
                 // height H can only be
                 // verified against state root (app hash) from block H - 1. this means the relayer must have updated the
@@ -135,6 +142,8 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
             receiptRoot,
             RLPReader.readRawBytes(iavlProof[0])
         );
+
+        console2.log(" validateReceiptRLP4" , gasleft());
 
         // given eventHeight has the receipt root at the peptide height
         // Now that verifyMembership passed, we can now trust the receiptRoot.

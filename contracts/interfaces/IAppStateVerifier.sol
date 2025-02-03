@@ -48,7 +48,7 @@ interface IAppStateVerifier {
      */
     function verifyMembership(bytes32 appHash, bytes calldata key, bytes32 value, Ics23Proof calldata proof)
         external
-        pure;
+        view;
 
     /**
      * @dev verifies the provided ICS23 proof given the trusted app hash. Reverts in case of failure.
