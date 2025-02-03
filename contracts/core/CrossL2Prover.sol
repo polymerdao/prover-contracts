@@ -108,6 +108,25 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
         return (srcChainId, MerkleTrie.get(receiptIndex, receiptMMPTProof, receiptRoot));
     }
 
+    function validateReceiptNew(bytes calldata proof)
+        public
+        view
+        returns (string memory chainID, bytes memory receipt)
+    {
+        this.verifyMembershipNew(
+            // TODO this is the state root, taken from the value of proof[1]
+            // the proof needs to include a signature of this which we will have to verify
+            bytes32(0x6a418705ca9f0fd2f41b467c86904648db83c61680a0924f35e83e2aa0505874),
+            // TODO this is the proof key that needs to be calculated on the fly
+            bytes("chain/11155420/storedReceipts/proof_api/receiptRoot/23259571"),
+            // TODO this is the proof value, currently set to a receipt root. Eventually, this would be the event
+            // or a hash of it
+            0xb7615c2cff5da7e6e9f0f6f9a9e30f510d382f10cdcf9bcd6da94129d235295e,
+            // TODO consider providing the start of the actual proof after having gotten all the other stuff
+            proof
+        );
+    }
+
     function _updateClient(bytes calldata proof, uint256 peptideHeight, uint256 peptideAppHash) internal {
         if (peptideHeight <= latestHeight) {
             revert CannotUpdateToOlderHeight();

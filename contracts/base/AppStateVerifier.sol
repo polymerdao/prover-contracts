@@ -17,8 +17,6 @@
 
 pragma solidity 0.8.15;
 
-import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
-
 import {IAppStateVerifier} from "../interfaces/IAppStateVerifier.sol";
 import {Ics23Proof, OpIcs23Proof} from "../libs/ReceiptParser.sol";
 
@@ -28,9 +26,6 @@ import {Ics23Proof, OpIcs23Proof} from "../libs/ReceiptParser.sol";
  * @author Polymer Labs
  */
 abstract contract AppStateVerifier is IAppStateVerifier {
-    using RLPReader for RLPReader.RLPItem;
-    using RLPReader for bytes;
-
     /**
      * @dev Prove that a given state is not part of a proof
      * @dev this method is mainly used for packet timeouts, which is currently not implemented
@@ -60,6 +55,46 @@ abstract contract AppStateVerifier is IAppStateVerifier {
         // we can check the second that corresponds to the ibc proof, that is checked against the app hash (app root)
         if (bytes32(proofs.proof[1].value) != _verify(proofs.proof[0])) revert InvalidPacketProof();
         if (appHash != _verify(proofs.proof[1])) revert InvalidIbcStateProof();
+    }
+
+    /*
+    header: key start (abs) (2B), key end (abs) (2B), value start (abs) (2B), value end (abs) (2B), num paths (1B),
+    layer-0: prefix, varint(key.length), key, varint(hash(value).length), hash(value)
+    path-n: [header: suffix start (rel) (1B), suffix end (rel) (1B)],  path[n].prefix, path[n].suffix
+    */
+    function verifyMembershipNew(bytes32 root, bytes memory key, bytes32 value, bytes calldata proof) public pure {
+        uint16 keystart = uint16(uint8(proof[0])) << 8 | uint8(proof[1]);
+        uint16 keyend = uint16(uint8(proof[2])) << 8 | uint8(proof[3]);
+        uint8 numpaths = uint8(proof[4]);
+        uint32 offset = keyend + 33;
+
+        require(keystart < keyend);
+        require(numpaths > 0);
+        require(proof[keyend] == 0x20);
+
+        if (keccak256(key) != keccak256(proof[keystart:keyend])) revert InvalidProofKey();
+
+        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(value)))) != keccak256(proof[keyend + 1:offset])) {
+            revert InvalidProofValue();
+        }
+
+        bytes32 prehash = sha256(proof[5:offset]);
+
+        for (uint16 i = 0; i < numpaths; i++) {
+            uint8 suffixstart = uint8(proof[offset]);
+            uint8 suffixend = uint8(proof[offset + 1]);
+
+            // add +2 to account for path header
+            prehash = sha256(
+                abi.encodePacked(
+                    proof[offset + 2:offset + suffixstart], prehash, proof[offset + suffixstart:offset + suffixend]
+                )
+            );
+
+            offset = offset + suffixend;
+        }
+
+        if (prehash != root) revert InvalidProofRoot();
     }
 
     /**

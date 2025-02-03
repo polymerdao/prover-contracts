@@ -74,6 +74,13 @@ contract CrossL2ProverTest is SigningBase {
         assertEq(RLPBytes, rlpEncodedReceipt, "RLP encoded receipt mismatch");
     }
 
+    function test_validate_receipt_new() public {
+        (bytes memory proofNew) = load_proof("/test/payload/op-proof-new.hex");
+        crossProver.validateReceiptNew(proofNew);
+        // assertEq(chainId, "11155420", "Chain ID mismatch");
+        //  assertEq(RLPBytes, rlpEncodedReceipt, "RLP encoded receipt mismatch");
+    }
+
     // Happy path for CrossEventProver.validateEvent()
     function test_validate_event_success() public {
         (string memory chainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData) =
