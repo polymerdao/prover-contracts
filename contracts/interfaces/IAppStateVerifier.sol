@@ -34,6 +34,7 @@ interface IAppStateVerifier {
     error InvalidAppHash();
     error InvalidProofKey();
     error InvalidProofValue();
+    error InvalidProofRoot();
     error InvalidPacketProof();
     error InvalidIbcStateProof();
     error MethodNotImplemented();
