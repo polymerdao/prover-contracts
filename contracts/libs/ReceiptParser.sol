@@ -144,4 +144,24 @@ library ReceiptParser {
     {
         proofKey = abi.encodePacked("chain/", chainId, "/storedReceipts/", clientType, "/receiptRoot/", toStr(height));
     }
+
+    function eventRootKey(uint32 chainId, string memory clientType, uint256 height, uint16 receiptIndex, uint8 logIndex)
+        internal
+        pure
+        returns (bytes memory proofKey)
+    {
+        // TODO actually change this to the decided structure
+        return abi.encodePacked(
+            "chain/",
+            toStr(uint256(chainId)),
+            "/storedLogs/",
+            clientType,
+            "/",
+            toStr(height),
+            "/",
+            toStr(receiptIndex),
+            "/",
+            toStr(logIndex)
+        );
+    }
 }

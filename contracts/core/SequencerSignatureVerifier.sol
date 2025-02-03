@@ -17,7 +17,6 @@
 
 pragma solidity 0.8.15;
 
-import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {ISignatureVerifier} from "../interfaces/ISignatureVerifier.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
@@ -28,9 +27,6 @@ import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
  * @author Polymer Labs
  */
 contract SequencerSignatureVerifier is ISignatureVerifier {
-    using RLPReader for RLPReader.RLPItem;
-    using RLPReader for bytes;
-
     address public immutable SEQUENCER; // The trusted sequencer address that polymer p2p signer holds the private key
         // to
     bytes32 public immutable CHAIN_ID; // Chain ID of the L2 chain for which the sequencer signs over
