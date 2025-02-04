@@ -58,27 +58,31 @@ abstract contract AppStateVerifier is IAppStateVerifier {
     }
 
     /*
-    header: key start (abs) (2B), key end (abs) (2B), value start (abs) (2B), value end (abs) (2B), num paths (1B),
-    layer-0: prefix, varint(key.length), key, varint(hash(value).length), hash(value)
-    path-n: [header: suffix start (rel) (1B), suffix end (rel) (1B)],  path[n].prefix, path[n].suffix
+    Proof structure looks like so:
+              +----------------------------------------------------------------------------------------------------+
+    header:   |  number of paths (1B) | path-0 start (1B) |  prefix...  |  varint(len(key))                        |
+              +----------------------------------------------------------------------------------------------------+
+    path-0:   |  path-0 suffix start (1B)  |  path-0 suffix end (1B)  |  path-0 prefix... |  path-0 suffix...      |
+              +----------------------------------------------------------------------------------------------------+
+    ...       |                                        ...                                                         |
+              +----------------------------------------------------------------------------------------------------+
+    path-n:   |  path-n suffix start (1B)  |  path-n suffix end (1B)  |  path-n prefix... |  path-n suffix...      |
+              +----------------------------------------------------------------------------------------------------+
     */
     function verifyMembershipNew(bytes32 root, bytes memory key, bytes32 value, bytes calldata proof) public pure {
-        uint16 keystart = uint16(uint8(proof[0])) << 8 | uint8(proof[1]);
-        uint16 keyend = uint16(uint8(proof[2])) << 8 | uint8(proof[3]);
-        uint8 numpaths = uint8(proof[4]);
-        uint32 offset = keyend + 33;
+        uint8 numpaths = uint8(proof[0]);
+        uint16 offset = uint16(uint8(proof[1]));
 
-        require(keystart < keyend);
         require(numpaths > 0);
-        require(proof[keyend] == 0x20);
 
-        if (keccak256(key) != keccak256(proof[keystart:keyend])) revert InvalidProofKey();
-
-        if (keccak256(abi.encodePacked(sha256(abi.encodePacked(value)))) != keccak256(proof[keyend + 1:offset])) {
-            revert InvalidProofValue();
-        }
-
-        bytes32 prehash = sha256(proof[5:offset]);
+        bytes32 prehash = sha256(
+            abi.encodePacked(
+                proof[2:offset], // this adds the prefix and varint(len(key))
+                key,
+                hex"20", // this is the result of doing varint(len(hash(value)))
+                sha256(abi.encodePacked(value))
+            )
+        );
 
         for (uint16 i = 0; i < numpaths; i++) {
             uint8 suffixstart = uint8(proof[offset]);
@@ -87,7 +91,9 @@ abstract contract AppStateVerifier is IAppStateVerifier {
             // add +2 to account for path header
             prehash = sha256(
                 abi.encodePacked(
-                    proof[offset + 2:offset + suffixstart], prehash, proof[offset + suffixstart:offset + suffixend]
+                    proof[offset + 2:offset + suffixstart], // n-th path prefix
+                    prehash,
+                    proof[offset + suffixstart:offset + suffixend] // n-th path suffix
                 )
             );
 
