@@ -11,7 +11,7 @@ import {ICrossL2Prover} from "contracts/interfaces/ICrossL2Prover.sol";
 import {MerkleTrie} from "optimism/libraries/trie/MerkleTrie.sol";
 import {IAppStateVerifier} from "contracts/interfaces/IAppStateVerifier.sol";
 
-contract CrossL2ProverTest is SigningBase {
+contract CrossL2ProverV2Test is SigningBase {
     using stdJson for string;
 
     CrossL2Prover crossProver;
