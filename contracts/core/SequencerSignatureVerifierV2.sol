@@ -40,10 +40,13 @@ contract SequencerSignatureVerifierV2 {
     /**
      * @notice Verify peptide sequencer signature over a given apphash
      */
-    function _verifySequencerSignature(bytes32 appHash, uint8 v, bytes32 r, bytes32 s) internal view {
+    function _verifySequencerSignature(bytes32 appHash, uint64 peptideHeight, uint8 v, bytes32 r, bytes32 s)
+        internal
+        view
+    {
         if (
             ECDSA.recover(
-                keccak256(bytes.concat(bytes32(0), CHAIN_ID, keccak256(abi.encodePacked(appHash)))),
+                keccak256(bytes.concat(bytes32(0), CHAIN_ID, keccak256(abi.encodePacked(appHash, peptideHeight)))),
                 bytes(abi.encodePacked(r, s, v))
             ) != SEQUENCER
         ) {
