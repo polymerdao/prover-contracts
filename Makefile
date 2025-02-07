@@ -2,6 +2,7 @@
 
 # Hardcoded for simplicity
 CONTRACT_NAMES = CrossL2Prover \
+				 CrossL2ProverV2 \
 				 ReceiptParser \
 				 Venus \
 				 SequencerSignatureVerifier
