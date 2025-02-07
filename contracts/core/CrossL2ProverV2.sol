@@ -37,32 +37,33 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     {
         clientType = clientType_;
     }
-
-    //  +-----------------------------------------------+
-    //  |  state root (32 bytes)                        | 0:32
-    //  +-----------------------------------------------+
-    //  |  signature (65 bytes)                         | 32:97
-    //  +-----------------------------------------------+
-    //  |  source chain ID (big endian, 4 bytes)        | 97:101
-    //  +-----------------------------------------------+
-    //  |  block height (big endian, 8 bytes)           | 101:109
-    //  +-----------------------------------------------+
-    //  |  receipt index (big endian, 2 bytes)          | 109:111
-    //  +-----------------------------------------------+
-    //  |  event index (1 byte)                         | 111:112
-    //  +-----------------------------------------------+
-    //  |  number of topics (1 byte)                    | 112:113
-    //  +-----------------------------------------------+
-    //  |  event data end (big endian, 2 bytes)         | 113:115
-    //  +-----------------------------------------------+
-    //  |  event emitter (contract address) (20 bytes)  | 115:135
-    //  +-----------------------------------------------+
-    //  |  topics (32 bytes * number of topics)         | 135:135 + 32 * number of topics
-    //  +-----------------------------------------------+
-    //  |  event data (x bytes)                         | 135 + 32 * number of topics: eventDatEnd
-    //  +-----------------------------------------------+
-    //  |  iavl proof (x bytes)                         | eventDataEnd:
-    //  +-----------------------------------------------+
+    //  +--------------------------------------------------+
+    //  |  state root (32 bytes)                           | 0:32
+    //  +--------------------------------------------------+
+    //  |  signature (65 bytes)                            | 32:97
+    //  +--------------------------------------------------+
+    //  |  source chain ID (big endian, 4 bytes)           | 97:101
+    //  +--------------------------------------------------+
+    //  |  peptide height (big endian, 8 bytes)            | 101:109
+    //  +--------------------------------------------------+
+    //  |  source chain block height (big endian, 8 bytes) | 109:117
+    //  +--------------------------------------------------+
+    //  |  receipt index (big endian, 2 bytes)             | 117:119
+    //  +--------------------------------------------------+
+    //  |  event index (1 byte)                            | 119
+    //  +--------------------------------------------------+
+    //  |  number of topics (1 byte)                       | 120
+    //  +--------------------------------------------------+
+    //  |  event data end (big endian, 2 bytes)            | 121:123
+    //  +--------------------------------------------------+
+    //  |  event emitter (contract address) (20 bytes)     | 123:143
+    //  +--------------------------------------------------+
+    //  |  topics (32 bytes * number of topics)            | 143 + 32 * number of topics: eventDatEnd
+    //  +--------------------------------------------------+
+    //  |  event data (x bytes)                            | eventDataEnd:
+    //  +--------------------------------------------------+
+    //  |  iavl proof (x bytes)                            |
+    //  +--------------------------------------------------+
 
     function validateEvent(bytes calldata proof)
         external
@@ -70,20 +71,26 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         returns (uint32 chainId, address emittingContract, bytes memory topics, bytes memory unindexedData)
     {
         chainId = uint32(bytes4(proof[97:101]));
-        _verifySequencerSignature(bytes32(proof[:32]), uint8(proof[96]), bytes32(proof[32:64]), bytes32(proof[64:96]));
+        _verifySequencerSignature(
+            bytes32(proof[:32]),
+            uint64(bytes8(proof[101:109])),
+            uint8(proof[96]),
+            bytes32(proof[32:64]),
+            bytes32(proof[64:96])
+        );
 
-        uint256 eventEnd = uint16(bytes2(proof[113:115]));
-        bytes memory rawEvent = proof[115:eventEnd];
+        uint256 eventEnd = uint16(bytes2(proof[121:123]));
+        bytes memory rawEvent = proof[123:eventEnd];
         this.verifyMembership(
             bytes32(proof[:32]),
             ReceiptParser.eventRootKey(
-                chainId, clientType, uint64(bytes8(proof[101:109])), uint16(bytes2(proof[109:111])), uint8(proof[111])
+                chainId, clientType, uint64(bytes8(proof[109:117])), uint16(bytes2(proof[117:119])), uint8(proof[119])
             ),
             keccak256(rawEvent),
             proof[eventEnd:]
         );
 
-        (emittingContract, topics, unindexedData) = this.parseEvent(rawEvent, uint8(proof[112]));
+        (emittingContract, topics, unindexedData) = this.parseEvent(rawEvent, uint8(proof[120]));
     }
 
     /*
