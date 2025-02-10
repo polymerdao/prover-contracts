@@ -45,7 +45,20 @@ contract CrossL2ProverTest is SigningBase {
 
     function test_validate_receipt_new_2() public {
         console2.log("calldata length", proof.length);
-        address(crossProverV2).call(abi.encodeWithSelector(crossProverV2.validateEvent.selector, proof));
+        string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/op-event-v2.json"));
+
+        (uint32 chainId, address addr, bytes memory topics, bytes memory data) = crossProverV2.validateEvent(proof);
+
+        assertEq(chainId, 84_532);
+        assertEq(addr, abi.decode(expected.parseRaw(".address"), (address)));
+        bytes memory expectedTopics = abi.encodePacked(
+            abi.decode(expected.parseRaw(".topics[0]"), (bytes32)),
+            abi.decode(expected.parseRaw(".topics[1]"), (bytes32)),
+            abi.decode(expected.parseRaw(".topics[2]"), (bytes32)),
+            abi.decode(expected.parseRaw(".topics[3]"), (bytes32))
+        );
+        assertEq(topics, expectedTopics);
+        assertEq(data, abi.encodePacked(abi.decode(expected.parseRaw(".data"), (bytes32))));
     }
 
     // Test valid peptide proof but invalid event hash
