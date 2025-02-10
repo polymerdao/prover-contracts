@@ -37,3 +37,5 @@ artifacts
 report/
 lcov.info
 src/evm/contracts
+
+.DS_Store
