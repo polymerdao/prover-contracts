@@ -125,8 +125,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         pure
         returns (address emittingContract, bytes memory topics, bytes memory unindexedData)
     {
-        uint256 topicsEnd = 32 * numTopics;
-
-        return (address(bytes20(rawEvent[:20])), rawEvent[21:topicsEnd], rawEvent[topicsEnd:]);
+        uint256 topicsEnd = 32 * numTopics + 20;
+        return (address(bytes20(rawEvent[:20])), rawEvent[20:topicsEnd], rawEvent[topicsEnd:]);
     }
 }
