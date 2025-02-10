@@ -93,6 +93,27 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         (emittingContract, topics, unindexedData) = this.parseEvent(rawEvent, uint8(proof[120]));
     }
 
+    function inspectLogIdentifier(bytes calldata proof)
+        external
+        pure
+        returns (uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint8 logIndex)
+    {
+        return (
+            uint32(bytes4(proof[97:101])),
+            uint64(bytes8(proof[109:117])),
+            uint16(bytes2(proof[117:119])),
+            uint8(proof[119])
+        );
+    }
+
+    function inspectPolymerState(bytes calldata proof)
+        external
+        pure
+        returns (bytes32 stateRoot, uint64 height, bytes calldata signature)
+    {
+        return (bytes32(proof[:32]), uint64(bytes8(proof[101:109])), proof[32:97]);
+    }
+
     /*
     header: key start (abs) (2B), key end (abs) (2B), value start (abs) (2B), value end (abs) (2B), num paths (1B),
     layer-0: prefix, varint(key.length), key, varint(hash(value).length), hash(value)
