@@ -37,4 +37,21 @@ interface ICrossL2ProverV2 {
         external
         view
         returns (uint32 chainId, address emittingContract, bytes calldata topics, bytes calldata unindexedData);
+
+    /**
+     * Return srcChain, Block Number, Receipt Index, and Local Index for a requested proof
+     */
+    function inspectLogIdentifier(bytes calldata proof)
+        external
+        pure
+        returns (uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint8 logIndex);
+
+    /**
+     * Return polymer state root, height , and signature over height and root which can be verified by
+     * crypto.pubkey(keccak(peptideStateRoot, peptideHeight))
+     */
+    function inspectPolymerState(bytes calldata proof)
+        external
+        pure
+        returns (bytes32 stateRoot, uint64 height, bytes memory signature);
 }
