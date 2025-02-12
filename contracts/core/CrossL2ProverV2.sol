@@ -37,39 +37,44 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     {
         clientType = clientType_;
     }
-    //  +--------------------------------------------------+
-    //  |  state root (32 bytes)                           | 0:32
-    //  +--------------------------------------------------+
-    //  |  signature (65 bytes)                            | 32:97
-    //  +--------------------------------------------------+
-    //  |  source chain ID (big endian, 4 bytes)           | 97:101
-    //  +--------------------------------------------------+
-    //  |  peptide height (big endian, 8 bytes)            | 101:109
-    //  +--------------------------------------------------+
-    //  |  source chain block height (big endian, 8 bytes) | 109:117
-    //  +--------------------------------------------------+
-    //  |  receipt index (big endian, 2 bytes)             | 117:119
-    //  +--------------------------------------------------+
-    //  |  event index (1 byte)                            | 119
-    //  +--------------------------------------------------+
-    //  |  number of topics (1 byte)                       | 120
-    //  +--------------------------------------------------+
-    //  |  event data end (big endian, 2 bytes)            | 121:123
-    //  +--------------------------------------------------+
-    //  |  event emitter (contract address) (20 bytes)     | 123:143
-    //  +--------------------------------------------------+
-    //  |  topics (32 bytes * number of topics)            | 143 + 32 * number of topics: eventDatEnd
-    //  +--------------------------------------------------+
-    //  |  event data (x bytes)                            | eventDataEnd:
-    //  +--------------------------------------------------+
-    //  |  iavl proof (x bytes)                            |
-    //  +--------------------------------------------------+
 
+    /**
+     * @inheritdoc ICrossL2ProverV2
+     */
     function validateEvent(bytes calldata proof)
         external
         view
         returns (uint32 chainId, address emittingContract, bytes memory topics, bytes memory unindexedData)
     {
+        // Proof calldata is encoded in the following format:
+        //  +--------------------------------------------------+
+        //  |  state root (32 bytes)                           | index: 0:32
+        //  +--------------------------------------------------+
+        //  |  signature (65 bytes)                            | index: 32:97
+        //  +--------------------------------------------------+
+        //  |  source chain ID (big endian, 4 bytes)           | index: 97:101
+        //  +--------------------------------------------------+
+        //  |  peptide height (big endian, 8 bytes)            | index: 101:109
+        //  +--------------------------------------------------+
+        //  |  source chain block height (big endian, 8 bytes) | index: 109:117
+        //  +--------------------------------------------------+
+        //  |  receipt index (big endian, 2 bytes)             | index: 117:119
+        //  +--------------------------------------------------+
+        //  |  event index (1 byte)                            | index: 119
+        //  +--------------------------------------------------+
+        //  |  number of topics (1 byte)                       | index: 120
+        //  +--------------------------------------------------+
+        //  |  event data end (big endian, 2 bytes)            | index: 121:123
+        //  +--------------------------------------------------+
+        //  |  event emitter (contract address) (20 bytes)     | index: 123:143
+        //  +--------------------------------------------------+
+        //  |  topics (32 bytes * number of topics)            | index: 143 + 32 * number of topics: eventDatEnd
+        //  +--------------------------------------------------+
+        //  |  event data (x bytes)                            | index: 123:eventDataEnd
+        //  +--------------------------------------------------+
+        //  |  iavl proof (x bytes)                            | index: eventDataEnd:
+        //  +--------------------------------------------------+
+
         chainId = uint32(bytes4(proof[97:101]));
         _verifySequencerSignature(
             bytes32(proof[:32]),
@@ -93,6 +98,9 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         (emittingContract, topics, unindexedData) = this.parseEvent(rawEvent, uint8(proof[120]));
     }
 
+    /**
+     * @inheritdoc ICrossL2ProverV2
+     */
     function inspectLogIdentifier(bytes calldata proof)
         external
         pure
@@ -106,6 +114,9 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         );
     }
 
+    /**
+     * @inheritdoc ICrossL2ProverV2
+     */
     function inspectPolymerState(bytes calldata proof)
         external
         pure
@@ -114,11 +125,9 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         return (bytes32(proof[:32]), uint64(bytes8(proof[101:109])), proof[32:97]);
     }
 
-    /*
-    header: key start (abs) (2B), key end (abs) (2B), value start (abs) (2B), value end (abs) (2B), num paths (1B),
-    layer-0: prefix, varint(key.length), key, varint(hash(value).length), hash(value)
-    path-n: [header: suffix start (rel) (1B), suffix end (rel) (1B)],  path[n].prefix, path[n].suffix
-    */
+    /**
+     * @inheritdoc ICrossL2ProverV2
+     */
     function verifyMembership(bytes32 root, bytes memory key, bytes32 value, bytes calldata proof) public pure {
         uint256 path0start = uint256(uint8(proof[1]));
         bytes32 prehash = sha256(abi.encodePacked(proof[2:path0start], key, hex"20", sha256(abi.encodePacked(value))));
@@ -141,6 +150,9 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         if (prehash != root) revert InvalidProofRoot();
     }
 
+    /**
+     * @inheritdoc ICrossL2ProverV2
+     */
     function parseEvent(bytes calldata rawEvent, uint8 numTopics)
         public
         pure
