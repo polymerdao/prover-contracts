@@ -68,6 +68,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     function validateEvent(bytes calldata proof)
         external
         view
+        virtual
         returns (uint32 chainId, address emittingContract, bytes memory topics, bytes memory unindexedData)
     {
         chainId = uint32(bytes4(proof[97:101]));
@@ -96,6 +97,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     function inspectLogIdentifier(bytes calldata proof)
         external
         pure
+        virtual
         returns (uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint8 logIndex)
     {
         return (
@@ -109,6 +111,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     function inspectPolymerState(bytes calldata proof)
         external
         pure
+        virtual
         returns (bytes32 stateRoot, uint64 height, bytes calldata signature)
     {
         return (bytes32(proof[:32]), uint64(bytes8(proof[101:109])), proof[32:97]);
@@ -119,7 +122,11 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     layer-0: prefix, varint(key.length), key, varint(hash(value).length), hash(value)
     path-n: [header: suffix start (rel) (1B), suffix end (rel) (1B)],  path[n].prefix, path[n].suffix
     */
-    function verifyMembership(bytes32 root, bytes memory key, bytes32 value, bytes calldata proof) public pure {
+    function verifyMembership(bytes32 root, bytes memory key, bytes32 value, bytes calldata proof)
+        public
+        pure
+        virtual
+    {
         uint256 path0start = uint256(uint8(proof[1]));
         bytes32 prehash = sha256(abi.encodePacked(proof[2:path0start], key, hex"20", sha256(abi.encodePacked(value))));
         uint256 offset = path0start;
@@ -144,6 +151,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     function parseEvent(bytes calldata rawEvent, uint8 numTopics)
         public
         pure
+        virtual
         returns (address emittingContract, bytes memory topics, bytes memory unindexedData)
     {
         uint256 topicsEnd = 32 * numTopics + 20;

@@ -63,6 +63,7 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     function validateEvent(uint256 logIndex, bytes calldata proof)
         external
         view
+        virtual
         returns (string memory chainId, address emittingContract, bytes[] memory topics, bytes memory unindexedData)
     {
         bytes memory receiptRLP;
@@ -70,14 +71,14 @@ contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
         (emittingContract, topics, unindexedData) = ReceiptParser.parseLog(logIndex, receiptRLP);
     }
 
-    function getState(uint256 height) external view returns (uint256) {
+    function getState(uint256 height) external view virtual returns (uint256) {
         return _getPeptideAppHash(height);
     }
 
     /**
      * @inheritdoc ICrossL2Prover
      */
-    function validateReceipt(bytes calldata proof) public view returns (string memory, bytes memory) {
+    function validateReceipt(bytes calldata proof) public view virtual returns (string memory, bytes memory) {
         (
             Ics23Proof memory peptideAppProof,
             bytes[] memory receiptMMPTProof,
