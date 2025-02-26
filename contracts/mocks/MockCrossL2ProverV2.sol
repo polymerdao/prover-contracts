@@ -131,31 +131,29 @@ contract MockCrossL2ProverV2 is CrossL2ProverV2 {
         // Assemble proof
         bytes memory proof = new bytes(eventEnd + 32); // Add 32 bytes for dummy iavlProof
 
-        // leave fixed fields with dummy or specified values
-        // stateRoot (32 bytes): dummy
-        // signature (65 bytes): dummy
+        // Leave fixed fields with dummy or specified values
+        // - stateRoot (32 bytes): dummy
+        // - signature (65 bytes): dummy
+        // Values are 0 so we don't have to set them here
 
         // populate given chainId (4 bytes)
         bytes4 chainIdBytes = bytes4(chainId_);
         for (uint256 i = 0; i < 4; i++) {
             proof[97 + i] = chainIdBytes[i];
         }
-        // peptideHeight (8 bytes): dummy (e.g., 100)
-        // leave proof[101:108] as uninitialized to 0
-
+        // peptideHeight (proof[101:109]) dummy value of 100
         proof[108] = bytes1(uint8(100));
 
-        // blockHeight (8 bytes): dummy (e.g., 200)
-        // Leave proof[109:116] as uninitialized to 0
+        // blockHeight (proof[109:117]) dummy value of 200
         proof[116] = bytes1(uint8(200));
 
-        // receiptIndex (2 bytes): dummy (e.g., 1)
-        // Leave proof[117] as uninitialized to 0
+        // - receiptIndex proof[117-118] dummy avlue of 1
         proof[118] = bytes1(uint8(1));
-        // eventIndex (1 byte): dummy (e.g., 0)
+        // eventIndex proof[119]: dummy  value of 0
         proof[119] = bytes1(0);
-        // numTopics (1 byte)
+        // numTopics proof[120]  dummy value of num topics
         proof[120] = bytes1(numTopics);
+
         // eventDataEnd (2 bytes)
         bytes2 eventEndBytes = bytes2(uint16(eventEnd));
         proof[121] = eventEndBytes[0];
