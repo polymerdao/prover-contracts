@@ -58,11 +58,11 @@ export class ContractRegistryLoader {
   }
 
   static emptyMultiple(): MultiChainContractRegistry {
-    //  @ts-ignore
+    // @ts-ignore
     return new Registry<{ chainName: string; contracts: ContractRegistry }>(
       [],
       {
-        //  @ts-ignore
+        // @ts-ignore
         toObj: (c) => {
           return {
             chainName: c.chainName,
