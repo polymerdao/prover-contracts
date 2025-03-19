@@ -9,7 +9,7 @@ export const ChainConfigSchema = z.object({
   description: z.optional(z.string()),
   rpc: z.string().min(1),
   deploymentEnvironment: z
-    .enum(["local", "staging", "production", "mainnet"])
+    .enum(["local", "staging", "production", "mainnet", "shadownet"])
     .optional()
     .default("local"),
 });
@@ -18,7 +18,7 @@ export const ChainConfigSchema = z.object({
 export const ChainFolderSchema = z.object({
   chainId: z.number().int().min(1),
   deploymentEnvironment: z
-    .enum(["local", "staging", "production", "mainnet"])
+    .enum(["local", "staging", "production", "mainnet", "shadownet"])
     .optional()
     .default("local"),
 });
