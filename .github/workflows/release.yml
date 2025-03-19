@@ -22,11 +22,12 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Check contract sizes
-        run: rm -rf out release-artifacts && forge build --force contracts/core --sizes --deny-warnings
-
+      # Note: run this before we generate artifacts, otherwise the release will include redundant contracts. 
       - name: Contract Unit Tests
         run: forge test
+
+      - name: Check contract sizes
+        run: rm -rf out release-artifacts && forge build --force contracts/core --sizes --deny-warnings
 
       - name: Save compiled contracts and ABIs
         if: success()
