@@ -37,7 +37,7 @@
     "@types/nunjucks": "^3.2.6",
     "@types/yargs": "^17.0.33",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
-    "@typescript-eslint/parser": "^8.11.0",
+    "@typescript-eslint/parser": "^8.26.0",
     "chai": "^5.1.1",
     "eslint": "^9.20.0",
     "globals": "^15.9.0",
