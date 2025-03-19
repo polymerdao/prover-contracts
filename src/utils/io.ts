@@ -37,7 +37,7 @@ export interface StringToStringMap {
 
 export type ChainFolder = {
   chainId: number;
-  deploymentEnvironment: "local" | "staging" | "production" | "mainnet";
+  deploymentEnvironment: "local" | "staging" | "production" | "mainnet" | "shadownet";
 };
 
 export type LibraryMetadata = {
