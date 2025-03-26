@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+members = ["program"]
+
+[workspace.package]
+authors = ["Polymer Labs"]
+repository = "https://github.com/polymerdao/prover-contracts"
+license = "Apache-2.0"
+edition = "2021"
+
+[workspace.lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = [
+    'cfg(target_os, values("solana"))',
+    'cfg(feature, values("custom-alloc", "custom-panic", "frozen-abi", "no-entrypoint"))',
+]
+
+[workspace.metadata.cli]
+solana = "2.2.0"
