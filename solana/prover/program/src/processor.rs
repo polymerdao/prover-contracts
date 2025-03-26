@@ -9,7 +9,7 @@ use {
 pub struct Processor {}
 impl Processor {
     /// Processes an [`InitializeMint`](enum.TokenInstruction.html) instruction.
-    pub fn process_validate_event(_proof: Vec<u8>) -> ProgramResult {
+    pub fn process_validate_event(proof: Vec<u8>) -> ProgramResult {
         // TODO call prover here
         Ok(())
     }
