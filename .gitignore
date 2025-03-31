@@ -38,4 +38,5 @@ report/
 lcov.info
 src/evm/contracts
 
+.vscode/
 .DS_Store
