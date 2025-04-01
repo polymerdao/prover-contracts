@@ -2,10 +2,10 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import {Base} from "test/utils/Base.t.sol";
-import "../../contracts/core/SequencerSignatureVerifier.sol";
+import {Base} from "./Base.t.sol";
+import "../../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
 import {RLPWriter} from "optimism/libraries/rlp/RLPWriter.sol";
-import {L1Header} from "../../contracts/interfaces/IAppStateVerifier.sol";
+import {L1Header} from "../../../contracts/interfaces/IAppStateVerifier.sol";
 
 contract SigningBase is Base {
     using stdJson for string;

@@ -3,8 +3,8 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import {console2} from "forge-std/Test.sol";
-import {CrossL2Prover} from "../contracts/core/CrossL2Prover.sol";
-import {SequencerSignatureVerifier} from "../contracts/core/SequencerSignatureVerifier.sol";
+import {CrossL2Prover} from "../../contracts/core/prove_api/CrossL2Prover.sol";
+import {SequencerSignatureVerifier} from "../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
 
 // This suite can be used to reproduce any contract-related issues from our live devnet or testnet versions.
 // This is useful for debugging because it enables things like being able to directly modify contracts easily and

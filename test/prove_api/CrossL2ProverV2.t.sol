@@ -2,15 +2,15 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import {SigningBase} from "test/utils/Signing.base.t.sol";
-import {CrossL2Prover} from "contracts/core/CrossL2Prover.sol";
-import {CrossL2ProverV2} from "contracts/core/CrossL2ProverV2.sol";
-import {SequencerSignatureVerifier} from "contracts/core/SequencerSignatureVerifier.sol";
-import {ReceiptParser, Ics23Proof, OpIcs23Proof} from "contracts/libs/ReceiptParser.sol";
-import {ISignatureVerifier} from "contracts/interfaces/ISignatureVerifier.sol";
-import {ICrossL2Prover} from "contracts/interfaces/ICrossL2Prover.sol";
+import {SigningBase} from "./utils/Signing.base.t.sol";
+import {CrossL2Prover} from "../../contracts/core/prove_api/CrossL2Prover.sol";
+import {CrossL2ProverV2} from "../../contracts/core/prove_api/CrossL2ProverV2.sol";
+import {SequencerSignatureVerifier} from "../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
+import {ReceiptParser, Ics23Proof, OpIcs23Proof} from "../../contracts/libs/ReceiptParser.sol";
+import {ISignatureVerifier} from "../../contracts/interfaces/ISignatureVerifier.sol";
+import {ICrossL2Prover} from "../../contracts/interfaces/ICrossL2Prover.sol";
 import {MerkleTrie} from "optimism/libraries/trie/MerkleTrie.sol";
-import {IAppStateVerifier} from "contracts/interfaces/IAppStateVerifier.sol";
+import {IAppStateVerifier} from "../../contracts/interfaces/IAppStateVerifier.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 
 contract CrossL2ProverTest is SigningBase {
