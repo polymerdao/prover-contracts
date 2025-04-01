@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { wallet } from './wallet';
 
-// defined in an account spec, which will be converted into an initialized multisig config once we deploy the multisig contract
+// Defined in an account spec, which will be converted into an initialized multisig config once we deploy the multisig contract
 export const uninitializedMultisigConfig = z
   .object({
     name: z.string().min(1),

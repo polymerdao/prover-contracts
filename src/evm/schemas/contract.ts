@@ -17,7 +17,7 @@ export const ContractItemSchema = z
         })
       )
     ),
-    // either a account name from account registry, or a private key or a mnemonic signer
+    // Either a account name from account registry, or a private key or a mnemonic signer
     deployer: z.string().nullish(),
     address: z.string().nullish(),
     init: z.optional(
@@ -40,7 +40,7 @@ const MultiChainContractRegistrySchema = z.array(
 
 export type ContractItem = z.infer<typeof ContractItemSchema>;
 
-// export type ContractRegistry = Registry<ContractItem>
+// Export type ContractRegistry = Registry<ContractItem>
 export type MultiChainContractRegistry = Registry<{
   chainName: string;
   [registryName]: ContractRegistry;
@@ -58,11 +58,11 @@ export class ContractRegistryLoader {
   }
 
   static emptyMultiple(): MultiChainContractRegistry {
-    //  @ts-ignore
+    // @ts-ignore
     return new Registry<{ chainName: string; contracts: ContractRegistry }>(
       [],
       {
-        //  @ts-ignore
+        // @ts-ignore
         toObj: (c) => {
           return {
             chainName: c.chainName,

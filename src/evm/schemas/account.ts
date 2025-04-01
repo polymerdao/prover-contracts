@@ -14,8 +14,8 @@ import {
   Wallet,
 } from "./wallet";
 
-// ethers wallet with encryption
-// geth compatible keystore
+// Ethers wallet with encryption
+// Geth compatible keystore
 const keyStore = z.object({
   dir: z.string().min(1),
   password: z.optional(z.string()),
@@ -71,7 +71,7 @@ export class SingleSigAccountRegistry extends Registry<Wallet> {
     }
   }
 
-  // return the same config obj that was used to load the accounts, but filtered by current account names
+  // Return the same config obj that was used to load the accounts, but filtered by current account names
   public serialize() {
     const wallets = this.toList();
     return this.config.map((item, index) => {
@@ -101,7 +101,7 @@ export class SingleSigAccountRegistry extends Registry<Wallet> {
   };
 }
 
-// load a Map of { [name: string]: Wallet } from EvmAccountsSchema object
+// Load a Map of { [name: string]: Wallet } from EvmAccountsSchema object
 export function loadEvmAccounts(config: unknown): Registry<Wallet> {
   if (!isEvmAccountsConfig(config)) {
     throw new Error(`Error parsing schema: ${config}: \n ${EvmAccountsConfig.safeParse(config).error}`);
@@ -153,7 +153,7 @@ export function createWallet(opt: SingleSigAccount): Wallet {
         opt.path
       );
     }
-    // if account.index is specified, derive the child wallet by index
+    // If account.index is specified, derive the child wallet by index
     if (Number.isInteger(opt.index)) {
       wallet = wallet.deriveChild(opt.index!);
     }
