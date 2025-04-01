@@ -23,7 +23,6 @@ import {LightClientType} from "../interfaces/IClientUpdates.sol";
 import {SequencerSignatureVerifierV2} from "./SequencerSignatureVerifierV2.sol";
 
 contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
-
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
         // for cheap on-chain use
 
@@ -140,15 +139,13 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         );
         programID = bytes32(proof[121:153]);
 
-
         uint256 currLogMessageStart = 153;
         uint256 currentLogMessageEnd = 153; // Edge case for 0 log messages, iavl starts at 153.
 
         logMessages = new string[](uint8((proof[120])));
 
         for (uint256 i = 0; i < uint8((proof[120])); i++) {
-            currentLogMessageEnd =
-                uint16(bytes2(proof[currLogMessageStart:currLogMessageStart + 2]));
+            currentLogMessageEnd = uint16(bytes2(proof[currLogMessageStart:currLogMessageStart + 2]));
             logMessages[i] = string(proof[currLogMessageStart + 2:currentLogMessageEnd]);
             currLogMessageStart = currentLogMessageEnd;
         }
