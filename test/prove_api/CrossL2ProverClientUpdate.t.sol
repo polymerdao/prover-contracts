@@ -2,13 +2,13 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import {SigningBase} from "test/utils/Signing.base.t.sol";
-import {CrossL2Prover} from "contracts/core/CrossL2Prover.sol";
-import {SequencerSignatureVerifier} from "contracts/core/SequencerSignatureVerifier.sol";
-import {Ics23Proof, OpIcs23Proof} from "contracts/libs/ReceiptParser.sol";
-import {ISignatureVerifier} from "contracts/interfaces/ISignatureVerifier.sol";
-import {ICrossL2Prover} from "contracts/interfaces/ICrossL2Prover.sol";
-import {IAppStateVerifier} from "contracts/interfaces/IAppStateVerifier.sol";
+import {SigningBase} from "./utils/Signing.base.t.sol";
+import {CrossL2Prover} from "../../contracts/core/prove_api/CrossL2Prover.sol";
+import {SequencerSignatureVerifier} from "../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
+import {Ics23Proof, OpIcs23Proof} from "../../contracts/libs/ReceiptParser.sol";
+import {ISignatureVerifier} from "../../contracts/interfaces/ISignatureVerifier.sol";
+import {ICrossL2Prover} from "../../contracts/interfaces/ICrossL2Prover.sol";
+import {IAppStateVerifier} from "../../contracts/interfaces/IAppStateVerifier.sol";
 
 contract CrossL2ProverClientUpdateTest is SigningBase {
     using stdJson for string;

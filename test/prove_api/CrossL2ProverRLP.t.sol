@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import {Base} from "test/utils/Base.t.sol";
-import {CrossL2Prover} from "contracts/core/CrossL2Prover.sol";
-import {SequencerSignatureVerifier} from "contracts/core/SequencerSignatureVerifier.sol";
+import {Base} from "./utils/Base.t.sol";
+import {CrossL2Prover} from "../../contracts/core/prove_api/CrossL2Prover.sol";
+import {SequencerSignatureVerifier} from "../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
 
-import {ISignatureVerifier} from "contracts/interfaces/ISignatureVerifier.sol";
-import {ICrossL2Prover} from "contracts/interfaces/ICrossL2Prover.sol";
+import {ISignatureVerifier} from "../../contracts/interfaces/ISignatureVerifier.sol";
+import {ICrossL2Prover} from "../../contracts/interfaces/ICrossL2Prover.sol";
 
 // These were two tests which test for some edge cases with RLP encoding which we can keep as regression testing in case
 // we change any low-level RLP encoding logic.
