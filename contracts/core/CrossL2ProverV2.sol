@@ -26,17 +26,19 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
         // for cheap on-chain use
 
+    struct LogData {
+        uint256 currLogMessageStart;
+        uint256 currentLogMessageEnd;
+        uint8 numLogMessages;
+    }
+    
     string public clientType;
 
     error InvalidProofKey();
     error InvalidProofValue();
     error InvalidProofRoot();
 
-     struct LogData {
-        uint256 currLogMessageStart;
-        uint256 currentLogMessageEnd;
-        uint8 numLogMessages;
-    }
+   
 
     constructor(string memory clientType_, address sequencer_, bytes32 chainId_)
         SequencerSignatureVerifierV2(sequencer_, chainId_)
