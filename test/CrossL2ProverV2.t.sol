@@ -20,23 +20,12 @@ contract CrossL2ProverTest is SigningBase {
     bytes proof;
 
     function setUp() public {
-        peptideAppHash = hex"f3198683334bc574225bbadc18a07ff3c7496c5c844cf54d7b54a4341c63f004";
         crossProverV2 = new CrossL2ProverV2(
             "proof_api",
             0x8D3921B96A3815F403Fb3a4c7fF525969d16f9E0,
             0x0000000000000000000000000000000000000000000000000000000000000385
         );
         proof = load_proof("/test/payload/op-proof-v2.hex");
-
-        bytes32 signHash = keccak256(
-            bytes.concat(
-                bytes32(0),
-                crossProverV2.CHAIN_ID(),
-                bytes32(0x6a418705ca9f0fd2f41b467c86904648db83c61680a0924f35e83e2aa0505874)
-            )
-        );
-
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(sequencerPkey, signHash);
     }
 
     // Test that a client update will fail if it doesn't have a valid sequencer signature
@@ -87,6 +76,32 @@ contract CrossL2ProverTest is SigningBase {
         assertEq(data, abi.encodePacked(abi.decode(expected.parseRaw(".data"), (bytes32))));
     }
 
+    function test_solana_validate() public {
+        bytes memory solProof = load_proof("/test/payload/solana-proof.hex");
+        string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event.json"));
+        console2.log("calldata length", solProof.length);
+
+        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
+        console2.log("calldata length", solProof.length);
+
+        assertEq(chainId, 2);
+        assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
+    }
+
+    function test_solana_validate_2() public {
+        bytes memory solProof = load_proof("/test/payload/solana-proof-2.hex");
+        string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
+        console2.log("calldata length", solProof.length);
+
+        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
+        console2.log("executor", toHexString(programID));
+        console2.log("log msg", logMsges[0]);
+
+        assertEq(chainId, 2);
+        assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
+        assertEq(logMsges, abi.decode(expected.parseRaw(".logMessages"), (string[])));
+    }
+
     // Test valid peptide proof but invalid event hash
     function test_revert_invalidEventBytes() public {}
 
@@ -105,19 +120,36 @@ contract CrossL2ProverTest is SigningBase {
     // Test trying to prove with a non-existent peptideApphash that hasn't yet been seen
     function test_revert_chain_ID() public {}
 
+    function toHexString(bytes32 input) internal pure returns (string memory) {
+        bytes memory result = new bytes(64); // 32 bytes * 2 hex digits per byte = 64 hex digits
+        for (uint256 i = 0; i < 32; i++) {
+            result[i * 2] = _byteToHexChar(uint8(input[i]) / 16);
+            result[i * 2 + 1] = _byteToHexChar(uint8(input[i]) % 16);
+        }
+        return string(result);
+    }
+
+    function _byteToHexChar(uint8 byteValue) internal pure returns (bytes1) {
+        if (byteValue < 10) {
+            return bytes1(byteValue + 48); // '0' to '9'
+        } else {
+            return bytes1(byteValue + 87); // 'a' to 'f'
+        }
+    }
     // Annoyingly add internal methods needed to avoid stack too deep - why does foundry check for stack to deep in
     // tester contracts ? 😱
-    function _checkInspectPolymerState(bytes memory proof, string memory expected) internal {
-        (bytes32 stateRoot, uint64 height, bytes memory signature) = crossProverV2.inspectPolymerState(proof);
+
+    function _checkInspectPolymerState(bytes memory proofParam, string memory expected) internal view {
+        (bytes32 stateRoot, uint64 height, bytes memory signature) = crossProverV2.inspectPolymerState(proofParam);
         assertEq(stateRoot, abi.decode(expected.parseRaw(".StateRoot"), (bytes32)));
         assertEq(height, abi.decode(expected.parseRaw(".PeptideHeight"), (uint64)));
         // Base 64 instead of other way since go defaults to encoding raw bytes in base64
         assertEq(Base64.encode(signature), expected.readString(".Signature"));
     }
 
-    function _checkInspectLogIndentifier(bytes memory proof, string memory expected) internal {
+    function _checkInspectLogIndentifier(bytes memory proofParam, string memory expected) internal view {
         (uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint8 logIndex) =
-            crossProverV2.inspectLogIdentifier(proof);
+            crossProverV2.inspectLogIdentifier(proofParam);
 
         assertEq(srcChain, abi.decode(expected.parseRaw(".ChainID"), (uint32)));
         assertEq(blockNumber, abi.decode(expected.parseRaw(".BlockHeight"), (uint64)));

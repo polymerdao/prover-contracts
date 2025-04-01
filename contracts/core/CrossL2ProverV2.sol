@@ -94,6 +94,77 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         (emittingContract, topics, unindexedData) = this.parseEvent(rawEvent, uint8(proof[120]));
     }
 
+    //  SOLANA DECODING
+    //  +--------------------------------------------------+
+    //  |  state root (32 bytes)                           | 0:32
+    //  +--------------------------------------------------+
+    //  |  signature (65 bytes)                            | 32:97
+    //  +--------------------------------------------------+
+    //  |  source chain ID (big endian, 4 bytes)           | 97:101
+    //  +--------------------------------------------------+
+    //  |  peptide height (big endian, 8 bytes)            | 101:109
+    //  +--------------------------------------------------+
+    //  |  source chain block height (big endian, 8 bytes) | 109:117
+    //  +--------------------------------------------------+
+    //  |  receipt index (big endian, 2 bytes)             | 117:119
+    //  +--------------------------------------------------+
+    //  |  event index (1 byte)                            | 119
+    //  +--------------------------------------------------+
+    //  |  num Log Messages (1 byte)                       | 120
+    //  +--------------------------------------------------+
+    //  |  solana program IDexecutor (32 bytes)            | 121:153
+    //  +--------------------------------------------------+
+    //  |  end of current log message (2 bytes)            | 153 : 155    <-----<
+    //  +--------------------------------------------------+
+    //  |  current log message  (X Bytes)                  | 155 : 155 + X -----^ REPEAT PROCESS UNTIL HIT NUM LOG
+    // MESSAGES
+    //  +--------------------------------------------------+
+    //  |  iavl proof (Y bytes)                            |
+    //  +--------------------------------------------------+
+
+    function validateEventSolana(bytes calldata proof)
+        external
+        view
+        virtual
+        returns (uint32 chainId, bytes32 programID, string[] memory logMessages)
+    {
+        chainId = uint32(bytes4(proof[97:101]));
+
+        _verifySequencerSignature(
+            bytes32(proof[:32]),
+            uint64(bytes8(proof[101:109])),
+            uint8(proof[96]),
+            bytes32(proof[32:64]),
+            bytes32(proof[64:96])
+        );
+        programID = bytes32(proof[121:153]);
+
+        uint256 currLogMessageStart = 153;
+        uint256 currentLogMessageEnd = 153; // Edge case for 0 log messages, iavl starts at 153.
+
+        logMessages = new string[](uint8((proof[120])));
+
+        for (uint256 i = 0; i < uint8((proof[120])); i++) {
+            currentLogMessageEnd = uint16(bytes2(proof[currLogMessageStart:currLogMessageStart + 2]));
+            logMessages[i] = string(proof[currLogMessageStart + 2:currentLogMessageEnd]);
+            currLogMessageStart = currentLogMessageEnd;
+        }
+
+        bytes memory rawEvent = abi.encodePacked(programID);
+        for (uint256 i = 0; i < uint8((proof[120])); i++) {
+            rawEvent = abi.encodePacked(rawEvent, logMessages[i]);
+        }
+
+        this.verifyMembership(
+            bytes32(proof[:32]),
+            ReceiptParser.eventRootKey(
+                chainId, clientType, uint64(bytes8(proof[109:117])), uint16(bytes2(proof[117:119])), uint8(proof[119])
+            ),
+            keccak256(rawEvent),
+            proof[currentLogMessageEnd:]
+        );
+    }
+
     function inspectLogIdentifier(bytes calldata proof)
         external
         pure
