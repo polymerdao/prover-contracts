@@ -28,6 +28,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         uint256 currentLogMessageEnd;
         uint8 numLogMessages;
     }
+
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
         // for cheap on-chain use
 
@@ -36,8 +37,6 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     error InvalidProofKey();
     error InvalidProofValue();
     error InvalidProofRoot();
-
-   
 
     constructor(string memory clientType_, address sequencer_, bytes32 chainId_)
         SequencerSignatureVerifierV2(sequencer_, chainId_)
@@ -123,7 +122,8 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     //  +--------------------------------------------------+
     //  |  end of current log message (2 bytes)            | 153 : 155    <-----<
     //  +--------------------------------------------------+
-    //  |  current log message  (X Bytes)                  | 155 : 155 + X -----^ REPEAT PROCESS UNTIL HIT NUM LOG MESSAGES
+    //  |  current log message  (X Bytes)                  | 155 : 155 + X -----^ REPEAT PROCESS UNTIL HIT NUM LOG
+    // MESSAGES
     //  +--------------------------------------------------+
     //  |  iavl proof (Y bytes)                            |
     //  +--------------------------------------------------+
@@ -151,11 +151,11 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         logData.currLogMessageStart = 153;
         logData.currentLogMessageEnd = 153; // Edge case for 0 log messages, iavl starts at 153.
 
-
         logMessages = new bytes[](logData.numLogMessages);
 
         for (uint256 i = 0; i < logData.numLogMessages; i++) {
-            logData.currentLogMessageEnd = uint16(bytes2(proof[logData.currLogMessageStart:logData.currLogMessageStart + 2]));
+            logData.currentLogMessageEnd =
+                uint16(bytes2(proof[logData.currLogMessageStart:logData.currLogMessageStart + 2]));
             logMessages[i] = proof[logData.currLogMessageStart + 2:logData.currentLogMessageEnd];
             logData.currLogMessageStart = logData.currentLogMessageEnd;
         }
@@ -164,8 +164,6 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         for (uint256 i = 0; i < logData.numLogMessages; i++) {
             rawEvent = abi.encodePacked(rawEvent, logMessages[i]);
         }
-
-
 
         this.verifyMembership(
             bytes32(proof[:32]),
@@ -231,8 +229,6 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         if (prehash != root) revert InvalidProofRoot();
     }
 
-
-
     function parseEvent(bytes calldata rawEvent, uint8 numTopics)
         public
         pure
@@ -242,7 +238,4 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         uint256 topicsEnd = 32 * numTopics + 20;
         return (address(bytes20(rawEvent[:20])), rawEvent[20:topicsEnd], rawEvent[topicsEnd:]);
     }
-   
 }
-
-

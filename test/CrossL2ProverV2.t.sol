@@ -37,7 +37,6 @@ contract CrossL2ProverTest is SigningBase {
         console2.log("calldata length", proof.length);
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/op-event-v2-1.json"));
 
-
         proof = load_proof("/test/payload/op-proof-v2-1.hex");
         (uint32 chainId, address addr, bytes memory topics, bytes memory data) = crossProverV2.validateEvent(proof);
 
@@ -89,16 +88,14 @@ contract CrossL2ProverTest is SigningBase {
         assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
     }
 
-
-
     function test_solana_validate_2() public {
         bytes memory solProof = load_proof("/test/payload/solana-proof-2.hex");
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
         console2.log("calldata length", solProof.length);
 
         (uint32 chainId, bytes32 programID, bytes[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
-        console2.log("executor" , toHexString(programID));
-        console2.log("log msg" , string(logMsges[0]));
+        console2.log("executor", toHexString(programID));
+        console2.log("log msg", string(logMsges[0]));
 
         assertEq(chainId, 2);
         assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
@@ -141,6 +138,7 @@ contract CrossL2ProverTest is SigningBase {
     }
     // Annoyingly add internal methods needed to avoid stack too deep - why does foundry check for stack to deep in
     // tester contracts ? 😱
+
     function _checkInspectPolymerState(bytes memory proofParam, string memory expected) internal view {
         (bytes32 stateRoot, uint64 height, bytes memory signature) = crossProverV2.inspectPolymerState(proofParam);
         assertEq(stateRoot, abi.decode(expected.parseRaw(".StateRoot"), (bytes32)));
@@ -149,7 +147,7 @@ contract CrossL2ProverTest is SigningBase {
         assertEq(Base64.encode(signature), expected.readString(".Signature"));
     }
 
-    function  _checkInspectLogIndentifier(bytes memory proofParam, string memory expected) internal view{
+    function _checkInspectLogIndentifier(bytes memory proofParam, string memory expected) internal view {
         (uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint8 logIndex) =
             crossProverV2.inspectLogIdentifier(proofParam);
 
