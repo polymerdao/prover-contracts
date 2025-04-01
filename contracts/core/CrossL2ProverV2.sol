@@ -21,17 +21,23 @@ import {ReceiptParser} from "../libs/ReceiptParser.sol";
 import {ICrossL2ProverV2} from "../interfaces/ICrossL2ProverV2.sol";
 import {LightClientType} from "../interfaces/IClientUpdates.sol";
 import {SequencerSignatureVerifierV2} from "./SequencerSignatureVerifierV2.sol";
+ 
+ 
+ struct LogData {
+        uint256 currLogMessageStart;
+        uint256 currentLogMessageEnd;
+        uint8 numLogMessages;
+}
 
 contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
-    LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
-        // for cheap on-chain use
-
     struct LogData {
         uint256 currLogMessageStart;
         uint256 currentLogMessageEnd;
         uint8 numLogMessages;
     }
-    
+    LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
+        // for cheap on-chain use
+
     string public clientType;
 
     error InvalidProofKey();
