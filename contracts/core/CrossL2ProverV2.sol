@@ -21,7 +21,6 @@ import {ReceiptParser} from "../libs/ReceiptParser.sol";
 import {ICrossL2ProverV2} from "../interfaces/ICrossL2ProverV2.sol";
 import {LightClientType} from "../interfaces/IClientUpdates.sol";
 import {SequencerSignatureVerifierV2} from "./SequencerSignatureVerifierV2.sol";
-import "forge-std/Test.sol";
 
 contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
@@ -32,6 +31,12 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     error InvalidProofKey();
     error InvalidProofValue();
     error InvalidProofRoot();
+
+     struct LogData {
+        uint256 currLogMessageStart;
+        uint256 currentLogMessageEnd;
+        uint8 numLogMessages;
+    }
 
     constructor(string memory clientType_, address sequencer_, bytes32 chainId_)
         SequencerSignatureVerifierV2(sequencer_, chainId_)
@@ -137,7 +142,6 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
             bytes32(proof[32:64]),
             bytes32(proof[64:96])
         );
-        console2.logBytes(proof[121:153]);
         programID = bytes32(proof[121:153]);
 
         LogData memory logData;
@@ -236,13 +240,6 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     {
         uint256 topicsEnd = 32 * numTopics + 20;
         return (address(bytes20(rawEvent[:20])), rawEvent[20:topicsEnd], rawEvent[topicsEnd:]);
-    }
-
-
-    struct LogData {
-        uint256 currLogMessageStart;
-        uint256 currentLogMessageEnd;
-        uint8 numLogMessages;
     }
    
 }
