@@ -31,7 +31,7 @@ var (
 
 // CrossL2ProverV2MetaData contains all meta data concerning the CrossL2ProverV2 contract.
 var CrossL2ProverV2MetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"clientType_\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"sequencer_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"chainId_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"LIGHT_CLIENT_TYPE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumLightClientType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SEQUENCER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"clientType\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"inspectLogIdentifier\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"srcChain\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"blockNumber\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"receiptIndex\",\"type\":\"uint16\",\"internalType\":\"uint16\"},{\"name\":\"logIndex\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"inspectPolymerState\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"stateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"height\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"signature\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"parseEvent\",\"inputs\":[{\"name\":\"rawEvent\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"numTopics\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"outputs\":[{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"validateEvent\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"validateEventSolana\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"programID\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"logMessages\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"verifyMembership\",\"inputs\":[{\"name\":\"root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"value\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"pure\"},{\"type\":\"error\",\"name\":\"InvalidProofKey\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofRoot\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofValue\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidSequencerSignature\",\"inputs\":[]}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"clientType_\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"sequencer_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"chainId_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"LIGHT_CLIENT_TYPE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumLightClientType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SEQUENCER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"clientType\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"inspectLogIdentifier\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"srcChain\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"blockNumber\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"receiptIndex\",\"type\":\"uint16\",\"internalType\":\"uint16\"},{\"name\":\"logIndex\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"inspectPolymerState\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"stateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"height\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"signature\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"parseEvent\",\"inputs\":[{\"name\":\"rawEvent\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"numTopics\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"outputs\":[{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"validateEvent\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"validateEventSolana\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"programID\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"logMessages\",\"type\":\"string[]\",\"internalType\":\"string[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"verifyMembership\",\"inputs\":[{\"name\":\"root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"value\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"pure\"},{\"type\":\"error\",\"name\":\"InvalidProofKey\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofRoot\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofValue\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidSequencerSignature\",\"inputs\":[]}]",
 }
 
 // CrossL2ProverV2ABI is the input ABI used to generate the binding from.
@@ -516,11 +516,11 @@ func (_CrossL2ProverV2 *CrossL2ProverV2CallerSession) ValidateEvent(proof []byte
 
 // ValidateEventSolana is a free data retrieval call binding the contract method 0xed407692.
 //
-// Solidity: function validateEventSolana(bytes proof) view returns(uint32 chainId, bytes32 programID, bytes[] logMessages)
+// Solidity: function validateEventSolana(bytes proof) view returns(uint32 chainId, bytes32 programID, string[] logMessages)
 func (_CrossL2ProverV2 *CrossL2ProverV2Caller) ValidateEventSolana(opts *bind.CallOpts, proof []byte) (struct {
 	ChainId     uint32
 	ProgramID   [32]byte
-	LogMessages [][]byte
+	LogMessages []string
 }, error) {
 	var out []interface{}
 	err := _CrossL2ProverV2.contract.Call(opts, &out, "validateEventSolana", proof)
@@ -528,7 +528,7 @@ func (_CrossL2ProverV2 *CrossL2ProverV2Caller) ValidateEventSolana(opts *bind.Ca
 	outstruct := new(struct {
 		ChainId     uint32
 		ProgramID   [32]byte
-		LogMessages [][]byte
+		LogMessages []string
 	})
 	if err != nil {
 		return *outstruct, err
@@ -536,7 +536,7 @@ func (_CrossL2ProverV2 *CrossL2ProverV2Caller) ValidateEventSolana(opts *bind.Ca
 
 	outstruct.ChainId = *abi.ConvertType(out[0], new(uint32)).(*uint32)
 	outstruct.ProgramID = *abi.ConvertType(out[1], new([32]byte)).(*[32]byte)
-	outstruct.LogMessages = *abi.ConvertType(out[2], new([][]byte)).(*[][]byte)
+	outstruct.LogMessages = *abi.ConvertType(out[2], new([]string)).(*[]string)
 
 	return *outstruct, err
 
@@ -544,22 +544,22 @@ func (_CrossL2ProverV2 *CrossL2ProverV2Caller) ValidateEventSolana(opts *bind.Ca
 
 // ValidateEventSolana is a free data retrieval call binding the contract method 0xed407692.
 //
-// Solidity: function validateEventSolana(bytes proof) view returns(uint32 chainId, bytes32 programID, bytes[] logMessages)
+// Solidity: function validateEventSolana(bytes proof) view returns(uint32 chainId, bytes32 programID, string[] logMessages)
 func (_CrossL2ProverV2 *CrossL2ProverV2Session) ValidateEventSolana(proof []byte) (struct {
 	ChainId     uint32
 	ProgramID   [32]byte
-	LogMessages [][]byte
+	LogMessages []string
 }, error) {
 	return _CrossL2ProverV2.Contract.ValidateEventSolana(&_CrossL2ProverV2.CallOpts, proof)
 }
 
 // ValidateEventSolana is a free data retrieval call binding the contract method 0xed407692.
 //
-// Solidity: function validateEventSolana(bytes proof) view returns(uint32 chainId, bytes32 programID, bytes[] logMessages)
+// Solidity: function validateEventSolana(bytes proof) view returns(uint32 chainId, bytes32 programID, string[] logMessages)
 func (_CrossL2ProverV2 *CrossL2ProverV2CallerSession) ValidateEventSolana(proof []byte) (struct {
 	ChainId     uint32
 	ProgramID   [32]byte
-	LogMessages [][]byte
+	LogMessages []string
 }, error) {
 	return _CrossL2ProverV2.Contract.ValidateEventSolana(&_CrossL2ProverV2.CallOpts, proof)
 }
