@@ -17,9 +17,9 @@
 
 pragma solidity 0.8.15;
 
-import {ReceiptParser} from "../libs/ReceiptParser.sol";
-import {ICrossL2ProverV2} from "../interfaces/ICrossL2ProverV2.sol";
-import {LightClientType} from "../interfaces/IClientUpdates.sol";
+import {ReceiptParser} from "../../libs/ReceiptParser.sol";
+import {ICrossL2ProverV2} from "../../interfaces/ICrossL2ProverV2.sol";
+import {LightClientType} from "../../interfaces/IClientUpdates.sol";
 import {SequencerSignatureVerifierV2} from "./SequencerSignatureVerifierV2.sol";
 
 contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
