@@ -23,11 +23,6 @@ import {LightClientType} from "../interfaces/IClientUpdates.sol";
 import {SequencerSignatureVerifierV2} from "./SequencerSignatureVerifierV2.sol";
 
 contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
-    struct LogData {
-        uint256 currLogMessageStart;
-        uint256 currentLogMessageEnd;
-        uint8 numLogMessages;
-    }
 
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
         // for cheap on-chain use
@@ -132,7 +127,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         external
         view
         virtual
-        returns (uint32 chainId, bytes32 programID, bytes[] memory logMessages)
+        returns (uint32 chainId, bytes32 programID, string[] memory logMessages)
     {
         chainId = uint32(bytes4(proof[97:101]));
 
@@ -145,23 +140,21 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         );
         programID = bytes32(proof[121:153]);
 
-        LogData memory logData;
 
-        logData.numLogMessages = uint8(bytes1(proof[120]));
-        logData.currLogMessageStart = 153;
-        logData.currentLogMessageEnd = 153; // Edge case for 0 log messages, iavl starts at 153.
+        uint256 currLogMessageStart = 153;
+        uint256 currentLogMessageEnd = 153; // Edge case for 0 log messages, iavl starts at 153.
 
-        logMessages = new bytes[](logData.numLogMessages);
+        logMessages = new string[](uint8((proof[120])));
 
-        for (uint256 i = 0; i < logData.numLogMessages; i++) {
-            logData.currentLogMessageEnd =
-                uint16(bytes2(proof[logData.currLogMessageStart:logData.currLogMessageStart + 2]));
-            logMessages[i] = proof[logData.currLogMessageStart + 2:logData.currentLogMessageEnd];
-            logData.currLogMessageStart = logData.currentLogMessageEnd;
+        for (uint256 i = 0; i < uint8((proof[120])); i++) {
+            currentLogMessageEnd =
+                uint16(bytes2(proof[currLogMessageStart:currLogMessageStart + 2]));
+            logMessages[i] = string(proof[currLogMessageStart + 2:currentLogMessageEnd]);
+            currLogMessageStart = currentLogMessageEnd;
         }
 
         bytes memory rawEvent = abi.encodePacked(programID);
-        for (uint256 i = 0; i < logData.numLogMessages; i++) {
+        for (uint256 i = 0; i < uint8((proof[120])); i++) {
             rawEvent = abi.encodePacked(rawEvent, logMessages[i]);
         }
 
@@ -171,7 +164,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
                 chainId, clientType, uint64(bytes8(proof[109:117])), uint16(bytes2(proof[117:119])), uint8(proof[119])
             ),
             keccak256(rawEvent),
-            proof[logData.currentLogMessageEnd:]
+            proof[currentLogMessageEnd:]
         );
     }
 

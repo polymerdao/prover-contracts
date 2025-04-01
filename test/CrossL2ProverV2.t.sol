@@ -81,7 +81,7 @@ contract CrossL2ProverTest is SigningBase {
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event.json"));
         console2.log("calldata length", solProof.length);
 
-        (uint32 chainId, bytes32 programID, bytes[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
+        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
         console2.log("calldata length", solProof.length);
 
         assertEq(chainId, 2);
@@ -93,13 +93,13 @@ contract CrossL2ProverTest is SigningBase {
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
         console2.log("calldata length", solProof.length);
 
-        (uint32 chainId, bytes32 programID, bytes[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
+        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
         console2.log("executor", toHexString(programID));
-        console2.log("log msg", string(logMsges[0]));
+        console2.log("log msg", logMsges[0]);
 
         assertEq(chainId, 2);
         assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
-        assertEq(logMsges, abi.decode(expected.parseRaw(".logMessages"), (bytes[])));
+        assertEq(logMsges, abi.decode(expected.parseRaw(".logMessages"), (string[])));
     }
 
     // Test valid peptide proof but invalid event hash
