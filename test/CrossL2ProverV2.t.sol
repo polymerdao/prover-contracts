@@ -89,6 +89,22 @@ contract CrossL2ProverTest is SigningBase {
         assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
     }
 
+
+
+    function test_solana_validate_2() public {
+        bytes memory solProof = load_proof("/test/payload/solana-proof-2.hex");
+        string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
+        console2.log("calldata length", solProof.length);
+
+        (uint32 chainId, bytes32 programID, bytes[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
+        console2.log("executor" , toHexString(programID));
+        console2.log("log msg" , string(logMsges[0]));
+
+        assertEq(chainId, 2);
+        assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
+        assertEq(logMsges, abi.decode(expected.parseRaw(".logMessages"), (bytes[])));
+    }
+
     // Test valid peptide proof but invalid event hash
     function test_revert_invalidEventBytes() public {}
 
@@ -107,6 +123,22 @@ contract CrossL2ProverTest is SigningBase {
     // Test trying to prove with a non-existent peptideApphash that hasn't yet been seen
     function test_revert_chain_ID() public {}
 
+    function toHexString(bytes32 input) internal pure returns (string memory) {
+        bytes memory result = new bytes(64); // 32 bytes * 2 hex digits per byte = 64 hex digits
+        for (uint256 i = 0; i < 32; i++) {
+            result[i * 2] = _byteToHexChar(uint8(input[i]) / 16);
+            result[i * 2 + 1] = _byteToHexChar(uint8(input[i]) % 16);
+        }
+        return string(result);
+    }
+
+    function _byteToHexChar(uint8 byteValue) internal pure returns (bytes1) {
+        if (byteValue < 10) {
+            return bytes1(byteValue + 48); // '0' to '9'
+        } else {
+            return bytes1(byteValue + 87); // 'a' to 'f'
+        }
+    }
     // Annoyingly add internal methods needed to avoid stack too deep - why does foundry check for stack to deep in
     // tester contracts ? 😱
     function _checkInspectPolymerState(bytes memory proofParam, string memory expected) internal view {

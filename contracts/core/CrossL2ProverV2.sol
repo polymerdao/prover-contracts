@@ -150,8 +150,8 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         logMessages = new bytes[](logData.numLogMessages);
 
         for (uint256 i = 0; i < logData.numLogMessages; i++) {
-            logData.currentLogMessageEnd = uint16(bytes2(proof[logData.currLogMessageStart:logData.currentLogMessageEnd + 2]));
-            logMessages[i] = proof[logData.currLogMessageStart:logData.currentLogMessageEnd];
+            logData.currentLogMessageEnd = uint16(bytes2(proof[logData.currLogMessageStart:logData.currLogMessageStart + 2]));
+            logMessages[i] = proof[logData.currLogMessageStart + 2:logData.currentLogMessageEnd];
             logData.currLogMessageStart = logData.currentLogMessageEnd;
         }
 
