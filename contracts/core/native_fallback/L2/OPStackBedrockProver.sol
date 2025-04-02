@@ -35,10 +35,7 @@ contract OPStackBedrockProver is ISettledStateProver {
      * @param _blockTimeStamp Block timestamp
      * @param _finalityDelayTimeStamp Required timestamp including delay
      */
-    error BlockBeforeFinalityPeriod(
-        uint256 _blockTimeStamp,
-        uint256 _finalityDelayTimeStamp
-    );
+    error BlockBeforeFinalityPeriod(uint256 _blockTimeStamp, uint256 _finalityDelayTimeStamp);
 
     /**
      * @notice Failed storage proof verification
@@ -47,12 +44,7 @@ contract OPStackBedrockProver is ISettledStateProver {
      * @param _proof Merkle proof
      * @param _root Expected root
      */
-    error InvalidStorageProof(
-        bytes _key,
-        bytes _val,
-        bytes[] _proof,
-        bytes32 _root
-    );
+    error InvalidStorageProof(bytes _key, bytes _val, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice Failed account proof verification
@@ -61,12 +53,7 @@ contract OPStackBedrockProver is ISettledStateProver {
      * @param _proof Merkle proof
      * @param _root Expected root
      */
-    error InvalidAccountProof(
-        bytes _address,
-        bytes _data,
-        bytes[] _proof,
-        bytes32 _root
-    );
+    error InvalidAccountProof(bytes _address, bytes _data, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice Handles Bedrock L2 world state validation
@@ -75,7 +62,8 @@ contract OPStackBedrockProver is ISettledStateProver {
      * @param _l2WorldStateRoot L2 state root
      * @param _rlpEncodedL2Header RLP encoded block header for that L2 state
      * @param _l1WorldStateRoot Proven L1 world state root
-     * @param _proof rest of the proof data: l2MessagePasserStateRoot, l2OutputIndex, l1StorageProof, rlpEncodedOutputOracleData, l1AccountProof
+     * @param _proof rest of the proof data: l2MessagePasserStateRoot, l2OutputIndex, l1StorageProof,
+     * rlpEncodedOutputOracleData, l1AccountProof
      */
     function proveSettledState(
         L2Configuration memory _chainConfig,
@@ -90,25 +78,16 @@ contract OPStackBedrockProver is ISettledStateProver {
             bytes[] memory l1StorageProof,
             bytes memory rlpEncodedOutputOracleData,
             bytes[] memory l1AccountProof
-        ) = abi.decode(_proof, (
-            bytes32,
-            uint256,
-            bytes[],
-            bytes,
-            bytes[]
-        ));
+        ) = abi.decode(_proof, (bytes32, uint256, bytes[], bytes, bytes[]));
 
         require(
             _proveWorldStateBedrock(
                 _chainConfig,
-                _l2WorldStateRoot,
+                BedrockScalarArgs(_l2WorldStateRoot, l2MessagePasserStateRoot, l2OutputIndex, _l1WorldStateRoot),
                 _rlpEncodedL2Header,
-                l2MessagePasserStateRoot,
-                l2OutputIndex,
                 l1StorageProof,
                 rlpEncodedOutputOracleData,
-                l1AccountProof,
-                _l1WorldStateRoot
+                l1AccountProof
             ),
             "Invalid Bedrock proof"
         );
@@ -116,75 +95,72 @@ contract OPStackBedrockProver is ISettledStateProver {
     }
 
     /**
+     * @notice Struct to hold all scalar parameters to _proveWorldStateBedrock
+     * @dev To prevent stack-too-deep
+     * @param _l2WorldStateRoot L2 state root
+     * @param _l2MessagePasserStateRoot L2 message passer state root
+     * @param _l2OutputIndex Storage slot index
+     * @param _l1WorldStateRoot Proven L1 world state root
+     */
+    struct BedrockScalarArgs {
+        bytes32 _l2WorldStateRoot;
+        bytes32 _l2MessagePasserStateRoot;
+        uint256 _l2OutputIndex;
+        bytes32 _l1WorldStateRoot; // trusted at this point
+    }
+
+    /**
      * @notice Handles Bedrock L2 world state validation
      * @dev Verifies L2 output root against L1 oracle and updates proven state
      * @param _chainConfig L2 configuration values: versionNumber, addresses, storageSlots, finalityDelaySeconds
-     * @param _l2WorldStateRoot L2 state root
+     * @param _args Scalar arguments for Bedrock proof
      * @param _rlpEncodedL2Header RLP encoded L2 header
-     * @param _l2MessagePasserStateRoot L2 message passer state root
-     * @param _l2OutputIndex Storage slot index
      * @param _l1StorageProof L1 storage proof for L2OutputOracle
      * @param _rlpEncodedOutputOracleData RLP encoded L2OutputOracle data
      * @param _l1AccountProof L1 account proof for L2OutputOracle
-     * @param _l1WorldStateRoot Proven L1 world state root
      */
     function _proveWorldStateBedrock(
         L2Configuration memory _chainConfig,
-        bytes32 _l2WorldStateRoot,
+        BedrockScalarArgs memory _args,
         bytes memory _rlpEncodedL2Header,
-        bytes32 _l2MessagePasserStateRoot,
-        uint256 _l2OutputIndex,
         bytes[] memory _l1StorageProof,
         bytes memory _rlpEncodedOutputOracleData,
-        bytes[] memory _l1AccountProof,
-        bytes32 _l1WorldStateRoot // trusted at this point
+        bytes[] memory _l1AccountProof
     ) internal view returns (bool) {
         // Verify block timestamp meets finality delay
-        uint256 endBatchBlockTimeStamp = _bytesToUint(
-            RLPReader.readBytes(RLPReader.readList(_rlpEncodedL2Header)[11])
-        );
+        {
+            uint256 endBatchBlockTimeStamp =
+                _bytesToUint(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL2Header)[11]));
 
-        if (
-            block.timestamp <=
-            endBatchBlockTimeStamp + _chainConfig.finalityDelaySeconds
-        ) {
-            revert BlockBeforeFinalityPeriod(
-                block.timestamp,
-                endBatchBlockTimeStamp + _chainConfig.finalityDelaySeconds
+            if (block.timestamp <= endBatchBlockTimeStamp + _chainConfig.finalityDelaySeconds) {
+                revert BlockBeforeFinalityPeriod(
+                    block.timestamp, endBatchBlockTimeStamp + _chainConfig.finalityDelaySeconds
+                );
+            }
+        }
+
+        bytes32 outputRoot;
+        {
+            // Generate and verify output root
+            bytes32 blockHash = keccak256(_rlpEncodedL2Header);
+            outputRoot = _generateOutputRoot(
+                _chainConfig.versionNumber, _args._l1WorldStateRoot, _args._l2MessagePasserStateRoot, blockHash
             );
         }
 
-        // Generate and verify output root
-        bytes32 blockHash = keccak256(_rlpEncodedL2Header);
-        bytes32 outputRoot = _generateOutputRoot(
-            _chainConfig.versionNumber,
-            _l2WorldStateRoot,
-            _l2MessagePasserStateRoot,
-            blockHash
-        );
-
-        _chainConfig.storageSlots[0];
         // Calculate storage slot and verify output root
         // For OPStackBedrock the output root storage slot number is stored in the first storage slot
-        bytes32 outputRootStorageSlot = bytes32(
-            (uint256(keccak256(abi.encode(_chainConfig.storageSlots[0]))) +
-                _l2OutputIndex *
-                2)
-        );
+        bytes32 outputRootStorageSlot =
+            bytes32((uint256(keccak256(abi.encode(_chainConfig.storageSlots[0]))) + _args._l2OutputIndex * 2));
 
-        bytes memory outputOracleStateRoot = RLPReader.readBytes(
-            RLPReader.readList(_rlpEncodedOutputOracleData)[2]
-        );
+        bytes memory outputOracleStateRoot = RLPReader.readBytes(RLPReader.readList(_rlpEncodedOutputOracleData)[2]);
 
         if (outputOracleStateRoot.length > 32) {
             revert IncorrectOutputOracleStorageRoot(outputOracleStateRoot);
         }
 
         _proveStorageBytes32(
-            abi.encodePacked(outputRootStorageSlot),
-            outputRoot,
-            _l1StorageProof,
-            bytes32(outputOracleStateRoot)
+            abi.encodePacked(outputRootStorageSlot), outputRoot, _l1StorageProof, bytes32(outputOracleStateRoot)
         );
 
         // For OPStackBedrock the output oracle address is stored in the first address slot
@@ -192,7 +168,7 @@ contract OPStackBedrockProver is ISettledStateProver {
             abi.encodePacked(_chainConfig.addresses[0]),
             _rlpEncodedOutputOracleData,
             _l1AccountProof,
-            _l1WorldStateRoot
+            _args._l1WorldStateRoot
         );
 
         return true;
@@ -212,15 +188,7 @@ contract OPStackBedrockProver is ISettledStateProver {
         bytes32 _messagePasserStateRoot,
         bytes32 _latestBlockHash
     ) internal pure returns (bytes32) {
-        return
-            keccak256(
-            abi.encode(
-                _outputRootVersion,
-                _worldStateRoot,
-                _messagePasserStateRoot,
-                _latestBlockHash
-            )
-        );
+        return keccak256(abi.encode(_outputRootVersion, _worldStateRoot, _messagePasserStateRoot, _latestBlockHash));
     }
 
     /**
@@ -232,10 +200,7 @@ contract OPStackBedrockProver is ISettledStateProver {
     function _bytesToUint(bytes memory _b) internal pure returns (uint256) {
         uint256 number;
         for (uint256 i = 0; i < _b.length; i++) {
-            number =
-                number +
-                uint256(uint8(_b[i])) *
-                (2 ** (8 * (_b.length - (i + 1))));
+            number = number + uint256(uint8(_b[i])) * (2 ** (8 * (_b.length - (i + 1))));
         }
         return number;
     }
@@ -248,22 +213,13 @@ contract OPStackBedrockProver is ISettledStateProver {
      * @param _proof Merkle proof
      * @param _root Expected root
      */
-    function _proveStorageBytes32(
-        bytes memory _key,
-        bytes32 _val,
-        bytes[] memory _proof,
-        bytes32 _root
-    ) internal pure {
+    function _proveStorageBytes32(bytes memory _key, bytes32 _val, bytes[] memory _proof, bytes32 _root)
+        internal
+        pure
+    {
         // `RLPWriter.writeUint` properly encodes values by removing any leading zeros.
         bytes memory rlpEncodedValue = RLPWriter.writeUint(uint256(_val));
-        if (
-            !SecureMerkleTrie.verifyInclusionProof(
-            _key,
-            rlpEncodedValue,
-            _proof,
-            _root
-        )
-        ) {
+        if (!SecureMerkleTrie.verifyInclusionProof(_key, rlpEncodedValue, _proof, _root)) {
             revert InvalidStorageProof(_key, rlpEncodedValue, _proof, _root);
         }
     }
@@ -276,20 +232,11 @@ contract OPStackBedrockProver is ISettledStateProver {
      * @param _proof Merkle proof
      * @param _root Expected root
      */
-    function _proveAccount(
-        bytes memory _address,
-        bytes memory _data,
-        bytes[] memory _proof,
-        bytes32 _root
-    ) internal pure {
-        if (
-            !SecureMerkleTrie.verifyInclusionProof(
-            _address,
-            _data,
-            _proof,
-            _root
-        )
-        ) {
+    function _proveAccount(bytes memory _address, bytes memory _data, bytes[] memory _proof, bytes32 _root)
+        internal
+        pure
+    {
+        if (!SecureMerkleTrie.verifyInclusionProof(_address, _data, _proof, _root)) {
             revert InvalidAccountProof(_address, _data, _proof, _root);
         }
     }

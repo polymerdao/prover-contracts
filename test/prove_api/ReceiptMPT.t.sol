@@ -11,13 +11,13 @@ contract ReceiptMPT is Base {
 
     function test_optimism_receipt() public {
         (bytes memory receiptIdx, bytes[] memory receiptProof, bytes32 receiptRoot, bytes memory receiptRLP) =
-            load_receipt("/test/payload/op-proof.hex", "/test/payload/op-receipt.hex");
+            load_receipt("/test/prove_api/payload/op-proof.hex", "/test/prove_api/payload/op-receipt.hex");
         assertEq(receiptRLP, MerkleTrie.get(receiptIdx, receiptProof, receiptRoot));
     }
 
     function test_arbitrum_receipt() public {
         (bytes memory receiptIdx, bytes[] memory receiptProof, bytes32 receiptRoot, bytes memory receiptRLP) =
-            load_receipt("/test/payload/arb-proof.hex", "/test/payload/arb-receipt.hex");
+            load_receipt("/test/prove_api/payload/arb-proof.hex", "/test/prove_api/payload/arb-receipt.hex");
         assertEq(receiptRLP, MerkleTrie.get(receiptIdx, receiptProof, receiptRoot));
     }
 }

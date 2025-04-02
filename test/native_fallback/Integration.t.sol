@@ -20,10 +20,7 @@ contract MockProver is NativeProver {
     ) NativeProver(_chainID, _l1Configuration, _initialL2Configurations) {}
 
     // Expose internal method for testing
-    function exposeSetInitialChainConfiguration(
-        uint256 _chainID,
-        L2Configuration memory _config
-    ) external {
+    function exposeSetInitialChainConfiguration(uint256 _chainID, L2Configuration memory _config) external {
         _setInitialChainConfiguration(_chainID, _config);
     }
 
@@ -37,11 +34,8 @@ contract MockProver is NativeProver {
         bytes32 _l1WorldStateRoot
     ) external {
         // Set L1 state root in the proven states map
-        BlockProof memory blockProof = BlockProof({
-            blockNumber: 100,
-            blockHash: bytes32(uint256(0xabcdef)),
-            stateRoot: _l1WorldStateRoot
-        });
+        BlockProof memory blockProof =
+            BlockProof({blockNumber: 100, blockHash: bytes32(uint256(0xabcdef)), stateRoot: _l1WorldStateRoot});
         provenStates[CHAIN_ID] = blockProof;
 
         // Update the chain configuration directly
@@ -88,7 +82,7 @@ contract IntegrationTest is Test {
             settlementBlocksDelay: 10,
             settlementRegistry: address(registry),
             settlementRegistryL2ConfigMappingSlot: 0, // l2ChainConfigurationHashMap slot
-            settlementRegistryL1ConfigMappingSlot: 1  // l1ChainConfigurationHashMap slot
+            settlementRegistryL1ConfigMappingSlot: 1 // l1ChainConfigurationHashMap slot
         });
 
         // Setup initial L2 configurations - one for Bedrock, one for Cannon
@@ -183,12 +177,7 @@ contract IntegrationTest is Test {
 
         // Update the chain configuration using our override method that bypasses proof verification
         mockProver.overrideProveL2Configuration(
-            bedrockChainID,
-            updatedBedrockConfig,
-            emptyStorageProof,
-            emptyAccountData,
-            emptyProof,
-            mockStateRoot
+            bedrockChainID, updatedBedrockConfig, emptyStorageProof, emptyAccountData, emptyProof, mockStateRoot
         );
 
         // In a real scenario, we would now verify that both the Prover and Registry

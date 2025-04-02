@@ -14,8 +14,8 @@ contract RegistryTest is Test {
     L2Configuration public l2Config;
     L1Configuration public l1Config;
 
-    event L2ChainConfigurationUpdated(uint256 chainID, bytes32 configHash);
-    event L1ChainConfigurationUpdated(uint256 chainID, bytes32 configHash);
+    event L2ChainConfigurationUpdated(uint256 indexed chainID, bytes32 indexed configHash);
+    event L1ChainConfigurationUpdated(uint256 indexed chainID, bytes32 indexed configHash);
 
     function setUp() public {
         owner = address(0x1);
@@ -47,16 +47,10 @@ contract RegistryTest is Test {
         });
 
         Registry.InitialL2Configuration[] memory initialL2Configs = new Registry.InitialL2Configuration[](1);
-        initialL2Configs[0] = Registry.InitialL2Configuration({
-            chainID: chainID,
-            config: l2Config
-        });
+        initialL2Configs[0] = Registry.InitialL2Configuration({chainID: chainID, config: l2Config});
 
         Registry.InitialL1Configuration[] memory initialL1Configs = new Registry.InitialL1Configuration[](1);
-        initialL1Configs[0] = Registry.InitialL1Configuration({
-            chainID: chainID,
-            config: l1Config
-        });
+        initialL1Configs[0] = Registry.InitialL1Configuration({chainID: chainID, config: l1Config});
 
         vm.prank(owner);
         registry = new Registry(owner, false, initialL2Configs, initialL1Configs);
@@ -229,7 +223,7 @@ contract RegistryTest is Test {
             addresses: updatedAddresses,
             storageSlots: updatedStorageSlots,
             versionNumber: 3,
-            finalityDelaySeconds: 10800
+            finalityDelaySeconds: 10_800
         });
 
         bytes32 finalConfigHash = keccak256(abi.encode(finalConfig));
@@ -328,5 +322,146 @@ contract RegistryTest is Test {
         vm.prank(user2);
         vm.expectRevert("Not authorized");
         registry.updateL1ChainConfiguration(l1ChainID, newL1Config);
+    }
+
+    function testIrrevocableChainID() public {
+        uint256 testChainID = 777;
+
+        // Grant irrevocable access to user
+        vm.prank(owner);
+        registry.grantChainIDIrrevocable(user, testChainID);
+
+        // Verify user has access
+        assertTrue(registry.isGrantee(user, testChainID));
+
+        // Attempt to grant the same chain ID to another user should fail
+        vm.prank(owner);
+        vm.expectRevert("ChainID is irrevocable");
+        registry.grantChainID(user2, testChainID);
+
+        // Attempt to grant irrevocable access to the same chain ID should fail
+        vm.prank(owner);
+        vm.expectRevert("ChainID is irrevocable");
+        registry.grantChainIDIrrevocable(user2, testChainID);
+    }
+
+    function testIrrevocableChainIDRange() public {
+        uint256 startChainID = 2000;
+        uint256 stopChainID = 2010;
+
+        // Grant irrevocable access to range
+        vm.prank(owner);
+        registry.grantChainIDRangeIrrevocable(user, startChainID, stopChainID);
+
+        // Verify user has access to all chain IDs in the range
+        for (uint256 i = startChainID; i <= stopChainID; i++) {
+            assertTrue(registry.isGrantee(user, i));
+        }
+
+        // Attempt to grant any chain ID in the range should fail
+        for (uint256 i = startChainID; i <= stopChainID; i++) {
+            vm.prank(owner);
+            vm.expectRevert("ChainID is irrevocable");
+            registry.grantChainID(user2, i);
+        }
+
+        // Verify invalid range handling
+        vm.prank(owner);
+        vm.expectRevert("Invalid range");
+        registry.grantChainIDRangeIrrevocable(user, stopChainID, startChainID);
+    }
+
+    function testGetL2ConfigAddresses() public view {
+        // Get the addresses from the initial config
+        address[] memory addresses = registry.getL2ConfigAddresses(chainID);
+
+        // Verify against the addresses in l2Config
+        assertEq(addresses.length, l2Config.addresses.length);
+        for (uint256 i = 0; i < addresses.length; i++) {
+            assertEq(addresses[i], l2Config.addresses[i]);
+        }
+    }
+
+    function testGetL2ConfigStorageSlots() public view {
+        // Get the storage slots from the initial config
+        uint256[] memory slots = registry.getL2ConfigStorageSlots(chainID);
+
+        // Verify against the storage slots in l2Config
+        assertEq(slots.length, l2Config.storageSlots.length);
+        for (uint256 i = 0; i < slots.length; i++) {
+            assertEq(slots[i], l2Config.storageSlots[i]);
+        }
+    }
+
+    function testOnlyAddLimitation() public {
+        // Deploy a registry with onlyAdd set to true
+        Registry.InitialL2Configuration[] memory initialL2Configs = new Registry.InitialL2Configuration[](0);
+        Registry.InitialL1Configuration[] memory initialL1Configs = new Registry.InitialL1Configuration[](0);
+
+        Registry restrictedRegistry = new Registry(owner, true, initialL2Configs, initialL1Configs);
+
+        uint256 testChainID = 888;
+
+        // Grant access to user
+        vm.prank(owner);
+        restrictedRegistry.grantChainID(user, testChainID);
+
+        // Setup test configuration
+        address[] memory addresses = new address[](1);
+        addresses[0] = address(0x7);
+
+        uint256[] memory storageSlots = new uint256[](1);
+        storageSlots[0] = 20;
+
+        L2Configuration memory config = L2Configuration({
+            prover: address(0x8),
+            addresses: addresses,
+            storageSlots: storageSlots,
+            versionNumber: 2,
+            finalityDelaySeconds: 7200
+        });
+
+        // First update should work (adding a new config)
+        vm.prank(user);
+        restrictedRegistry.updateL2ChainConfiguration(testChainID, config);
+
+        // Second update to the same chain ID should fail
+        L2Configuration memory updatedConfig = L2Configuration({
+            prover: address(0x9),
+            addresses: addresses,
+            storageSlots: storageSlots,
+            versionNumber: 3,
+            finalityDelaySeconds: 7200
+        });
+
+        vm.prank(user);
+        vm.expectRevert("Existing config cannot be updated");
+        restrictedRegistry.updateL2ChainConfiguration(testChainID, updatedConfig);
+
+        // Same test for L1 configs
+        L1Configuration memory testL1Config = L1Configuration({
+            blockHashOracle: address(0x1234),
+            settlementBlocksDelay: 10,
+            settlementRegistry: address(0x5678),
+            settlementRegistryL2ConfigMappingSlot: 5,
+            settlementRegistryL1ConfigMappingSlot: 6
+        });
+
+        // First update should work (adding a new config)
+        vm.prank(user);
+        restrictedRegistry.updateL1ChainConfiguration(testChainID, testL1Config);
+
+        // Second update to the same chain ID should fail
+        L1Configuration memory updatedL1Config = L1Configuration({
+            blockHashOracle: address(0x9876),
+            settlementBlocksDelay: 20,
+            settlementRegistry: address(0x5432),
+            settlementRegistryL2ConfigMappingSlot: 7,
+            settlementRegistryL1ConfigMappingSlot: 8
+        });
+
+        vm.prank(user);
+        vm.expectRevert("Existing config cannot be updated");
+        restrictedRegistry.updateL1ChainConfiguration(testChainID, updatedL1Config);
     }
 }
