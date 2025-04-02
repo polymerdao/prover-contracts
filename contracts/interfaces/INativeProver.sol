@@ -42,9 +42,7 @@ interface INativeProver {
         bytes32 _l1WorldStateRoot
     ) external;
 
-    function proveSettlementLayerState(
-        bytes calldata _rlpEncodedL1Header
-    ) external;
+    function proveSettlementLayerState(bytes calldata _rlpEncodedL1Header) external;
 
     function proveSettledState(
         uint256 _chainID,
@@ -59,10 +57,7 @@ interface INativeProver {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractState,
         bytes[] calldata _l2AccountProof
-    )
-    external
-    view
-    returns (uint256 chainId, address storingContract, bytes32 storageValue);
+    ) external view returns (uint256 chainId, address storingContract, bytes32 storageValue);
 
     function prove(
         ProveScalarArgs calldata _args,
@@ -72,8 +67,5 @@ interface INativeProver {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l2AccountProof
-    )
-    external
-    view
-    returns (uint256 chainId, address storingContract, bytes32 storageValue);
+    ) external view returns (uint256 chainId, address storingContract, bytes32 storageValue);
 }

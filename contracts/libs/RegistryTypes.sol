@@ -47,7 +47,8 @@ struct L1Configuration {
  * @param _storageSlot storage slot being proven
  * @param _storageValue the storage value being proven
  * @param _l2WorldStateRoot L2 world state root
-**/
+ *
+ */
 struct ProveScalarArgs {
     uint256 chainID;
     address contractAddr;

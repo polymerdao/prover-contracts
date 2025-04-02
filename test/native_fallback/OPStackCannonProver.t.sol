@@ -43,10 +43,15 @@ contract OPStackCannonProverTest is Test {
         latestBlockHash = bytes32(uint256(0xdeadbeef));
 
         // Create a mock RLP encoded L2 header with expected hash
-        rlpEncodedL2Header = abi.encodePacked(latestBlockHash); // Simple mock that will pass keccak256(encoded) == expected
+        rlpEncodedL2Header = abi.encodePacked(latestBlockHash); // Simple mock that will pass keccak256(encoded) ==
+            // expected
     }
 
-    function _createMockDisputeGameFactoryProofData() internal view returns (OPStackCannonProver.DisputeGameFactoryProofData memory) {
+    function _createMockDisputeGameFactoryProofData()
+        internal
+        view
+        returns (OPStackCannonProver.DisputeGameFactoryProofData memory)
+    {
         // Create mock dispute game factory proof data
         OPStackCannonProver.DisputeGameFactoryProofData memory data;
 
@@ -56,7 +61,7 @@ contract OPStackCannonProverTest is Test {
 
         // A game ID that contains a mock address, timestamp, and game type
         address mockGameAddr = address(0x9876);
-        uint64 timestamp = 1647399600; // Wed Mar 16 2022 07:00:00 GMT+0000
+        uint64 timestamp = 1_647_399_600; // Wed Mar 16 2022 07:00:00 GMT+0000
         uint32 gameType = 0;
         data.gameId = _packGameID(gameType, timestamp, mockGameAddr);
 
@@ -78,7 +83,11 @@ contract OPStackCannonProverTest is Test {
         return data;
     }
 
-    function _createMockFaultDisputeGameProofData() internal pure returns (OPStackCannonProver.FaultDisputeGameProofData memory) {
+    function _createMockFaultDisputeGameProofData()
+        internal
+        pure
+        returns (OPStackCannonProver.FaultDisputeGameProofData memory)
+    {
         // Create mock fault dispute game proof data
         OPStackCannonProver.FaultDisputeGameProofData memory data;
 
@@ -90,8 +99,8 @@ contract OPStackCannonProverTest is Test {
 
         // Mock game status data - critical to set gameStatus to 2 (RESOLVED)
         data.faultDisputeGameStatusSlotData = OPStackCannonProver.FaultDisputeGameStatusSlotData({
-            createdAt: 1647399600, // Wed Mar 16 2022 07:00:00 GMT+0000
-            resolvedAt: 1647486000, // Thu Mar 17 2022 07:00:00 GMT+0000
+            createdAt: 1_647_399_600, // Wed Mar 16 2022 07:00:00 GMT+0000
+            resolvedAt: 1_647_486_000, // Thu Mar 17 2022 07:00:00 GMT+0000
             gameStatus: 2, // RESOLVED (2)
             initialized: true,
             l2BlockNumberChallenged: false
@@ -117,10 +126,7 @@ contract OPStackCannonProverTest is Test {
 
     function _createMockProof() internal view returns (bytes memory) {
         // Combine the mock structures into the proof format expected by the prover
-        return abi.encode(
-            _createMockDisputeGameFactoryProofData(),
-            _createMockFaultDisputeGameProofData()
-        );
+        return abi.encode(_createMockDisputeGameFactoryProofData(), _createMockFaultDisputeGameProofData());
     }
 
     function testGameStatusUnresolvedReverts() public {
@@ -158,9 +164,7 @@ contract OPStackCannonProverTest is Test {
         // Should revert with InvalidRLPEncodedBlock
         vm.expectRevert(
             abi.encodeWithSelector(
-                OPStackCannonProver.InvalidRLPEncodedBlock.selector,
-                latestBlockHash,
-                keccak256(invalidHeader)
+                OPStackCannonProver.InvalidRLPEncodedBlock.selector, latestBlockHash, keccak256(invalidHeader)
             )
         );
         prover.proveSettledState(chainConfig, l2WorldStateRoot, invalidHeader, l1WorldStateRoot, validProof);
@@ -169,7 +173,7 @@ contract OPStackCannonProverTest is Test {
     function test_PackGameID() public pure {
         // Test game ID packing
         uint32 gameType = 123;
-        uint64 timestamp = 1647399600; // Wed Mar 16 2022 07:00:00 GMT+0000
+        uint64 timestamp = 1_647_399_600; // Wed Mar 16 2022 07:00:00 GMT+0000
         address gameProxy = address(0xA123);
 
         // Pack the values
@@ -183,48 +187,39 @@ contract OPStackCannonProverTest is Test {
         assertEq(unpackedProxy, gameProxy, "Proxy address mismatch");
     }
 
-    function _packGameID(
-        uint32 _gameType,
-        uint64 _timestamp,
-        address _gameProxy
-    ) internal pure returns (bytes32 gameId_) {
+    function _packGameID(uint32 _gameType, uint64 _timestamp, address _gameProxy)
+        internal
+        pure
+        returns (bytes32 gameId_)
+    {
         assembly {
-            gameId_ := or(
-                or(shl(224, _gameType), shl(160, _timestamp)),
-                _gameProxy
-            )
+            gameId_ := or(or(shl(224, _gameType), shl(160, _timestamp)), _gameProxy)
         }
     }
 
-    function _unpackGameID(
-        bytes32 _gameId
-    ) internal pure returns (uint32 gameType_, uint64 timestamp_, address gameProxy_) {
+    function _unpackGameID(bytes32 _gameId)
+        internal
+        pure
+        returns (uint32 gameType_, uint64 timestamp_, address gameProxy_)
+    {
         assembly {
             gameType_ := shr(224, _gameId)
             timestamp_ := and(shr(160, _gameId), 0xFFFFFFFFFFFFFFFF)
-            gameProxy_ := and(
-                _gameId,
-                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            )
+            gameProxy_ := and(_gameId, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
         }
     }
 
     function test_AssembleGameStatusStorage() public pure {
         // Test game status assembly
-        uint64 createdAt = 1647399600; // Wed Mar 16 2022 07:00:00 GMT+0000
-        uint64 resolvedAt = 1647486000; // Thu Mar 17 2022 07:00:00 GMT+0000
+        uint64 createdAt = 1_647_399_600; // Wed Mar 16 2022 07:00:00 GMT+0000
+        uint64 resolvedAt = 1_647_486_000; // Thu Mar 17 2022 07:00:00 GMT+0000
         uint8 gameStatus = 2; // RESOLVED
         bool initialized = true;
         bool l2BlockNumberChallenged = false;
 
         // Call the internal function - we'll do this by manually computing the result
-        bytes32 result = _manualAssembleGameStatusStorage(
-            createdAt,
-            resolvedAt,
-            gameStatus,
-            initialized,
-            l2BlockNumberChallenged
-        );
+        bytes32 result =
+            _manualAssembleGameStatusStorage(createdAt, resolvedAt, gameStatus, initialized, l2BlockNumberChallenged);
 
         // Verify packed bits
         // We can verify this by checking the individual component values
@@ -235,7 +230,7 @@ contract OPStackCannonProverTest is Test {
 
         // Extract the last 19 bytes
         bytes memory dataBytes = new bytes(19);
-        for (uint i = 0; i < 19; i++) {
+        for (uint256 i = 0; i < 19; i++) {
             dataBytes[i] = packed[32 - 19 + i];
         }
 
@@ -257,13 +252,7 @@ contract OPStackCannonProverTest is Test {
             uint256(
                 uint152(
                     bytes19(
-                        abi.encodePacked(
-                            _l2BlockNumberChallenged,
-                            _initialized,
-                            _gameStatus,
-                            _resolvedAt,
-                            _createdAt
-                        )
+                        abi.encodePacked(_l2BlockNumberChallenged, _initialized, _gameStatus, _resolvedAt, _createdAt)
                     )
                 )
             )

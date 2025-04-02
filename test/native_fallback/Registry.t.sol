@@ -47,16 +47,10 @@ contract RegistryTest is Test {
         });
 
         Registry.InitialL2Configuration[] memory initialL2Configs = new Registry.InitialL2Configuration[](1);
-        initialL2Configs[0] = Registry.InitialL2Configuration({
-            chainID: chainID,
-            config: l2Config
-        });
+        initialL2Configs[0] = Registry.InitialL2Configuration({chainID: chainID, config: l2Config});
 
         Registry.InitialL1Configuration[] memory initialL1Configs = new Registry.InitialL1Configuration[](1);
-        initialL1Configs[0] = Registry.InitialL1Configuration({
-            chainID: chainID,
-            config: l1Config
-        });
+        initialL1Configs[0] = Registry.InitialL1Configuration({chainID: chainID, config: l1Config});
 
         vm.prank(owner);
         registry = new Registry(owner, false, initialL2Configs, initialL1Configs);
@@ -229,7 +223,7 @@ contract RegistryTest is Test {
             addresses: updatedAddresses,
             storageSlots: updatedStorageSlots,
             versionNumber: 3,
-            finalityDelaySeconds: 10800
+            finalityDelaySeconds: 10_800
         });
 
         bytes32 finalConfigHash = keccak256(abi.encode(finalConfig));

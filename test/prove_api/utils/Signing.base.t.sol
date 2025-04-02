@@ -37,7 +37,8 @@ contract SigningBase is Base {
         // this is the "rlp" half-encoded header that would be sent by the relayer. this was produced
         // by the test-data-generator tool.
         L1Header memory l1header = abi.decode(
-            vm.parseBytes(vm.readFile(string.concat(rootDir, "/test/prove_api/payload/l1_block_0x4df537.hex"))), (L1Header)
+            vm.parseBytes(vm.readFile(string.concat(rootDir, "/test/prove_api/payload/l1_block_0x4df537.hex"))),
+            (L1Header)
         );
 
         l1BlockHash = keccak256(RLPWriter.writeList(l1header.header)); // Blockhash that will be signed by sequencer
