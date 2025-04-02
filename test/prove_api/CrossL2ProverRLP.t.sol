@@ -24,9 +24,9 @@ contract CrossL2ProverDevnet is Base {
     }
 
     function test_RLP_1() public {
-        bytes memory clientUpdate = load_bytes_from_hex("/test/payload/RLP/clientUpdate1.hex");
+        bytes memory clientUpdate = load_bytes_from_hex("/test/prove_api/payload/RLP/clientUpdate1.hex");
 
-        bytes memory proof = load_bytes_from_hex("/test/payload/RLP/proof1.hex");
+        bytes memory proof = load_bytes_from_hex("/test/prove_api/payload/RLP/proof1.hex");
 
         (bool success, bytes memory returnData) = address(prover).call(clientUpdate);
 
@@ -36,9 +36,9 @@ contract CrossL2ProverDevnet is Base {
     }
 
     function test_RLP_2() public {
-        bytes memory clientUpdate = load_bytes_from_hex("/test/payload/RLP/clientUpdate2.hex");
+        bytes memory clientUpdate = load_bytes_from_hex("/test/prove_api/payload/RLP/clientUpdate2.hex");
 
-        bytes memory proof = load_bytes_from_hex("/test/payload/RLP/proof2.hex");
+        bytes memory proof = load_bytes_from_hex("/test/prove_api/payload/RLP/proof2.hex");
 
         (bool success, bytes memory returnData) = address(prover).call(clientUpdate);
 

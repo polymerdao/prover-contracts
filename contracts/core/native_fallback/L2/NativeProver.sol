@@ -24,7 +24,7 @@ import {IL1Block} from "../../../interfaces/IL1Block.sol";
 import {INativeProver} from "../../../interfaces/INativeProver.sol";
 import {IProverHelper} from "../../../interfaces/IProverHelper.sol";
 import {ISettledStateProver} from "../../../interfaces/ISettledStateProver.sol";
-import {L2Configuration, L1Configuration, Type} from "../../../libs/RegistryTypes.sol";
+import {L2Configuration, L1Configuration, Type, ProveScalarArgs} from "../../../libs/RegistryTypes.sol";
 
 contract NativeProver is INativeProver, IProverHelper {
     uint256 public CHAIN_ID; // ChainID of the L2 chain this contract is deployed on
@@ -53,7 +53,6 @@ contract NativeProver is INativeProver, IProverHelper {
         bytes32 blockHash;
         bytes32 stateRoot;
     }
-
 
     /**
      * @notice Emitted when L1 world state is successfully proven
@@ -599,37 +598,29 @@ contract NativeProver is INativeProver, IProverHelper {
     /**
      * @notice Proves a storage value in a settled L2 state root
      * @dev Verifies a storage value against a verified settle L2 state root
-     * @param _chainID ID of destination chain
-     * @param _contractAddr Address of storing contract on the L2
-     * @param _storageSlot Storage slot to prove
-     * @param _storageValue Storage value to prove
+     * @param _args holds the ProveScalarArgs
      * @param _l2StorageProof Proof data for storage value verification
      * @param _rlpEncodedContractState RLP encoded contract state
      * @param _l2AccountProof Proof data for storing contract on the L2
-     * @param _l2WorldStateRoot Proven L2 world state root
      * @return chainID Destination chain ID
      * @return storingContract Address of storing contract
      * @return storageValue Verified storage value
      */
     function proveStorageValue(
-        uint256 _chainID,
-        address _contractAddr,
-        bytes32 _storageSlot,
-        bytes32 _storageValue,
+        ProveScalarArgs calldata _args,
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractState,
-        bytes[] calldata _l2AccountProof,
-        bytes32 _l2WorldStateRoot
+        bytes[] calldata _l2AccountProof
     )
     public
     view
     returns (uint256 chainID, address storingContract, bytes32 storageValue) {
         // Verify L2 state root is proven
-        BlockProof memory existingBlockProof = provenStates[_chainID];
-        if (existingBlockProof.stateRoot != _l2WorldStateRoot) {
+        BlockProof memory existingBlockProof = provenStates[_args.chainID];
+        if (existingBlockProof.stateRoot != _args.l2WorldStateRoot) {
             revert DestinationChainStateRootNotProved(
                 existingBlockProof.stateRoot,
-                _l2WorldStateRoot
+                _args.l2WorldStateRoot
             );
         }
 
@@ -643,45 +634,38 @@ contract NativeProver is INativeProver, IProverHelper {
 
         // Verify the account exists in the state tree
         _proveAccount(
-            abi.encodePacked(_contractAddr),
+            abi.encodePacked(_args.contractAddr),
             _rlpEncodedContractState,
             _l2AccountProof,
-            _l2WorldStateRoot
+            _args.l2WorldStateRoot
         );
 
         // Verify the storage value exists in the storage tree
         _proveStorageBytes32(
-            abi.encodePacked(_storageSlot),
-            _storageValue,
+            abi.encodePacked(_args.storageSlot),
+            _args.storageValue,
             _l2StorageProof,
             bytes32(storageRoot)
         );
 
-        return (_chainID, _contractAddr, _storageValue);
+        return (_args.chainID, _args.contractAddr, _args.storageValue);
     }
 
     /**
      * @notice Proves a storage value in a settled L2 state root
      * @dev Single view function encapsulating all three steps of the proof process: L1 view; settled L2 state; L2 storage
-     * @param _chainID chain ID of the L2 configuration being proven
-     * @param _contractAddr contract address on the L2 storing the value
-     * @param _storageValue the storage value being proven
+     * @param _args holds the ProveScalarArgs
      * @param _rlpEncodedL1Header L1 header to be verified against L1 block hash oracle to access L1 state root
      * @param _rlpEncodedL2Header L2 header proven in the L1 settlement
-     * @param _l2WorldStateRoot L2 world state root
      * @param _settledStateProof proof of the L2 world state root in the L1 settlement
      * @param _l2StorageProof proof of the storage value in the L2 _contractAddr
      * @param _rlpEncodedContractAccount RLP encoded _contractAddr account
      * @param _l2AccountProof proof of the _contractAddr account in the L2 world state
     **/
     function prove(
-        uint256 _chainID,
-        address _contractAddr,
-        bytes32 _storageSlot,
-        bytes32 _storageValue,
+        ProveScalarArgs calldata _args,
         bytes calldata _rlpEncodedL1Header,
         bytes memory _rlpEncodedL2Header,
-        bytes32 _l2WorldStateRoot,
         bytes calldata _settledStateProof,
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
@@ -689,22 +673,59 @@ contract NativeProver is INativeProver, IProverHelper {
     )
     external
     view
-    validRLPEncodeBlock(_rlpEncodedL1Header, IL1Block(L1_CONFIGURATION.blockHashOracle).hash())
     returns (uint256 chainID, address storingContract, bytes32 storageValue) {
-        // Pull L1 state root out of the verified L1 header
+        // First prove the settled state
+        _proveSettledState(
+            _args,
+            _rlpEncodedL1Header,
+            _rlpEncodedL2Header,
+            _settledStateProof
+        );
+
+        // Now prove storage against the verified settled L2 state root
+        _proveStorageInState(
+            _args,
+            _l2StorageProof,
+            _rlpEncodedContractAccount,
+            _l2AccountProof
+        );
+
+        return (_args.chainID, _args.contractAddr, _args.storageValue);
+    }
+
+    function _proveSettledState(
+        ProveScalarArgs calldata _args,
+        bytes calldata _rlpEncodedL1Header,
+        bytes memory _rlpEncodedL2Header,
+        bytes calldata _settledStateProof
+    )
+    internal
+    view
+    validRLPEncodeBlock(_rlpEncodedL1Header, IL1Block(L1_CONFIGURATION.blockHashOracle).hash())
+    {
         bytes32 _l1StateRoot = bytes32(
             RLPReader.readBytes(RLPReader.readList(_rlpEncodedL1Header)[3])
         );
 
         // Get the L2Configuration for this chainID
-        L2Configuration memory conf = l2ChainConfigurations[_chainID];
+        L2Configuration memory conf = l2ChainConfigurations[_args.chainID];
 
         // Call out to the configured prover to verify proof of the settled L2 state root
-        require(ISettledStateProver(conf.prover).
-        proveSettledState(conf, _l2WorldStateRoot, _rlpEncodedL2Header, _l1StateRoot, _settledStateProof),
-            "Invalid settled state proof");
+        require(ISettledStateProver(conf.prover).proveSettledState(
+            conf,
+            _args.l2WorldStateRoot,
+            _rlpEncodedL2Header,
+            _l1StateRoot,
+            _settledStateProof
+        ), "Invalid settled state proof");
+    }
 
-        // Prove storage against the verified settled L2 state root
+    function _proveStorageInState(
+        ProveScalarArgs calldata _args,
+        bytes[] calldata _l2StorageProof,
+        bytes calldata _rlpEncodedContractAccount,
+        bytes[] calldata _l2AccountProof
+    ) internal pure {
         bytes memory storageRoot = RLPReader.readBytes(
             RLPReader.readList(_rlpEncodedContractAccount)[2]
         );
@@ -715,20 +736,18 @@ contract NativeProver is INativeProver, IProverHelper {
 
         // Verify the account exists in the state tree
         _proveAccount(
-            abi.encodePacked(_contractAddr),
+            abi.encodePacked(_args.contractAddr),
             _rlpEncodedContractAccount,
             _l2AccountProof,
-            _l2WorldStateRoot
+            _args.l2WorldStateRoot
         );
 
         // Verify the storage value exists in the storage tree
         _proveStorageBytes32(
-            abi.encodePacked(_storageSlot),
-            _storageValue,
+            abi.encodePacked(_args.storageSlot),
+            _args.storageValue,
             _l2StorageProof,
             bytes32(storageRoot)
         );
-
-        return (_chainID, _contractAddr, _storageValue);
     }
 }

@@ -6,7 +6,12 @@ CONTRACT_NAMES = CrossL2Prover \
 				 MockCrossL2ProverV2 \
 				 ReceiptParser \
 				 Venus \
-				 SequencerSignatureVerifier
+				 SequencerSignatureVerifier \
+				 NativeProver.sol \
+				 Registry.sol \
+				 OPStackBedrockProver.sol \
+				 OPStackCannonProver.sol \
+				 RegistryTypes.sol
 
 # Create the pattern for each contract
 CONTRACT_ABI_PATTERNS = $(addsuffix .sol/*.abi.json,$(addprefix ./out/,$(CONTRACT_NAMES)))

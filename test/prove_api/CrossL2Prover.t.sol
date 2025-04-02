@@ -33,11 +33,11 @@ contract CrossL2ProverV2Test is SigningBase {
         crossProver = new CrossL2Prover(sigVerifier, "proof_api", 100);
 
         Ics23Proof memory peptideAppProof;
-        (proof) = load_proof("/test/payload/op-proof.hex");
+        (proof) = load_proof("/test/prove_api/payload/op-proof.hex");
         (peptideAppProof, receiptMMPTProof, receiptRoot, eventHeight, srcChainId, receiptIndex) =
             abi.decode(proof, (Ics23Proof, bytes[], bytes32, uint64, string, bytes));
 
-        rlpEncodedReceipt = load_bytes_from_hex("/test/payload/op-receipt.hex");
+        rlpEncodedReceipt = load_bytes_from_hex("/test/prove_api/payload/op-receipt.hex");
 
         peptideAppProofBytes = abi.encode(peptideAppProof);
         store_peptide_apphash(

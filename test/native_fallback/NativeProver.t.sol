@@ -3,7 +3,7 @@ pragma solidity 0.8.15;
 
 import {Test} from "forge-std/Test.sol";
 import {NativeProver} from "../../contracts/core/native_fallback/L2/NativeProver.sol";
-import {L2Configuration, L1Configuration, Type} from "../../contracts/libs/RegistryTypes.sol";
+import {L2Configuration, L1Configuration, Type, ProveScalarArgs} from "../../contracts/libs/RegistryTypes.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {IL1Block} from "../../contracts/interfaces/IL1Block.sol";
@@ -702,13 +702,15 @@ contract ProverTest is Test {
         // We expect any revert since we can't easily mock all the verification
         vm.expectRevert();
         prover.prove(
-            l2ChainID,
-            contractAddr,
-            storageSlot,
-            storageValue,
+            ProveScalarArgs(
+                l2ChainID,
+                contractAddr,
+                storageSlot,
+                storageValue,
+                l2StateRoot
+            ),
             validL1Header,
             validL2Header,
-            l2StateRoot,
             settledStateProof,
             l2StorageProof,
             rlpEncodedContractAccount,
