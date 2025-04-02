@@ -35,9 +35,15 @@ contract Registry is IRegistry {
 
     mapping(address => mapping(uint256 => uint256)) public granteeBitmap;
 
-    event L2ChainConfigurationUpdated(uint256 chainID, bytes32 configHash);
+    mapping(uint256 => uint256) public irrevocableChainIDBitmap;
 
-    event L1ChainConfigurationUpdated(uint256 chainID, bytes32 configHash);
+    event NewGrantee(uint256 indexed chainID, address indexed grantee);
+
+    event NewIrrevocableGrantee(uint256 indexed chainID, address indexed grantee);
+
+    event L2ChainConfigurationUpdated(uint256 indexed chainID, bytes32 indexed configHash);
+
+    event L1ChainConfigurationUpdated(uint256 indexed chainID, bytes32 indexed configHash);
 
     struct InitialL2Configuration {
         uint256 chainID;
@@ -97,18 +103,48 @@ contract Registry is IRegistry {
         _setL2ChainConfiguration(_chainID, _config);
     }
 
-    function grantChainID(address _grantee, uint256 _chainID) external onlyMultiSig {
+    modifier isRevocable(uint256 _chainID) {
+        require((irrevocableChainIDBitmap[_chainID / 256] & (1 << (_chainID % 256))) == 0, "ChainID is irrevocable");
+        _;
+    }
+
+    function grantChainID(address _grantee, uint256 _chainID) external onlyMultiSig isRevocable(_chainID) {
+        return _grantChainID(_grantee, _chainID);
+    }
+
+    function grantChainIDIrrevocable(address _grantee, uint256 _chainID) external onlyMultiSig isRevocable(_chainID) {
+        return _grantChainIDIrrevocable(_grantee, _chainID);
+    }
+
+    function _grantChainID(address _grantee, uint256 _chainID) internal isRevocable(_chainID) {
         uint256 _bucket = _chainID / 256;
         uint256 _bit = _chainID % 256;
         granteeBitmap[_grantee][_bucket] |= (1 << _bit);
+        emit NewGrantee(_chainID, _grantee);
+    }
+
+    function _grantChainIDIrrevocable(address _grantee, uint256 _chainID) internal isRevocable(_chainID) {
+        uint256 _bucket = _chainID / 256;
+        uint256 _bit = _chainID % 256;
+        granteeBitmap[_grantee][_bucket] |= (1 << _bit);
+        irrevocableChainIDBitmap[_bucket] |= (1 << _bit);
+        emit NewIrrevocableGrantee(_chainID, _grantee);
     }
 
     function grantChainIDRange(address _grantee, uint256 _startChainID, uint256 _stopChainID) external onlyMultiSig {
         require(_startChainID <= _stopChainID, "Invalid range");
         for (uint256 i = _startChainID; i <= _stopChainID; i++) {
-            uint256 _bucket = i / 256;
-            uint256 _bit = i % 256;
-            granteeBitmap[_grantee][_bucket] |= (1 << _bit);
+            _grantChainID(_grantee, i);
+        }
+    }
+
+    function grantChainIDRangeIrrevocable(address _grantee, uint256 _startChainID, uint256 _stopChainID)
+        external
+        onlyMultiSig
+    {
+        require(_startChainID <= _stopChainID, "Invalid range");
+        for (uint256 i = _startChainID; i <= _stopChainID; i++) {
+            _grantChainIDIrrevocable(_grantee, i);
         }
     }
 
