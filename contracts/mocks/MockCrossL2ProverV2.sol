@@ -17,7 +17,7 @@
 
 pragma solidity 0.8.15;
 
-import {CrossL2ProverV2} from "../core/CrossL2ProverV2.sol";
+import {CrossL2ProverV2} from "../core/prove_api/CrossL2ProverV2.sol";
 
 contract MockCrossL2ProverV2 is CrossL2ProverV2 {
     // Event for proof generation
