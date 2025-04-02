@@ -6,7 +6,12 @@ CONTRACT_NAMES = CrossL2Prover \
 				 MockCrossL2ProverV2 \
 				 ReceiptParser \
 				 Venus \
-				 SequencerSignatureVerifier
+				 SequencerSignatureVerifier \
+				 NativeProver \
+				 Registry \
+				 OPStackBedrockProver \
+				 OPStackCannonProver \
+				 RegistryTypes
 
 # Create the pattern for each contract
 CONTRACT_ABI_PATTERNS = $(addsuffix .sol/*.abi.json,$(addprefix ./out/,$(CONTRACT_NAMES)))
@@ -58,5 +63,5 @@ bindings-gen-go: build-contracts
 bindings-gen-ts: build-contracts
 	echo "Generating TypeScript bindings..."; \
 	rm -rfd ./src/evm/contracts/*; \
-	typechain --target ethers-v6 --out-dir ./src/evm/contracts $(CONTRACT_JSON_FILES); \
+	npx typechain --target ethers-v6 --out-dir ./src/evm/contracts $(CONTRACT_JSON_FILES); \
 	echo "Done."

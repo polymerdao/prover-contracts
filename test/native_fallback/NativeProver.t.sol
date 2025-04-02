@@ -3,7 +3,7 @@ pragma solidity 0.8.15;
 
 import {Test} from "forge-std/Test.sol";
 import {NativeProver} from "../../contracts/core/native_fallback/L2/NativeProver.sol";
-import {L2Configuration, L1Configuration, Type} from "../../contracts/libs/RegistryTypes.sol";
+import {L2Configuration, L1Configuration, Type, ProveScalarArgs} from "../../contracts/libs/RegistryTypes.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {IL1Block} from "../../contracts/interfaces/IL1Block.sol";
@@ -19,13 +19,11 @@ contract MockSettledStateProver {
         shouldSucceed = _shouldSucceed;
     }
 
-    function proveSettledState(
-        L2Configuration memory,
-        bytes32,
-        bytes memory,
-        bytes32,
-        bytes calldata
-    ) external view returns (bool) {
+    function proveSettledState(L2Configuration memory, bytes32, bytes memory, bytes32, bytes calldata)
+        external
+        view
+        returns (bool)
+    {
         return shouldSucceed;
     }
 }
@@ -47,7 +45,9 @@ contract ProverTest is Test {
     bytes32 public l2StateRoot;
 
     event L1WorldStateProven(uint256 indexed _blockNumber, bytes32 _L1WorldStateRoot);
-    event L2WorldStateProven(uint256 indexed _destinationChainID, uint256 indexed _blockNumber, bytes32 _L2WorldStateRoot);
+    event L2WorldStateProven(
+        uint256 indexed _destinationChainID, uint256 indexed _blockNumber, bytes32 _L2WorldStateRoot
+    );
 
     function setUp() public {
         // Create a mock L1 header
@@ -92,10 +92,7 @@ contract ProverTest is Test {
         });
 
         NativeProver.InitialL2Configuration[] memory initialL2Configs = new NativeProver.InitialL2Configuration[](1);
-        initialL2Configs[0] = NativeProver.InitialL2Configuration({
-            chainID: l2ChainID,
-            config: l2Config
-        });
+        initialL2Configs[0] = NativeProver.InitialL2Configuration({chainID: l2ChainID, config: l2Config});
 
         // Create prover
         prover = new NativeProver(l2ChainID, l1Config, initialL2Configs);
@@ -115,7 +112,7 @@ contract ProverTest is Test {
         bytes[] memory headerParts = new bytes[](9);
 
         // Fill parts 0-2 with dummy values
-        for (uint i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             headerParts[i] = RLPWriter.writeBytes(hex"1234");
         }
 
@@ -123,7 +120,7 @@ contract ProverTest is Test {
         headerParts[3] = RLPWriter.writeBytes(abi.encodePacked(stateRoot));
 
         // Fill parts 4-7 with dummy values
-        for (uint i = 4; i < 8; i++) {
+        for (uint256 i = 4; i < 8; i++) {
             headerParts[i] = RLPWriter.writeBytes(hex"5678");
         }
 
@@ -138,7 +135,7 @@ contract ProverTest is Test {
         bytes[] memory headerParts = new bytes[](9);
 
         // Fill parts 0-2 with dummy values
-        for (uint i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             headerParts[i] = RLPWriter.writeBytes(hex"1234");
         }
 
@@ -146,7 +143,7 @@ contract ProverTest is Test {
         headerParts[3] = RLPWriter.writeBytes(abi.encodePacked(stateRoot));
 
         // Fill parts 4-7 with dummy values
-        for (uint i = 4; i < 8; i++) {
+        for (uint256 i = 4; i < 8; i++) {
             headerParts[i] = RLPWriter.writeBytes(hex"5678");
         }
 
@@ -170,7 +167,7 @@ contract ProverTest is Test {
         // This way we can bypass the delay check in proveSettlementLayerState
         L1Configuration memory config = L1Configuration({
             blockHashOracle: address(mockL1Block),
-            settlementBlocksDelay: 0,  // Set to 0 to allow any block
+            settlementBlocksDelay: 0, // Set to 0 to allow any block
             settlementRegistry: address(0x1234),
             settlementRegistryL2ConfigMappingSlot: 5,
             settlementRegistryL1ConfigMappingSlot: 6
@@ -195,10 +192,7 @@ contract ProverTest is Test {
 
         // Create a new prover instance with the modified config
         NativeProver.InitialL2Configuration[] memory initialL2Configs = new NativeProver.InitialL2Configuration[](1);
-        initialL2Configs[0] = NativeProver.InitialL2Configuration({
-            chainID: l2ChainID,
-            config: l2Config
-        });
+        initialL2Configs[0] = NativeProver.InitialL2Configuration({chainID: l2ChainID, config: l2Config});
 
         // Create new prover with 0 settlement delay
         NativeProver newProver = new NativeProver(l2ChainID, config, initialL2Configs);
@@ -232,7 +226,7 @@ contract ProverTest is Test {
         mockL1Block.setBlockHash(earlierHash);
 
         // Should revert with NeedLaterBlock
-        vm.expectRevert();  // Just expect any revert without checking the specific error message
+        vm.expectRevert(); // Just expect any revert without checking the specific error message
         prover.proveSettlementLayerState(earlierHeader);
 
         // Reset the block hash for other tests
@@ -249,11 +243,7 @@ contract ProverTest is Test {
 
         // Prove L2 state
         prover.proveSettledState(
-            l2ChainID,
-            l2StateRoot,
-            rlpEncodedL2Header,
-            l1StateRoot,
-            _createMockSettledStateProof()
+            l2ChainID, l2StateRoot, rlpEncodedL2Header, l1StateRoot, _createMockSettledStateProof()
         );
 
         // Verify stored state
@@ -273,17 +263,11 @@ contract ProverTest is Test {
         // Should revert with SettlementChainStateRootNotProved
         vm.expectRevert(
             abi.encodeWithSelector(
-                NativeProver.SettlementChainStateRootNotProved.selector,
-                l1StateRoot,
-                invalidL1StateRoot
+                NativeProver.SettlementChainStateRootNotProved.selector, l1StateRoot, invalidL1StateRoot
             )
         );
         prover.proveSettledState(
-            l2ChainID,
-            l2StateRoot,
-            rlpEncodedL2Header,
-            invalidL1StateRoot,
-            _createMockSettledStateProof()
+            l2ChainID, l2StateRoot, rlpEncodedL2Header, invalidL1StateRoot, _createMockSettledStateProof()
         );
     }
 
@@ -297,11 +281,7 @@ contract ProverTest is Test {
         // Should revert with "Invalid settled state proof"
         vm.expectRevert("Invalid settled state proof");
         prover.proveSettledState(
-            l2ChainID,
-            l2StateRoot,
-            rlpEncodedL2Header,
-            l1StateRoot,
-            _createMockSettledStateProof()
+            l2ChainID, l2StateRoot, rlpEncodedL2Header, l1StateRoot, _createMockSettledStateProof()
         );
     }
 
@@ -336,10 +316,7 @@ contract ProverTest is Test {
 
         // 3. Create a new mock prover and initialize with our test chain
         NativeProver.InitialL2Configuration[] memory initialConfigs = new NativeProver.InitialL2Configuration[](1);
-        initialConfigs[0] = NativeProver.InitialL2Configuration({
-            chainID: testDestChainID,
-            config: testChainConfig
-        });
+        initialConfigs[0] = NativeProver.InitialL2Configuration({chainID: testDestChainID, config: testChainConfig});
 
         // Use the existing L1 configuration from setUp
         L1Configuration memory currentL1Config = L1Configuration({
@@ -381,8 +358,8 @@ contract ProverTest is Test {
         vm.expectRevert(
             abi.encodeWithSelector(
                 NativeProver.OutdatedBlock.selector,
-                100,  // input block number
-                200   // latest block number
+                100, // input block number
+                200 // latest block number
             )
         );
 
@@ -419,7 +396,7 @@ contract ProverTest is Test {
 
     function testPackGameID() public view {
         uint32 gameType = 123;
-        uint64 timestamp = 1647399600; // Wed Mar 16 2022 07:00:00 GMT+0000
+        uint64 timestamp = 1_647_399_600; // Wed Mar 16 2022 07:00:00 GMT+0000
         address gameProxy = address(0xA123);
 
         bytes32 packedId = prover.packGameID(gameType, timestamp, gameProxy);
@@ -457,17 +434,17 @@ contract ProverTest is Test {
         // 1. For simplicity, use a single leaf node containing our key-value pair
         // Convert key to nibbles (half-bytes)
         bytes memory nibbles = new bytes(64); // 32 bytes * 2 nibbles per byte
-        for (uint i = 0; i < 32; i++) {
-            nibbles[i*2] = bytes1(uint8(key[i]) / 16);
-            nibbles[i*2+1] = bytes1(uint8(key[i]) % 16);
+        for (uint256 i = 0; i < 32; i++) {
+            nibbles[i * 2] = bytes1(uint8(key[i]) / 16);
+            nibbles[i * 2 + 1] = bytes1(uint8(key[i]) % 16);
         }
 
         // 2. Encode path by adding a prefix
         // Leaf prefix: 0x20
         bytes memory path = new bytes(65);
         path[0] = bytes1(0x20); // Leaf prefix
-        for (uint i = 0; i < 64; i++) {
-            path[i+1] = nibbles[i];
+        for (uint256 i = 0; i < 64; i++) {
+            path[i + 1] = nibbles[i];
         }
 
         // 3. Encode the value as per RLP requirements
@@ -490,16 +467,16 @@ contract ProverTest is Test {
 
         // Convert key to nibbles
         bytes memory nibbles = new bytes(64);
-        for (uint i = 0; i < 32; i++) {
-            nibbles[i*2] = bytes1(uint8(key[i]) / 16);
-            nibbles[i*2+1] = bytes1(uint8(key[i]) % 16);
+        for (uint256 i = 0; i < 32; i++) {
+            nibbles[i * 2] = bytes1(uint8(key[i]) / 16);
+            nibbles[i * 2 + 1] = bytes1(uint8(key[i]) % 16);
         }
 
         // Encode path
         bytes memory path = new bytes(65);
         path[0] = bytes1(0x20); // Leaf prefix
-        for (uint i = 0; i < 64; i++) {
-            path[i+1] = nibbles[i];
+        for (uint256 i = 0; i < 64; i++) {
+            path[i + 1] = nibbles[i];
         }
 
         // Encode value
@@ -515,7 +492,11 @@ contract ProverTest is Test {
     }
 
     // Generate a valid account proof
-    function _generateAccountProof(bytes memory address_, bytes memory accountData) internal pure returns (bytes[] memory) {
+    function _generateAccountProof(bytes memory address_, bytes memory accountData)
+        internal
+        pure
+        returns (bytes[] memory)
+    {
         // Similar to the storage proof but with an account address
         bytes[] memory proof = new bytes[](1);
 
@@ -524,16 +505,16 @@ contract ProverTest is Test {
 
         // Convert hashed address to nibbles (half-bytes)
         bytes memory nibbles = new bytes(64); // 32 bytes * 2 nibbles per byte
-        for (uint i = 0; i < 32; i++) {
-            nibbles[i*2] = bytes1(uint8(hashedAddress[i]) / 16);
-            nibbles[i*2+1] = bytes1(uint8(hashedAddress[i]) % 16);
+        for (uint256 i = 0; i < 32; i++) {
+            nibbles[i * 2] = bytes1(uint8(hashedAddress[i]) / 16);
+            nibbles[i * 2 + 1] = bytes1(uint8(hashedAddress[i]) % 16);
         }
 
         // Encode path by adding a prefix
         bytes memory path = new bytes(65);
         path[0] = bytes1(0x20); // Leaf prefix
-        for (uint i = 0; i < 64; i++) {
-            path[i+1] = nibbles[i];
+        for (uint256 i = 0; i < 64; i++) {
+            path[i + 1] = nibbles[i];
         }
 
         // Encode leaf node
@@ -589,12 +570,7 @@ contract ProverTest is Test {
             )
         );
         prover.updateL2ChainConfiguration(
-            l2ChainID,
-            config,
-            emptyStorageProof,
-            rlpEncodedAccountData,
-            emptyAccountProof,
-            unprovenStateRoot
+            l2ChainID, config, emptyStorageProof, rlpEncodedAccountData, emptyAccountProof, unprovenStateRoot
         );
     }
 
@@ -630,11 +606,7 @@ contract ProverTest is Test {
         // We expect any revert since we can't easily mock all the verification properly
         vm.expectRevert();
         prover.updateL1ChainConfiguration(
-            l1Config,
-            emptyStorageProof,
-            rlpEncodedAccountData,
-            emptyAccountProof,
-            l1StateRoot
+            l1Config, emptyStorageProof, rlpEncodedAccountData, emptyAccountProof, l1StateRoot
         );
     }
 
@@ -649,11 +621,11 @@ contract ProverTest is Test {
 
         // 1. First we need a valid L1 header to prove settlement layer state
         bytes[] memory headerPartsL1 = new bytes[](9);
-        for (uint i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             headerPartsL1[i] = RLPWriter.writeBytes(hex"1234");
         }
         headerPartsL1[3] = RLPWriter.writeBytes(abi.encodePacked(l1StateRoot));
-        for (uint i = 4; i < 8; i++) {
+        for (uint256 i = 4; i < 8; i++) {
             headerPartsL1[i] = RLPWriter.writeBytes(hex"5678");
         }
         headerPartsL1[8] = RLPWriter.writeUint(101); // Block number
@@ -664,11 +636,11 @@ contract ProverTest is Test {
 
         // 2. Next, we need a valid L2 header
         bytes[] memory headerPartsL2 = new bytes[](9);
-        for (uint i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             headerPartsL2[i] = RLPWriter.writeBytes(hex"1234");
         }
         headerPartsL2[3] = RLPWriter.writeBytes(abi.encodePacked(l2StateRoot));
-        for (uint i = 4; i < 8; i++) {
+        for (uint256 i = 4; i < 8; i++) {
             headerPartsL2[i] = RLPWriter.writeBytes(hex"5678");
         }
         headerPartsL2[8] = RLPWriter.writeUint(201); // Block number
@@ -702,13 +674,9 @@ contract ProverTest is Test {
         // We expect any revert since we can't easily mock all the verification
         vm.expectRevert();
         prover.prove(
-            l2ChainID,
-            contractAddr,
-            storageSlot,
-            storageValue,
+            ProveScalarArgs(l2ChainID, contractAddr, storageSlot, storageValue, l2StateRoot),
             validL1Header,
             validL2Header,
-            l2StateRoot,
             settledStateProof,
             l2StorageProof,
             rlpEncodedContractAccount,

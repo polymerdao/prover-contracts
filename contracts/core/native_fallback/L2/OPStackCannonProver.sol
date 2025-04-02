@@ -55,9 +55,7 @@ contract OPStackCannonProver is ISettledStateProver {
      * @notice Invalid dispute game factory state root encoding
      * @param _disputeGameFactoryStateRoot Invalid state root
      */
-    error IncorrectDisputeGameFactoryStateRoot(
-        bytes _disputeGameFactoryStateRoot
-    );
+    error IncorrectDisputeGameFactoryStateRoot(bytes _disputeGameFactoryStateRoot);
 
     /**
      * @notice Fault dispute game not yet resolved
@@ -72,12 +70,7 @@ contract OPStackCannonProver is ISettledStateProver {
      * @param _proof Merkle proof
      * @param _root Expected root
      */
-    error InvalidAccountProof(
-        bytes _address,
-        bytes _data,
-        bytes[] _proof,
-        bytes32 _root
-    );
+    error InvalidAccountProof(bytes _address, bytes _data, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice Failed storage proof verification
@@ -86,40 +79,26 @@ contract OPStackCannonProver is ISettledStateProver {
      * @param _proof Merkle proof
      * @param _root Expected root
      */
-    error InvalidStorageProof(
-        bytes _key,
-        bytes _val,
-        bytes[] _proof,
-        bytes32 _root
-    );
+    error InvalidStorageProof(bytes _key, bytes _val, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice RLP encoded block data hash mismatch
      * @param _expectedBlockHash Expected hash
      * @param _calculatedBlockHash Actual hash
      */
-    error InvalidRLPEncodedBlock(
-        bytes32 _expectedBlockHash,
-        bytes32 _calculatedBlockHash
-    );
+    error InvalidRLPEncodedBlock(bytes32 _expectedBlockHash, bytes32 _calculatedBlockHash);
 
     /**
      * @notice Validates RLP encoded block data matches expected hash
      * @param _rlpEncodedBlockData Encoded block data
      * @param _expectedBlockHash Expected block hash
      */
-    modifier validRLPEncodeBlock(
-        bytes memory _rlpEncodedBlockData,
-        bytes32 _expectedBlockHash
-    ) {
+    modifier validRLPEncodeBlock(bytes memory _rlpEncodedBlockData, bytes32 _expectedBlockHash) {
         bytes32 calculatedBlockHash = keccak256(_rlpEncodedBlockData);
         if (calculatedBlockHash == _expectedBlockHash) {
             _;
         } else {
-            revert InvalidRLPEncodedBlock(
-                _expectedBlockHash,
-                calculatedBlockHash
-            );
+            revert InvalidRLPEncodedBlock(_expectedBlockHash, calculatedBlockHash);
         }
     }
 
@@ -141,10 +120,7 @@ contract OPStackCannonProver is ISettledStateProver {
         (
             DisputeGameFactoryProofData memory disputeGameFactoryProofData,
             FaultDisputeGameProofData memory faultDisputeGameProofData
-        ) = abi.decode(_proof, (
-            DisputeGameFactoryProofData,
-            FaultDisputeGameProofData
-        ));
+        ) = abi.decode(_proof, (DisputeGameFactoryProofData, FaultDisputeGameProofData));
 
         require(
             _proveWorldStateCannon(
@@ -177,26 +153,21 @@ contract OPStackCannonProver is ISettledStateProver {
         FaultDisputeGameProofData memory _faultDisputeGameProofData,
         bytes32 _l1WorldStateRoot // trusted at this point
     )
-    internal
-    validRLPEncodeBlock(
-    _rlpEncodedL2Header,
-    _disputeGameFactoryProofData.latestBlockHash
-    )
-    pure
-    returns (bool)
+        internal
+        pure
+        validRLPEncodeBlock(_rlpEncodedL2Header, _disputeGameFactoryProofData.latestBlockHash)
+        returns (bool)
     {
         // prove that the FaultDisputeGame was created by the Dispute Game Factory
 
         // Verify dispute game creation and resolution
         bytes32 rootClaim;
         address faultDisputeGameProxyAddress;
-        (
-            faultDisputeGameProxyAddress,
-            rootClaim
-        ) = _faultDisputeGameFromFactory(
+        (faultDisputeGameProxyAddress, rootClaim) = _faultDisputeGameFromFactory(
             _chainConfig.versionNumber,
             _chainConfig.addresses[0], // For OPStackCannon the factory address is stored in the first address slot
-            _chainConfig.storageSlots[0], // For OPStackCannon the disputeGameFactoryListSlot is the 1st storage slot in the config
+            _chainConfig.storageSlots[0], // For OPStackCannon the disputeGameFactoryListSlot is the 1st storage slot in
+                // the config
             _l2WorldStateRoot,
             _disputeGameFactoryProofData,
             _l1WorldStateRoot
@@ -205,8 +176,10 @@ contract OPStackCannonProver is ISettledStateProver {
         _faultDisputeGameIsResolved(
             rootClaim,
             faultDisputeGameProxyAddress,
-            _chainConfig.storageSlots[1], // For OPStackCannon faultDisputeGameRootClaimSlot is the 2nd storage slot in the config
-            _chainConfig.storageSlots[2], // For OPStackCannon faultDisputeGameStatusSlot is the 3rd storage slot in the config
+            _chainConfig.storageSlots[1], // For OPStackCannon faultDisputeGameRootClaimSlot is the 2nd storage slot in
+                // the config
+            _chainConfig.storageSlots[2], // For OPStackCannon faultDisputeGameStatusSlot is the 3rd storage slot in the
+                // config
             _faultDisputeGameProofData,
             _l1WorldStateRoot
         );
@@ -215,7 +188,7 @@ contract OPStackCannonProver is ISettledStateProver {
     }
 
     /**
-   * @notice Verifies fault dispute game resolution
+     * @notice Verifies fault dispute game resolution
      * @dev Verifies game status and root claim
      * @param _rootClaim Expected root claim value
      * @param _faultDisputeGameProxyAddress Game proxy contract
@@ -233,16 +206,8 @@ contract OPStackCannonProver is ISettledStateProver {
         bytes32 _l1WorldStateRoot
     ) internal pure {
         // Verify game is resolved
-        if (
-            _faultDisputeGameProofData
-            .faultDisputeGameStatusSlotData
-            .gameStatus != 2
-        ) {
-            revert FaultDisputeGameUnresolved(
-                _faultDisputeGameProofData
-                .faultDisputeGameStatusSlotData
-                .gameStatus
-            );
+        if (_faultDisputeGameProofData.faultDisputeGameStatusSlotData.gameStatus != 2) {
+            revert FaultDisputeGameUnresolved(_faultDisputeGameProofData.faultDisputeGameStatusSlotData.gameStatus);
         }
 
         // ensure faultDisputeGame is resolved
@@ -260,12 +225,8 @@ contract OPStackCannonProver is ISettledStateProver {
             _faultDisputeGameProofData.faultDisputeGameStatusSlotData.createdAt,
             _faultDisputeGameProofData.faultDisputeGameStatusSlotData.resolvedAt,
             _faultDisputeGameProofData.faultDisputeGameStatusSlotData.gameStatus,
-            _faultDisputeGameProofData
-            .faultDisputeGameStatusSlotData
-            .initialized,
-            _faultDisputeGameProofData
-            .faultDisputeGameStatusSlotData
-            .l2BlockNumberChallenged
+            _faultDisputeGameProofData.faultDisputeGameStatusSlotData.initialized,
+            _faultDisputeGameProofData.faultDisputeGameStatusSlotData.l2BlockNumberChallenged
         );
 
         // Verify game status storage proof
@@ -274,11 +235,7 @@ contract OPStackCannonProver is ISettledStateProver {
             faultDisputeGameStatusStorage,
             _faultDisputeGameProofData.faultDisputeGameStatusStorageProof,
             bytes32(
-                RLPReader.readBytes(
-                    RLPReader.readList(
-                        _faultDisputeGameProofData.rlpEncodedFaultDisputeGameData
-                    )[2]
-                )
+                RLPReader.readBytes(RLPReader.readList(_faultDisputeGameProofData.rlpEncodedFaultDisputeGameData)[2])
             )
         );
 
@@ -292,7 +249,7 @@ contract OPStackCannonProver is ISettledStateProver {
     }
 
     /**
- * @notice Validates fault dispute game from factory configuration
+     * @notice Validates fault dispute game from factory configuration
      * @dev Internal helper for Cannon proving
      * @param _disputeGameFactoryAddress Factory contract address
      * @param _l2WorldStateRoot L2 state root to verify
@@ -308,11 +265,7 @@ contract OPStackCannonProver is ISettledStateProver {
         bytes32 _l2WorldStateRoot,
         DisputeGameFactoryProofData memory _disputeGameFactoryProofData,
         bytes32 _l1WorldStateRoot
-    )
-    internal
-    pure
-    returns (address faultDisputeGameProxyAddress, bytes32 rootClaim)
-    {
+    ) internal pure returns (address faultDisputeGameProxyAddress, bytes32 rootClaim) {
         // Generate root claim from state data
         bytes32 _rootClaim = _generateOutputRoot(
             _outputVersion,
@@ -324,24 +277,15 @@ contract OPStackCannonProver is ISettledStateProver {
         // Verify game exists in factory
         bytes32 disputeGameFactoryStorageSlot = bytes32(
             abi.encode(
-                (uint256(
-                    keccak256(
-                        abi.encode(_disputeGameFactoryListSlot)
-                    )
-                ) + _disputeGameFactoryProofData.gameIndex)
+                (uint256(keccak256(abi.encode(_disputeGameFactoryListSlot))) + _disputeGameFactoryProofData.gameIndex)
             )
         );
 
-        bytes memory disputeGameFactoryStateRoot = RLPReader.readBytes(
-            RLPReader.readList(
-                _disputeGameFactoryProofData.rlpEncodedDisputeGameFactoryData
-            )[2]
-        );
+        bytes memory disputeGameFactoryStateRoot =
+            RLPReader.readBytes(RLPReader.readList(_disputeGameFactoryProofData.rlpEncodedDisputeGameFactoryData)[2]);
 
         if (disputeGameFactoryStateRoot.length > 32) {
-            revert IncorrectDisputeGameFactoryStateRoot(
-                disputeGameFactoryStateRoot
-            );
+            revert IncorrectDisputeGameFactoryStateRoot(disputeGameFactoryStateRoot);
         }
 
         // Verify storage and account proofs
@@ -360,9 +304,7 @@ contract OPStackCannonProver is ISettledStateProver {
         );
 
         // Get proxy address from game ID
-        (, , address _faultDisputeGameProxyAddress) = _unpackGameID(
-            _disputeGameFactoryProofData.gameId
-        );
+        (,, address _faultDisputeGameProxyAddress) = _unpackGameID(_disputeGameFactoryProofData.gameId);
 
         return (_faultDisputeGameProxyAddress, _rootClaim);
     }
@@ -381,15 +323,7 @@ contract OPStackCannonProver is ISettledStateProver {
         bytes32 _messagePasserStateRoot,
         bytes32 _latestBlockHash
     ) internal pure returns (bytes32) {
-        return
-            keccak256(
-            abi.encode(
-                _outputRootVersion,
-                _worldStateRoot,
-                _messagePasserStateRoot,
-                _latestBlockHash
-            )
-        );
+        return keccak256(abi.encode(_outputRootVersion, _worldStateRoot, _messagePasserStateRoot, _latestBlockHash));
     }
 
     /**
@@ -399,45 +333,31 @@ contract OPStackCannonProver is ISettledStateProver {
      * @return timestamp_ Creation timestamp
      * @return gameProxy_ Proxy contract address
      */
-    function _unpackGameID(
-        bytes32 _gameId
-    )
-    internal
-    pure
-    returns (uint32 gameType_, uint64 timestamp_, address gameProxy_)
+    function _unpackGameID(bytes32 _gameId)
+        internal
+        pure
+        returns (uint32 gameType_, uint64 timestamp_, address gameProxy_)
     {
         assembly {
             gameType_ := shr(224, _gameId)
             timestamp_ := and(shr(160, _gameId), 0xFFFFFFFFFFFFFFFF)
-            gameProxy_ := and(
-                _gameId,
-                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            )
+            gameProxy_ := and(_gameId, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
         }
     }
 
     /**
- * @notice Validates an account proof against a root
+     * @notice Validates an account proof against a root
      * @dev Uses SecureMerkleTrie for verification
      * @param _address Account address
      * @param _data Expected account data
      * @param _proof Merkle proof
      * @param _root Expected root
      */
-    function _proveAccount(
-        bytes memory _address,
-        bytes memory _data,
-        bytes[] memory _proof,
-        bytes32 _root
-    ) internal pure {
-        if (
-            !SecureMerkleTrie.verifyInclusionProof(
-            _address,
-            _data,
-            _proof,
-            _root
-        )
-        ) {
+    function _proveAccount(bytes memory _address, bytes memory _data, bytes[] memory _proof, bytes32 _root)
+        internal
+        pure
+    {
+        if (!SecureMerkleTrie.verifyInclusionProof(_address, _data, _proof, _root)) {
             revert InvalidAccountProof(_address, _data, _proof, _root);
         }
     }
@@ -450,22 +370,13 @@ contract OPStackCannonProver is ISettledStateProver {
      * @param _proof Merkle proof
      * @param _root Expected root
      */
-    function _proveStorageBytes32(
-        bytes memory _key,
-        bytes32 _val,
-        bytes[] memory _proof,
-        bytes32 _root
-    ) internal pure {
+    function _proveStorageBytes32(bytes memory _key, bytes32 _val, bytes[] memory _proof, bytes32 _root)
+        internal
+        pure
+    {
         // `RLPWriter.writeUint` properly encodes values by removing any leading zeros.
         bytes memory rlpEncodedValue = RLPWriter.writeUint(uint256(_val));
-        if (
-            !SecureMerkleTrie.verifyInclusionProof(
-            _key,
-            rlpEncodedValue,
-            _proof,
-            _root
-        )
-        ) {
+        if (!SecureMerkleTrie.verifyInclusionProof(_key, rlpEncodedValue, _proof, _root)) {
             revert InvalidStorageProof(_key, rlpEncodedValue, _proof, _root);
         }
     }
@@ -489,18 +400,11 @@ contract OPStackCannonProver is ISettledStateProver {
     ) internal pure returns (bytes32 gameStatusStorageSlotRLP) {
         // Packed data is 64 + 64 + 8 + 8 + 8 = 152 bits / 19 bytes.
         // Need to convert to `uint152` to preserve right alignment.
-        return
-            bytes32(
+        return bytes32(
             uint256(
                 uint152(
                     bytes19(
-                        abi.encodePacked(
-                            _l2BlockNumberChallenged,
-                            _initialized,
-                            _gameStatus,
-                            _resolvedAt,
-                            _createdAt
-                        )
+                        abi.encodePacked(_l2BlockNumberChallenged, _initialized, _gameStatus, _resolvedAt, _createdAt)
                     )
                 )
             )

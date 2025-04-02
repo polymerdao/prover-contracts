@@ -43,10 +43,7 @@ contract OPStackBedrockProverTest is Test {
 
         // Generate output root
         l2OutputRoot = _manualGenerateOutputRoot(
-            chainConfig.versionNumber,
-            l2WorldStateRoot,
-            l2MessagePasserStateRoot,
-            l2BlockHash
+            chainConfig.versionNumber, l2WorldStateRoot, l2MessagePasserStateRoot, l2BlockHash
         );
 
         // Set a block timestamp in the past
@@ -63,7 +60,7 @@ contract OPStackBedrockProverTest is Test {
         bytes[] memory headerParts = new bytes[](15);
 
         // Fill header parts with dummy values
-        for (uint i = 0; i < headerParts.length; i++) {
+        for (uint256 i = 0; i < headerParts.length; i++) {
             headerParts[i] = RLPWriter.writeBytes(hex"1234");
         }
 
@@ -82,9 +79,9 @@ contract OPStackBedrockProverTest is Test {
 
         // Create a fake output entry with our precomputed output root
         bytes memory outputValue = abi.encode(
-            l2OutputRoot,    // output root
+            l2OutputRoot, // output root
             block.timestamp, // timestamp
-            block.number     // l2BlockNumber
+            block.number // l2BlockNumber
         );
 
         // RLP encode the output value (simplified)
@@ -196,22 +193,10 @@ contract OPStackBedrockProverTest is Test {
         uint256 version = 0;
 
         // Calculate the expected output
-        bytes32 expected = keccak256(
-            abi.encode(
-                version,
-                worldStateRoot,
-                messagePasserStateRoot,
-                latestBlockHash
-            )
-        );
+        bytes32 expected = keccak256(abi.encode(version, worldStateRoot, messagePasserStateRoot, latestBlockHash));
 
         // Compare with our manual implementation
-        bytes32 result = _manualGenerateOutputRoot(
-            version,
-            worldStateRoot,
-            messagePasserStateRoot,
-            latestBlockHash
-        );
+        bytes32 result = _manualGenerateOutputRoot(version, worldStateRoot, messagePasserStateRoot, latestBlockHash);
 
         assertEq(result, expected, "Output root calculation incorrect");
     }
@@ -222,14 +207,7 @@ contract OPStackBedrockProverTest is Test {
         bytes32 _messagePasserStateRoot,
         bytes32 _latestBlockHash
     ) internal pure returns (bytes32) {
-        return keccak256(
-            abi.encode(
-                _outputRootVersion,
-                _worldStateRoot,
-                _messagePasserStateRoot,
-                _latestBlockHash
-            )
-        );
+        return keccak256(abi.encode(_outputRootVersion, _worldStateRoot, _messagePasserStateRoot, _latestBlockHash));
     }
 
     function test_BytesToUint() public pure {
@@ -240,7 +218,7 @@ contract OPStackBedrockProverTest is Test {
 
         assertEq(_manualBytesToUint(input1), 1, "Convert 0x01 to 1");
         assertEq(_manualBytesToUint(input2), 258, "Convert 0x0102 to 258");
-        assertEq(_manualBytesToUint(input3), 66051, "Convert 0x010203 to 66051");
+        assertEq(_manualBytesToUint(input3), 66_051, "Convert 0x010203 to 66051");
     }
 
     function _manualBytesToUint(bytes memory _b) internal pure returns (uint256) {

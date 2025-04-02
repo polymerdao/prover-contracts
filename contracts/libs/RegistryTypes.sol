@@ -38,3 +38,21 @@ struct L1Configuration {
     uint256 settlementRegistryL2ConfigMappingSlot;
     uint256 settlementRegistryL1ConfigMappingSlot;
 }
+
+/**
+ * @notice Struct to hold scalar args to prove()
+ * @dev To avoid stack-too-deep
+ * @param _chainID chain ID of the L2 configuration being proven
+ * @param _contractAddr contract address on the L2 storing the value
+ * @param _storageSlot storage slot being proven
+ * @param _storageValue the storage value being proven
+ * @param _l2WorldStateRoot L2 world state root
+ *
+ */
+struct ProveScalarArgs {
+    uint256 chainID;
+    address contractAddr;
+    bytes32 storageSlot;
+    bytes32 storageValue;
+    bytes32 l2WorldStateRoot;
+}

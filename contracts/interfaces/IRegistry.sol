@@ -25,29 +25,17 @@ import {L2Configuration, L1Configuration} from "../libs/RegistryTypes.sol";
  * @notice A contract for implementing an L2 settlement location registry on the L1
  */
 interface IRegistry {
-    function updateL2ChainConfiguration(
-        uint256 chainID,
-        L2Configuration calldata config
-    ) external;
+    function updateL2ChainConfiguration(uint256 chainID, L2Configuration calldata config) external;
 
-    function updateL1ChainConfiguration(
-        uint256 chainID,
-        L1Configuration calldata config
-    ) external;
+    function updateL1ChainConfiguration(uint256 chainID, L1Configuration calldata config) external;
 
-    function grantChainID(
-        address _grantee,
-        uint256 _chainID
-    ) external;
+    function grantChainID(address _grantee, uint256 _chainID) external;
 
-    function grantChainIDRange(
-        address _grantee,
-        uint256 _startChainID,
-        uint256 _stopChainID)
-    external;
+    function grantChainIDIrrevocable(address _grantee, uint256 _chainID) external;
 
-    function isGrantee(
-        address _grantee,
-        uint256 _chainID)
-    external view returns (bool);
+    function grantChainIDRange(address _grantee, uint256 _startChainID, uint256 _stopChainID) external;
+
+    function grantChainIDRangeIrrevocable(address _grantee, uint256 _startChainID, uint256 _stopChainID) external;
+
+    function isGrantee(address _grantee, uint256 _chainID) external view returns (bool);
 }

@@ -37,7 +37,8 @@ contract SigningBase is Base {
         // this is the "rlp" half-encoded header that would be sent by the relayer. this was produced
         // by the test-data-generator tool.
         L1Header memory l1header = abi.decode(
-            vm.parseBytes(vm.readFile(string.concat(rootDir, "/test/payload/l1_block_0x4df537.hex"))), (L1Header)
+            vm.parseBytes(vm.readFile(string.concat(rootDir, "/test/prove_api/payload/l1_block_0x4df537.hex"))),
+            (L1Header)
         );
 
         l1BlockHash = keccak256(RLPWriter.writeList(l1header.header)); // Blockhash that will be signed by sequencer
@@ -46,7 +47,7 @@ contract SigningBase is Base {
 
         // this happens to be the polymer height when the L2OO was updated with the output proposal
         // we are using in the test
-        string memory l2BlockJson = vm.readFile(string.concat(rootDir, "/test/payload/l2_block_0x4b0.json"));
+        string memory l2BlockJson = vm.readFile(string.concat(rootDir, "/test/prove_api/payload/l2_block_0x4b0.json"));
         peptideAppHash = abi.decode(l2BlockJson.parseRaw(".result.stateRoot"), (bytes32));
 
         bytes32 payloadHash = keccak256(abi.encodePacked(peptideBlockNumber, peptideAppHash, l1BlockHash));
