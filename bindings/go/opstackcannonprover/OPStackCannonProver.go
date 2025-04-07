@@ -36,11 +36,12 @@ type L2Configuration struct {
 	StorageSlots         []*big.Int
 	VersionNumber        *big.Int
 	FinalityDelaySeconds *big.Int
+	L2Type               uint8
 }
 
 // OPStackCannonProverMetaData contains all meta data concerning the OPStackCannonProver contract.
 var OPStackCannonProverMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"function\",\"name\":\"proveSettledState\",\"inputs\":[{\"name\":\"_chainConfig\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"pure\"},{\"type\":\"error\",\"name\":\"FaultDisputeGameUnresolved\",\"inputs\":[{\"name\":\"_gameStatus\",\"type\":\"uint8\",\"internalType\":\"uint8\"}]},{\"type\":\"error\",\"name\":\"IncorrectDisputeGameFactoryStateRoot\",\"inputs\":[{\"name\":\"_disputeGameFactoryStateRoot\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"type\":\"error\",\"name\":\"InvalidAccountProof\",\"inputs\":[{\"name\":\"_address\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidRLPEncodedBlock\",\"inputs\":[{\"name\":\"_expectedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_calculatedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]}]",
+	ABI: "[{\"type\":\"function\",\"name\":\"proveSettledState\",\"inputs\":[{\"name\":\"_chainConfig\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"pure\"},{\"type\":\"error\",\"name\":\"FaultDisputeGameUnresolved\",\"inputs\":[{\"name\":\"_gameStatus\",\"type\":\"uint8\",\"internalType\":\"uint8\"}]},{\"type\":\"error\",\"name\":\"IncorrectDisputeGameFactoryStateRoot\",\"inputs\":[{\"name\":\"_disputeGameFactoryStateRoot\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"type\":\"error\",\"name\":\"InvalidAccountProof\",\"inputs\":[{\"name\":\"_address\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidRLPEncodedBlock\",\"inputs\":[{\"name\":\"_expectedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_calculatedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]}]",
 }
 
 // OPStackCannonProverABI is the input ABI used to generate the binding from.
@@ -189,9 +190,9 @@ func (_OPStackCannonProver *OPStackCannonProverTransactorRaw) Transact(opts *bin
 	return _OPStackCannonProver.Contract.contract.Transact(opts, method, params...)
 }
 
-// ProveSettledState is a free data retrieval call binding the contract method 0x3d10b088.
+// ProveSettledState is a free data retrieval call binding the contract method 0x52aba3d8.
 //
-// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) pure returns(bool)
+// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256,uint8) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) pure returns(bool)
 func (_OPStackCannonProver *OPStackCannonProverCaller) ProveSettledState(opts *bind.CallOpts, _chainConfig L2Configuration, _l2WorldStateRoot [32]byte, _rlpEncodedL2Header []byte, _l1WorldStateRoot [32]byte, _proof []byte) (bool, error) {
 	var out []interface{}
 	err := _OPStackCannonProver.contract.Call(opts, &out, "proveSettledState", _chainConfig, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _proof)
@@ -206,16 +207,16 @@ func (_OPStackCannonProver *OPStackCannonProverCaller) ProveSettledState(opts *b
 
 }
 
-// ProveSettledState is a free data retrieval call binding the contract method 0x3d10b088.
+// ProveSettledState is a free data retrieval call binding the contract method 0x52aba3d8.
 //
-// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) pure returns(bool)
+// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256,uint8) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) pure returns(bool)
 func (_OPStackCannonProver *OPStackCannonProverSession) ProveSettledState(_chainConfig L2Configuration, _l2WorldStateRoot [32]byte, _rlpEncodedL2Header []byte, _l1WorldStateRoot [32]byte, _proof []byte) (bool, error) {
 	return _OPStackCannonProver.Contract.ProveSettledState(&_OPStackCannonProver.CallOpts, _chainConfig, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _proof)
 }
 
-// ProveSettledState is a free data retrieval call binding the contract method 0x3d10b088.
+// ProveSettledState is a free data retrieval call binding the contract method 0x52aba3d8.
 //
-// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) pure returns(bool)
+// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256,uint8) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) pure returns(bool)
 func (_OPStackCannonProver *OPStackCannonProverCallerSession) ProveSettledState(_chainConfig L2Configuration, _l2WorldStateRoot [32]byte, _rlpEncodedL2Header []byte, _l1WorldStateRoot [32]byte, _proof []byte) (bool, error) {
 	return _OPStackCannonProver.Contract.ProveSettledState(&_OPStackCannonProver.CallOpts, _chainConfig, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _proof)
 }

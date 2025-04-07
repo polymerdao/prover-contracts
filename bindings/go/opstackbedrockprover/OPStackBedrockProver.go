@@ -36,11 +36,12 @@ type L2Configuration struct {
 	StorageSlots         []*big.Int
 	VersionNumber        *big.Int
 	FinalityDelaySeconds *big.Int
+	L2Type               uint8
 }
 
 // OPStackBedrockProverMetaData contains all meta data concerning the OPStackBedrockProver contract.
 var OPStackBedrockProverMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"function\",\"name\":\"proveSettledState\",\"inputs\":[{\"name\":\"_chainConfig\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"error\",\"name\":\"BlockBeforeFinalityPeriod\",\"inputs\":[{\"name\":\"_blockTimeStamp\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_finalityDelayTimeStamp\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"IncorrectOutputOracleStorageRoot\",\"inputs\":[{\"name\":\"_outputOracleStateRoot\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"type\":\"error\",\"name\":\"InvalidAccountProof\",\"inputs\":[{\"name\":\"_address\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]}]",
+	ABI: "[{\"type\":\"function\",\"name\":\"proveSettledState\",\"inputs\":[{\"name\":\"_chainConfig\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"error\",\"name\":\"BlockBeforeFinalityPeriod\",\"inputs\":[{\"name\":\"_blockTimeStamp\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_finalityDelayTimeStamp\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"IncorrectOutputOracleStorageRoot\",\"inputs\":[{\"name\":\"_outputOracleStateRoot\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"type\":\"error\",\"name\":\"InvalidAccountProof\",\"inputs\":[{\"name\":\"_address\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]}]",
 }
 
 // OPStackBedrockProverABI is the input ABI used to generate the binding from.
@@ -189,9 +190,9 @@ func (_OPStackBedrockProver *OPStackBedrockProverTransactorRaw) Transact(opts *b
 	return _OPStackBedrockProver.Contract.contract.Transact(opts, method, params...)
 }
 
-// ProveSettledState is a free data retrieval call binding the contract method 0x3d10b088.
+// ProveSettledState is a free data retrieval call binding the contract method 0x52aba3d8.
 //
-// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) view returns(bool)
+// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256,uint8) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) view returns(bool)
 func (_OPStackBedrockProver *OPStackBedrockProverCaller) ProveSettledState(opts *bind.CallOpts, _chainConfig L2Configuration, _l2WorldStateRoot [32]byte, _rlpEncodedL2Header []byte, _l1WorldStateRoot [32]byte, _proof []byte) (bool, error) {
 	var out []interface{}
 	err := _OPStackBedrockProver.contract.Call(opts, &out, "proveSettledState", _chainConfig, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _proof)
@@ -206,16 +207,16 @@ func (_OPStackBedrockProver *OPStackBedrockProverCaller) ProveSettledState(opts 
 
 }
 
-// ProveSettledState is a free data retrieval call binding the contract method 0x3d10b088.
+// ProveSettledState is a free data retrieval call binding the contract method 0x52aba3d8.
 //
-// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) view returns(bool)
+// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256,uint8) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) view returns(bool)
 func (_OPStackBedrockProver *OPStackBedrockProverSession) ProveSettledState(_chainConfig L2Configuration, _l2WorldStateRoot [32]byte, _rlpEncodedL2Header []byte, _l1WorldStateRoot [32]byte, _proof []byte) (bool, error) {
 	return _OPStackBedrockProver.Contract.ProveSettledState(&_OPStackBedrockProver.CallOpts, _chainConfig, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _proof)
 }
 
-// ProveSettledState is a free data retrieval call binding the contract method 0x3d10b088.
+// ProveSettledState is a free data retrieval call binding the contract method 0x52aba3d8.
 //
-// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) view returns(bool)
+// Solidity: function proveSettledState((address,address[],uint256[],uint256,uint256,uint8) _chainConfig, bytes32 _l2WorldStateRoot, bytes _rlpEncodedL2Header, bytes32 _l1WorldStateRoot, bytes _proof) view returns(bool)
 func (_OPStackBedrockProver *OPStackBedrockProverCallerSession) ProveSettledState(_chainConfig L2Configuration, _l2WorldStateRoot [32]byte, _rlpEncodedL2Header []byte, _l1WorldStateRoot [32]byte, _proof []byte) (bool, error) {
 	return _OPStackBedrockProver.Contract.ProveSettledState(&_OPStackBedrockProver.CallOpts, _chainConfig, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _proof)
 }

@@ -18,7 +18,7 @@
 pragma solidity 0.8.15;
 
 import {IRegistry} from "../../../interfaces/IRegistry.sol";
-import {L2Configuration, L1Configuration} from "../../../libs/RegistryTypes.sol";
+import {L2Configuration, L1Configuration, Type} from "../../../libs/RegistryTypes.sol";
 
 contract Registry is IRegistry {
     address public immutable multiSigOwner;
@@ -178,5 +178,13 @@ contract Registry is IRegistry {
 
     function getL2ConfigStorageSlots(uint256 _chainID) external view returns (uint256[] memory) {
         return l2ChainConfigurations[_chainID].storageSlots;
+    }
+
+    function getL2ConfigType(uint256 _chainID) external view returns (Type) {
+        return l2ChainConfigurations[_chainID].l2Type;
+    }
+
+    function getL1BlockHashOracle(uint256 _chainID) external view returns (address) {
+        return l1ChainConfigurations[_chainID].blockHashOracle;
     }
 }

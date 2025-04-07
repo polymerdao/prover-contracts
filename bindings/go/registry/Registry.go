@@ -45,6 +45,7 @@ type L2Configuration struct {
 	StorageSlots         []*big.Int
 	VersionNumber        *big.Int
 	FinalityDelaySeconds *big.Int
+	L2Type               uint8
 }
 
 // RegistryInitialL1Configuration is an auto generated low-level Go binding around an user-defined struct.
@@ -61,7 +62,7 @@ type RegistryInitialL2Configuration struct {
 
 // RegistryMetaData contains all meta data concerning the Registry contract.
 var RegistryMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_multiSigOwner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_onlyAdd\",\"type\":\"bool\",\"internalType\":\"bool\"},{\"name\":\"_initialL2Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structRegistry.InitialL2Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]},{\"name\":\"_initialL1Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structRegistry.InitialL1Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"getL2ConfigAddresses\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[]\",\"internalType\":\"address[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL2ConfigStorageSlots\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"grantChainID\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDIrrevocable\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDRange\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_startChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_stopChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDRangeIrrevocable\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_startChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_stopChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"granteeBitmap\",\"inputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"irrevocableChainIDBitmap\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"isGrantee\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l1ChainConfigurationHashMap\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l1ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurationHashMap\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"multiSigOwner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"onlyAdd\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"updateL1ChainConfiguration\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL2ChainConfiguration\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"L1ChainConfigurationUpdated\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"configHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"L2ChainConfigurationUpdated\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"configHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"NewGrantee\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"grantee\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"NewIrrevocableGrantee\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"grantee\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_multiSigOwner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_onlyAdd\",\"type\":\"bool\",\"internalType\":\"bool\"},{\"name\":\"_initialL2Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structRegistry.InitialL2Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}]},{\"name\":\"_initialL1Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structRegistry.InitialL1Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"getL1BlockHashOracle\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL2ConfigAddresses\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[]\",\"internalType\":\"address[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL2ConfigStorageSlots\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL2ConfigType\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"grantChainID\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDIrrevocable\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDRange\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_startChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_stopChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDRangeIrrevocable\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_startChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_stopChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"granteeBitmap\",\"inputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"irrevocableChainIDBitmap\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"isGrantee\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l1ChainConfigurationHashMap\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l1ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurationHashMap\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"multiSigOwner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"onlyAdd\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"updateL1ChainConfiguration\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL2ChainConfiguration\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"L1ChainConfigurationUpdated\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"configHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"L2ChainConfigurationUpdated\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"configHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"NewGrantee\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"grantee\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"NewIrrevocableGrantee\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"grantee\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false}]",
 }
 
 // RegistryABI is the input ABI used to generate the binding from.
@@ -210,6 +211,37 @@ func (_Registry *RegistryTransactorRaw) Transact(opts *bind.TransactOpts, method
 	return _Registry.Contract.contract.Transact(opts, method, params...)
 }
 
+// GetL1BlockHashOracle is a free data retrieval call binding the contract method 0x7fc0ad31.
+//
+// Solidity: function getL1BlockHashOracle(uint256 _chainID) view returns(address)
+func (_Registry *RegistryCaller) GetL1BlockHashOracle(opts *bind.CallOpts, _chainID *big.Int) (common.Address, error) {
+	var out []interface{}
+	err := _Registry.contract.Call(opts, &out, "getL1BlockHashOracle", _chainID)
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// GetL1BlockHashOracle is a free data retrieval call binding the contract method 0x7fc0ad31.
+//
+// Solidity: function getL1BlockHashOracle(uint256 _chainID) view returns(address)
+func (_Registry *RegistrySession) GetL1BlockHashOracle(_chainID *big.Int) (common.Address, error) {
+	return _Registry.Contract.GetL1BlockHashOracle(&_Registry.CallOpts, _chainID)
+}
+
+// GetL1BlockHashOracle is a free data retrieval call binding the contract method 0x7fc0ad31.
+//
+// Solidity: function getL1BlockHashOracle(uint256 _chainID) view returns(address)
+func (_Registry *RegistryCallerSession) GetL1BlockHashOracle(_chainID *big.Int) (common.Address, error) {
+	return _Registry.Contract.GetL1BlockHashOracle(&_Registry.CallOpts, _chainID)
+}
+
 // GetL2ConfigAddresses is a free data retrieval call binding the contract method 0x974ec7fc.
 //
 // Solidity: function getL2ConfigAddresses(uint256 _chainID) view returns(address[])
@@ -270,6 +302,37 @@ func (_Registry *RegistrySession) GetL2ConfigStorageSlots(_chainID *big.Int) ([]
 // Solidity: function getL2ConfigStorageSlots(uint256 _chainID) view returns(uint256[])
 func (_Registry *RegistryCallerSession) GetL2ConfigStorageSlots(_chainID *big.Int) ([]*big.Int, error) {
 	return _Registry.Contract.GetL2ConfigStorageSlots(&_Registry.CallOpts, _chainID)
+}
+
+// GetL2ConfigType is a free data retrieval call binding the contract method 0x5338efd4.
+//
+// Solidity: function getL2ConfigType(uint256 _chainID) view returns(uint8)
+func (_Registry *RegistryCaller) GetL2ConfigType(opts *bind.CallOpts, _chainID *big.Int) (uint8, error) {
+	var out []interface{}
+	err := _Registry.contract.Call(opts, &out, "getL2ConfigType", _chainID)
+
+	if err != nil {
+		return *new(uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
+
+	return out0, err
+
+}
+
+// GetL2ConfigType is a free data retrieval call binding the contract method 0x5338efd4.
+//
+// Solidity: function getL2ConfigType(uint256 _chainID) view returns(uint8)
+func (_Registry *RegistrySession) GetL2ConfigType(_chainID *big.Int) (uint8, error) {
+	return _Registry.Contract.GetL2ConfigType(&_Registry.CallOpts, _chainID)
+}
+
+// GetL2ConfigType is a free data retrieval call binding the contract method 0x5338efd4.
+//
+// Solidity: function getL2ConfigType(uint256 _chainID) view returns(uint8)
+func (_Registry *RegistryCallerSession) GetL2ConfigType(_chainID *big.Int) (uint8, error) {
+	return _Registry.Contract.GetL2ConfigType(&_Registry.CallOpts, _chainID)
 }
 
 // GranteeBitmap is a free data retrieval call binding the contract method 0x50257fb1.
@@ -489,11 +552,12 @@ func (_Registry *RegistryCallerSession) L2ChainConfigurationHashMap(arg0 *big.In
 
 // L2ChainConfigurations is a free data retrieval call binding the contract method 0x63281a15.
 //
-// Solidity: function l2ChainConfigurations(uint256 ) view returns(address prover, uint256 versionNumber, uint256 finalityDelaySeconds)
+// Solidity: function l2ChainConfigurations(uint256 ) view returns(address prover, uint256 versionNumber, uint256 finalityDelaySeconds, uint8 l2Type)
 func (_Registry *RegistryCaller) L2ChainConfigurations(opts *bind.CallOpts, arg0 *big.Int) (struct {
 	Prover               common.Address
 	VersionNumber        *big.Int
 	FinalityDelaySeconds *big.Int
+	L2Type               uint8
 }, error) {
 	var out []interface{}
 	err := _Registry.contract.Call(opts, &out, "l2ChainConfigurations", arg0)
@@ -502,6 +566,7 @@ func (_Registry *RegistryCaller) L2ChainConfigurations(opts *bind.CallOpts, arg0
 		Prover               common.Address
 		VersionNumber        *big.Int
 		FinalityDelaySeconds *big.Int
+		L2Type               uint8
 	})
 	if err != nil {
 		return *outstruct, err
@@ -510,6 +575,7 @@ func (_Registry *RegistryCaller) L2ChainConfigurations(opts *bind.CallOpts, arg0
 	outstruct.Prover = *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 	outstruct.VersionNumber = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
 	outstruct.FinalityDelaySeconds = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+	outstruct.L2Type = *abi.ConvertType(out[3], new(uint8)).(*uint8)
 
 	return *outstruct, err
 
@@ -517,22 +583,24 @@ func (_Registry *RegistryCaller) L2ChainConfigurations(opts *bind.CallOpts, arg0
 
 // L2ChainConfigurations is a free data retrieval call binding the contract method 0x63281a15.
 //
-// Solidity: function l2ChainConfigurations(uint256 ) view returns(address prover, uint256 versionNumber, uint256 finalityDelaySeconds)
+// Solidity: function l2ChainConfigurations(uint256 ) view returns(address prover, uint256 versionNumber, uint256 finalityDelaySeconds, uint8 l2Type)
 func (_Registry *RegistrySession) L2ChainConfigurations(arg0 *big.Int) (struct {
 	Prover               common.Address
 	VersionNumber        *big.Int
 	FinalityDelaySeconds *big.Int
+	L2Type               uint8
 }, error) {
 	return _Registry.Contract.L2ChainConfigurations(&_Registry.CallOpts, arg0)
 }
 
 // L2ChainConfigurations is a free data retrieval call binding the contract method 0x63281a15.
 //
-// Solidity: function l2ChainConfigurations(uint256 ) view returns(address prover, uint256 versionNumber, uint256 finalityDelaySeconds)
+// Solidity: function l2ChainConfigurations(uint256 ) view returns(address prover, uint256 versionNumber, uint256 finalityDelaySeconds, uint8 l2Type)
 func (_Registry *RegistryCallerSession) L2ChainConfigurations(arg0 *big.Int) (struct {
 	Prover               common.Address
 	VersionNumber        *big.Int
 	FinalityDelaySeconds *big.Int
+	L2Type               uint8
 }, error) {
 	return _Registry.Contract.L2ChainConfigurations(&_Registry.CallOpts, arg0)
 }
@@ -704,23 +772,23 @@ func (_Registry *RegistryTransactorSession) UpdateL1ChainConfiguration(_chainID 
 	return _Registry.Contract.UpdateL1ChainConfiguration(&_Registry.TransactOpts, _chainID, _config)
 }
 
-// UpdateL2ChainConfiguration is a paid mutator transaction binding the contract method 0x3b6b4975.
+// UpdateL2ChainConfiguration is a paid mutator transaction binding the contract method 0x53467449.
 //
-// Solidity: function updateL2ChainConfiguration(uint256 _chainID, (address,address[],uint256[],uint256,uint256) _config) returns()
+// Solidity: function updateL2ChainConfiguration(uint256 _chainID, (address,address[],uint256[],uint256,uint256,uint8) _config) returns()
 func (_Registry *RegistryTransactor) UpdateL2ChainConfiguration(opts *bind.TransactOpts, _chainID *big.Int, _config L2Configuration) (*types.Transaction, error) {
 	return _Registry.contract.Transact(opts, "updateL2ChainConfiguration", _chainID, _config)
 }
 
-// UpdateL2ChainConfiguration is a paid mutator transaction binding the contract method 0x3b6b4975.
+// UpdateL2ChainConfiguration is a paid mutator transaction binding the contract method 0x53467449.
 //
-// Solidity: function updateL2ChainConfiguration(uint256 _chainID, (address,address[],uint256[],uint256,uint256) _config) returns()
+// Solidity: function updateL2ChainConfiguration(uint256 _chainID, (address,address[],uint256[],uint256,uint256,uint8) _config) returns()
 func (_Registry *RegistrySession) UpdateL2ChainConfiguration(_chainID *big.Int, _config L2Configuration) (*types.Transaction, error) {
 	return _Registry.Contract.UpdateL2ChainConfiguration(&_Registry.TransactOpts, _chainID, _config)
 }
 
-// UpdateL2ChainConfiguration is a paid mutator transaction binding the contract method 0x3b6b4975.
+// UpdateL2ChainConfiguration is a paid mutator transaction binding the contract method 0x53467449.
 //
-// Solidity: function updateL2ChainConfiguration(uint256 _chainID, (address,address[],uint256[],uint256,uint256) _config) returns()
+// Solidity: function updateL2ChainConfiguration(uint256 _chainID, (address,address[],uint256[],uint256,uint256,uint8) _config) returns()
 func (_Registry *RegistryTransactorSession) UpdateL2ChainConfiguration(_chainID *big.Int, _config L2Configuration) (*types.Transaction, error) {
 	return _Registry.Contract.UpdateL2ChainConfiguration(&_Registry.TransactOpts, _chainID, _config)
 }
