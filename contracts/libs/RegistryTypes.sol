@@ -29,6 +29,7 @@ struct L2Configuration {
     uint256[] storageSlots;
     uint256 versionNumber;
     uint256 finalityDelaySeconds;
+    Type l2Type;
 }
 
 struct L1Configuration {
