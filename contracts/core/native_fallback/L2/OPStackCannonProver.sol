@@ -178,7 +178,7 @@ contract OPStackCannonProver is ISettledStateProver {
             faultDisputeGameProxyAddress,
             _chainConfig.storageSlots[1], // For OPStackCannon faultDisputeGameRootClaimSlot is the 2nd storage slot in
                 // the config
-            _chainConfig.storageSlots[2], // For OPStackCannon faultDisputeGameStatusSlot is the 3rd storage slot in the
+                _chainConfig.storageSlots[2], // For OPStackCannon faultDisputeGameStatusSlot is the 3rd storage slot in the
                 // config
             _faultDisputeGameProofData,
             _l1WorldStateRoot
@@ -251,12 +251,12 @@ contract OPStackCannonProver is ISettledStateProver {
     /**
      * @notice Validates fault dispute game from factory configuration
      * @dev Internal helper for Cannon proving
-     * @param _disputeGameFactoryAddress Factory contract address
-     * @param _l2WorldStateRoot L2 state root to verify
-     * @param _disputeGameFactoryProofData Proof data for factory validation
+     * @param _outputVersion Version number (usually 0)
+     * @param _disputeGameFactoryAddress Address of the dispute game factory
+     * @param _disputeGameFactoryListSlot Storage slot for the dispute game factory list
+     * @param _l2WorldStateRoot Proven L2 world state root
+     * @param _disputeGameFactoryProofData Proof data for factory verification
      * @param _l1WorldStateRoot Proven L1 world state root
-     * @return faultDisputeGameProxyAddress Address of game proxy
-     * @return rootClaim Generated root claim
      */
     function _faultDisputeGameFromFactory(
         uint256 _outputVersion,
