@@ -22,6 +22,7 @@ import {SecureMerkleTrie} from "@eth-optimism/contracts-bedrock/src/libraries/tr
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {ISettledStateProver} from "../../../interfaces/ISettledStateProver.sol";
+import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
 contract OPStackCannonProver is ISettledStateProver {
     struct DisputeGameFactoryProofData {
@@ -53,40 +54,33 @@ contract OPStackCannonProver is ISettledStateProver {
 
     /**
      * @notice Invalid dispute game factory state root encoding
-     * @param _disputeGameFactoryStateRoot Invalid state root
      */
     error IncorrectDisputeGameFactoryStateRoot(bytes _disputeGameFactoryStateRoot);
 
     /**
      * @notice Fault dispute game not yet resolved
-     * @param _gameStatus Current game status
      */
     error FaultDisputeGameUnresolved(uint8 _gameStatus);
 
     /**
      * @notice Failed account proof verification
-     * @param _address Account address
-     * @param _data Account data
-     * @param _proof Merkle proof
-     * @param _root Expected root
      */
     error InvalidAccountProof(bytes _address, bytes _data, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice Failed storage proof verification
-     * @param _key Storage key
-     * @param _val Storage value
-     * @param _proof Merkle proof
-     * @param _root Expected root
      */
     error InvalidStorageProof(bytes _key, bytes _val, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice RLP encoded block data hash mismatch
-     * @param _expectedBlockHash Expected hash
-     * @param _calculatedBlockHash Actual hash
      */
     error InvalidRLPEncodedBlock(bytes32 _expectedBlockHash, bytes32 _calculatedBlockHash);
+
+    /**
+     * @notice Invalid bedrock settled state proof
+     */
+    error InvalidCannonProof(bytes32 _l2WorldStateRoot, bytes32 _l1WorldStateRoot);
 
     /**
      * @notice Validates RLP encoded block data matches expected hash
@@ -122,17 +116,18 @@ contract OPStackCannonProver is ISettledStateProver {
             FaultDisputeGameProofData memory faultDisputeGameProofData
         ) = abi.decode(_proof, (DisputeGameFactoryProofData, FaultDisputeGameProofData));
 
-        require(
-            _proveWorldStateCannon(
+        if (
+            !_proveWorldStateCannon(
                 _chainConfig,
                 _l2WorldStateRoot,
                 _rlpEncodedL2Header,
                 disputeGameFactoryProofData,
                 faultDisputeGameProofData,
                 _l1WorldStateRoot
-            ),
-            "Invalid Bedrock proof"
-        );
+            )
+        ) {
+            revert InvalidCannonProof(_l2WorldStateRoot, _l1WorldStateRoot);
+        }
         return true;
     }
 
@@ -177,8 +172,8 @@ contract OPStackCannonProver is ISettledStateProver {
             rootClaim,
             faultDisputeGameProxyAddress,
             _chainConfig.storageSlots[1], // For OPStackCannon faultDisputeGameRootClaimSlot is the 2nd storage slot in
-                // the config
-                _chainConfig.storageSlots[2], // For OPStackCannon faultDisputeGameStatusSlot is the 3rd storage slot in the
+            // the config
+            _chainConfig.storageSlots[2], // For OPStackCannon faultDisputeGameStatusSlot is the 3rd storage slot in the
                 // config
             _faultDisputeGameProofData,
             _l1WorldStateRoot
@@ -213,7 +208,7 @@ contract OPStackCannonProver is ISettledStateProver {
         // ensure faultDisputeGame is resolved
         // Prove that the FaultDispute game has been settled
         // storage proof for FaultDisputeGame rootClaim (means block is valid)
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(uint256(_faultDisputeGameRootClaimSlot)),
             _rootClaim,
             _faultDisputeGameProofData.faultDisputeGameRootClaimStorageProof,
@@ -230,7 +225,7 @@ contract OPStackCannonProver is ISettledStateProver {
         );
 
         // Verify game status storage proof
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(uint256(_faultDisputeGameStatusSlot)),
             faultDisputeGameStatusStorage,
             _faultDisputeGameProofData.faultDisputeGameStatusStorageProof,
@@ -289,7 +284,7 @@ contract OPStackCannonProver is ISettledStateProver {
         }
 
         // Verify storage and account proofs
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(disputeGameFactoryStorageSlot),
             _disputeGameFactoryProofData.gameId,
             _disputeGameFactoryProofData.disputeFaultGameStorageProof,
@@ -359,25 +354,6 @@ contract OPStackCannonProver is ISettledStateProver {
     {
         if (!SecureMerkleTrie.verifyInclusionProof(_address, _data, _proof, _root)) {
             revert InvalidAccountProof(_address, _data, _proof, _root);
-        }
-    }
-
-    /**
-     * @notice Validates a bytes32 storage value against a root
-     * @dev Encodes value as RLP before verification
-     * @param _key Storage slot key
-     * @param _val Expected bytes32 value
-     * @param _proof Merkle proof
-     * @param _root Expected root
-     */
-    function _proveStorageBytes32(bytes memory _key, bytes32 _val, bytes[] memory _proof, bytes32 _root)
-        internal
-        pure
-    {
-        // `RLPWriter.writeUint` properly encodes values by removing any leading zeros.
-        bytes memory rlpEncodedValue = RLPWriter.writeUint(uint256(_val));
-        if (!SecureMerkleTrie.verifyInclusionProof(_key, rlpEncodedValue, _proof, _root)) {
-            revert InvalidStorageProof(_key, rlpEncodedValue, _proof, _root);
         }
     }
 

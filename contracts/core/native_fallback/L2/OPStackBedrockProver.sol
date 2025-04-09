@@ -22,38 +22,33 @@ import {SecureMerkleTrie} from "@eth-optimism/contracts-bedrock/src/libraries/tr
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {ISettledStateProver} from "../../../interfaces/ISettledStateProver.sol";
+import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
 contract OPStackBedrockProver is ISettledStateProver {
     /**
      * @notice Invalid output oracle storage root encoding
-     * @param _outputOracleStateRoot Invalid storage root
      */
     error IncorrectOutputOracleStorageRoot(bytes _outputOracleStateRoot);
 
     /**
      * @notice Block timestamp before finality period
-     * @param _blockTimeStamp Block timestamp
-     * @param _finalityDelayTimeStamp Required timestamp including delay
      */
     error BlockBeforeFinalityPeriod(uint256 _blockTimeStamp, uint256 _finalityDelayTimeStamp);
 
     /**
      * @notice Failed storage proof verification
-     * @param _key Storage key
-     * @param _val Storage value
-     * @param _proof Merkle proof
-     * @param _root Expected root
      */
     error InvalidStorageProof(bytes _key, bytes _val, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice Failed account proof verification
-     * @param _address Account address
-     * @param _data Account data
-     * @param _proof Merkle proof
-     * @param _root Expected root
      */
     error InvalidAccountProof(bytes _address, bytes _data, bytes[] _proof, bytes32 _root);
+
+    /**
+     * @notice Invalid bedrock settled state proof
+     */
+    error InvalidBedrockProof(bytes32 _l2WorldStateRoot, bytes32 _l1WorldStateRoot);
 
     /**
      * @notice Handles Bedrock L2 world state validation
@@ -80,17 +75,18 @@ contract OPStackBedrockProver is ISettledStateProver {
             bytes[] memory l1AccountProof
         ) = abi.decode(_proof, (bytes32, uint256, bytes[], bytes, bytes[]));
 
-        require(
-            _proveWorldStateBedrock(
+        if (
+            !_proveWorldStateBedrock(
                 _chainConfig,
                 BedrockScalarArgs(_l2WorldStateRoot, l2MessagePasserStateRoot, l2OutputIndex, _l1WorldStateRoot),
                 _rlpEncodedL2Header,
                 l1StorageProof,
                 rlpEncodedOutputOracleData,
                 l1AccountProof
-            ),
-            "Invalid Bedrock proof"
-        );
+            )
+        ) {
+            revert InvalidBedrockProof(_l2WorldStateRoot, _l1WorldStateRoot);
+        }
         return true;
     }
 
@@ -159,7 +155,7 @@ contract OPStackBedrockProver is ISettledStateProver {
             revert IncorrectOutputOracleStorageRoot(outputOracleStateRoot);
         }
 
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(outputRootStorageSlot), outputRoot, _l1StorageProof, bytes32(outputOracleStateRoot)
         );
 
@@ -203,25 +199,6 @@ contract OPStackBedrockProver is ISettledStateProver {
             number = number + uint256(uint8(_b[i])) * (2 ** (8 * (_b.length - (i + 1))));
         }
         return number;
-    }
-
-    /**
-     * @notice Validates a bytes32 storage value against a root
-     * @dev Encodes value as RLP before verification
-     * @param _key Storage slot key
-     * @param _val Expected bytes32 value
-     * @param _proof Merkle proof
-     * @param _root Expected root
-     */
-    function _proveStorageBytes32(bytes memory _key, bytes32 _val, bytes[] memory _proof, bytes32 _root)
-        internal
-        pure
-    {
-        // `RLPWriter.writeUint` properly encodes values by removing any leading zeros.
-        bytes memory rlpEncodedValue = RLPWriter.writeUint(uint256(_val));
-        if (!SecureMerkleTrie.verifyInclusionProof(_key, rlpEncodedValue, _proof, _root)) {
-            revert InvalidStorageProof(_key, rlpEncodedValue, _proof, _root);
-        }
     }
 
     /**
