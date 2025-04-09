@@ -55,6 +55,10 @@ contract IntegrationTest is Test {
     uint256 public bedrockChainID = 10;
     uint256 public cannonChainID = 11;
 
+    // Event declarations
+    event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);
+    event L2ChainConfigurationUpdated(uint256 indexed chainID, bytes32 indexed configHash);
+    
     // Standard test setup that integrates all components
     function setUp() public {
         owner = address(0x1);
@@ -74,7 +78,7 @@ contract IntegrationTest is Test {
         Registry.InitialL2Configuration[] memory registryInitialL2Configs = new Registry.InitialL2Configuration[](0);
         Registry.InitialL1Configuration[] memory registryInitialL1Configs = new Registry.InitialL1Configuration[](0);
 
-        registry = new Registry(owner, false, registryInitialL2Configs, registryInitialL1Configs);
+        registry = new Registry(owner, registryInitialL2Configs, registryInitialL1Configs);
 
         // Setup L1 configuration for Prover
         L1Configuration memory l1Config = L1Configuration({
@@ -102,7 +106,8 @@ contract IntegrationTest is Test {
                 addresses: bedrockAddrs,
                 storageSlots: bedrockSlots,
                 versionNumber: 0,
-                finalityDelaySeconds: 7200
+                finalityDelaySeconds: 7200,
+                l2Type: Type.OPStackBedrock
             })
         });
 
@@ -122,15 +127,31 @@ contract IntegrationTest is Test {
                 addresses: cannonAddrs,
                 storageSlots: cannonSlots,
                 versionNumber: 0,
-                finalityDelaySeconds: 0 // Not used in Cannon
+                finalityDelaySeconds: 0, // Not used in Cannon
+                l2Type: Type.OPStackCannon
             })
         });
 
         // Create MockProver
         mockProver = new MockProver(l2ChainID, l1Config, proverInitialConfigs);
 
+        // Calculate expected role hash for bedrock chain ID
+        bytes32 bedrockRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), bedrockChainID));
+        
+        // Expect the RoleGranted event for bedrock chain
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(bedrockRole, address(mockProver), owner);
+        
         // Grant permissions in Registry for the Prover to update configs
         registry.grantChainID(address(mockProver), bedrockChainID);
+        
+        // Calculate expected role hash for cannon chain ID
+        bytes32 cannonRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), cannonChainID));
+        
+        // Expect the RoleGranted event for cannon chain
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(cannonRole, address(mockProver), owner);
+        
         registry.grantChainID(address(mockProver), cannonChainID);
 
         vm.stopPrank();
@@ -153,17 +174,31 @@ contract IntegrationTest is Test {
             addresses: updatedBedrockAddrs,
             storageSlots: updatedBedrockSlots,
             versionNumber: 1, // Updated version
-            finalityDelaySeconds: 3600 // Updated delay
+            finalityDelaySeconds: 3600, // Updated delay
+            l2Type: Type.OPStackBedrock
         });
 
+        // Calculate expected role hash for bedrock chain ID
+        bytes32 bedrockRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), bedrockChainID));
+        
+        // Expect the RoleGranted event
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(bedrockRole, owner, owner);
+        
         // Grant permission to ourselves to update this specific chain ID
         registry.grantChainID(owner, bedrockChainID);
 
+        // Calculate the config hash
+        bytes32 configHash = keccak256(abi.encode(updatedBedrockConfig));
+        
+        // Expect the L2ChainConfigurationUpdated event
+        vm.expectEmit(true, true, true, true);
+        emit L2ChainConfigurationUpdated(bedrockChainID, configHash);
+        
         // Update the registry configuration directly
         registry.updateL2ChainConfiguration(bedrockChainID, updatedBedrockConfig);
 
         // Verify Registry has the correct hash
-        bytes32 configHash = keccak256(abi.encode(updatedBedrockConfig));
         assertEq(registry.l2ChainConfigurationHashMap(bedrockChainID), configHash);
 
         // 2. Now update mockProver configuration

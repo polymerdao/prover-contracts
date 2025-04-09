@@ -53,40 +53,33 @@ contract OPStackCannonProver is ISettledStateProver {
 
     /**
      * @notice Invalid dispute game factory state root encoding
-     * @param _disputeGameFactoryStateRoot Invalid state root
      */
     error IncorrectDisputeGameFactoryStateRoot(bytes _disputeGameFactoryStateRoot);
 
     /**
      * @notice Fault dispute game not yet resolved
-     * @param _gameStatus Current game status
      */
     error FaultDisputeGameUnresolved(uint8 _gameStatus);
 
     /**
      * @notice Failed account proof verification
-     * @param _address Account address
-     * @param _data Account data
-     * @param _proof Merkle proof
-     * @param _root Expected root
      */
     error InvalidAccountProof(bytes _address, bytes _data, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice Failed storage proof verification
-     * @param _key Storage key
-     * @param _val Storage value
-     * @param _proof Merkle proof
-     * @param _root Expected root
      */
     error InvalidStorageProof(bytes _key, bytes _val, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice RLP encoded block data hash mismatch
-     * @param _expectedBlockHash Expected hash
-     * @param _calculatedBlockHash Actual hash
      */
     error InvalidRLPEncodedBlock(bytes32 _expectedBlockHash, bytes32 _calculatedBlockHash);
+
+    /**
+     * @notice Invalid bedrock settled state proof
+     */
+    error InvalidCannonProof(bytes32 _l2WorldStateRoot, bytes32 _l1WorldStateRoot);
 
     /**
      * @notice Validates RLP encoded block data matches expected hash
@@ -122,17 +115,19 @@ contract OPStackCannonProver is ISettledStateProver {
             FaultDisputeGameProofData memory faultDisputeGameProofData
         ) = abi.decode(_proof, (DisputeGameFactoryProofData, FaultDisputeGameProofData));
 
-        require(
-            _proveWorldStateCannon(
+        if(!_proveWorldStateCannon(
                 _chainConfig,
                 _l2WorldStateRoot,
                 _rlpEncodedL2Header,
                 disputeGameFactoryProofData,
                 faultDisputeGameProofData,
                 _l1WorldStateRoot
-            ),
-            "Invalid Bedrock proof"
-        );
+            )) {
+            revert InvalidCannonProof(
+                _l2WorldStateRoot,
+                _l1WorldStateRoot
+            );
+        }
         return true;
     }
 

@@ -3,7 +3,7 @@ pragma solidity 0.8.15;
 
 import {Test} from "forge-std/Test.sol";
 import {OPStackCannonProver} from "../../contracts/core/native_fallback/L2/OPStackCannonProver.sol";
-import {L2Configuration} from "../../contracts/libs/RegistryTypes.sol";
+import {L2Configuration, Type} from "../../contracts/libs/RegistryTypes.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 
@@ -32,7 +32,8 @@ contract OPStackCannonProverTest is Test {
             addresses: addresses,
             storageSlots: storageSlots,
             versionNumber: 0, // Typical OP Stack version
-            finalityDelaySeconds: 0 // Not used in Cannon prover
+            finalityDelaySeconds: 0, // Not used in Cannon prover
+            l2Type: Type.OPStackCannon
         });
 
         // Mock state roots

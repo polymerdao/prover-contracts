@@ -17,14 +17,14 @@
 
 pragma solidity 0.8.15;
 
+import {BitMaps} from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import {IRegistry} from "../../../interfaces/IRegistry.sol";
 import {L2Configuration, L1Configuration, Type} from "../../../libs/RegistryTypes.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract Registry is IRegistry {
-    address public immutable multiSigOwner;
-
-    bool public immutable onlyAdd;
-
+contract Registry is IRegistry, Ownable, Pausable, AccessControl {
     mapping(uint256 => bytes32) public l2ChainConfigurationHashMap;
 
     mapping(uint256 => L2Configuration) public l2ChainConfigurations;
@@ -33,11 +33,9 @@ contract Registry is IRegistry {
 
     mapping(uint256 => L1Configuration) public l1ChainConfigurations;
 
-    mapping(address => mapping(uint256 => uint256)) public granteeBitmap;
+    BitMaps.BitMap internal irrevocableChainIDBitmap;
 
-    mapping(uint256 => uint256) public irrevocableChainIDBitmap;
-
-    event NewGrantee(uint256 indexed chainID, address indexed grantee);
+    bytes32 private constant CHAIN_ROLE_PREFIX = keccak256("CHAIN_ROLE");
 
     event NewIrrevocableGrantee(uint256 indexed chainID, address indexed grantee);
 
@@ -55,20 +53,22 @@ contract Registry is IRegistry {
         L1Configuration config;
     }
 
-    modifier onlyMultiSig() {
-        require(msg.sender == multiSigOwner, "Not authorized");
-        _;
-    }
+    error InvalidRange(uint256 startChainID, uint256 stopChainID);
 
     constructor(
-        address _multiSigOwner,
-        bool _onlyAdd,
+        address _initialOwner,
         InitialL2Configuration[] memory _initialL2Configurations,
         InitialL1Configuration[] memory _initialL1Configurations
     ) {
-        require(_multiSigOwner != address(0), "Invalid multiSig address");
-        multiSigOwner = _multiSigOwner;
-        onlyAdd = _onlyAdd;
+        if (_initialOwner == address(0)) {
+            revert("Ownable: new owner is the zero address");
+        }
+        _transferOwnership(_initialOwner);
+
+        // Grant the default admin role to the owner
+        _setupRole(DEFAULT_ADMIN_ROLE, _initialOwner);
+
+        // Initialize configurations
         for (uint256 i = 0; i < _initialL2Configurations.length; ++i) {
             _setL2ChainConfiguration(_initialL2Configurations[i].chainID, _initialL2Configurations[i].config);
         }
@@ -86,7 +86,6 @@ contract Registry is IRegistry {
 
     function updateL1ChainConfiguration(uint256 _chainID, L1Configuration calldata _config) external {
         require(_isGrantee(msg.sender, _chainID), "Not authorized");
-        require(_isAllowedL1ConfigUpdate(_chainID), "Existing config cannot be updated");
         _setL1ChainConfiguration(_chainID, _config);
     }
 
@@ -99,40 +98,45 @@ contract Registry is IRegistry {
 
     function updateL2ChainConfiguration(uint256 _chainID, L2Configuration calldata _config) external {
         require(_isGrantee(msg.sender, _chainID), "Not authorized");
-        require(_isAllowedL2ConfigUpdate(_chainID), "Existing config cannot be updated");
         _setL2ChainConfiguration(_chainID, _config);
     }
 
     modifier isRevocable(uint256 _chainID) {
-        require((irrevocableChainIDBitmap[_chainID / 256] & (1 << (_chainID % 256))) == 0, "ChainID is irrevocable");
+        require(BitMaps.get(irrevocableChainIDBitmap, _chainID) == false, "ChainID is irrevocable");
         _;
     }
 
-    function grantChainID(address _grantee, uint256 _chainID) external onlyMultiSig isRevocable(_chainID) {
+    /**
+     * @dev Get chain-specific role identifier based on chain ID
+     */
+    function _getChainRole(uint256 _chainID) internal pure returns (bytes32) {
+        return keccak256(abi.encode(CHAIN_ROLE_PREFIX, _chainID));
+    }
+
+    function grantChainID(address _grantee, uint256 _chainID) external onlyOwner isRevocable(_chainID) {
         return _grantChainID(_grantee, _chainID);
     }
 
-    function grantChainIDIrrevocable(address _grantee, uint256 _chainID) external onlyMultiSig isRevocable(_chainID) {
+    function grantChainIDIrrevocable(address _grantee, uint256 _chainID) external onlyOwner isRevocable(_chainID) {
         return _grantChainIDIrrevocable(_grantee, _chainID);
     }
 
     function _grantChainID(address _grantee, uint256 _chainID) internal isRevocable(_chainID) {
-        uint256 _bucket = _chainID / 256;
-        uint256 _bit = _chainID % 256;
-        granteeBitmap[_grantee][_bucket] |= (1 << _bit);
-        emit NewGrantee(_chainID, _grantee);
+        bytes32 role = _getChainRole(_chainID);
+        _grantRole(role, _grantee);
     }
 
     function _grantChainIDIrrevocable(address _grantee, uint256 _chainID) internal isRevocable(_chainID) {
-        uint256 _bucket = _chainID / 256;
-        uint256 _bit = _chainID % 256;
-        granteeBitmap[_grantee][_bucket] |= (1 << _bit);
-        irrevocableChainIDBitmap[_bucket] |= (1 << _bit);
+        BitMaps.set(irrevocableChainIDBitmap, _chainID);
+        bytes32 role = _getChainRole(_chainID);
+        _grantRole(role, _grantee);
         emit NewIrrevocableGrantee(_chainID, _grantee);
     }
 
-    function grantChainIDRange(address _grantee, uint256 _startChainID, uint256 _stopChainID) external onlyMultiSig {
-        require(_startChainID <= _stopChainID, "Invalid range");
+    function grantChainIDRange(address _grantee, uint256 _startChainID, uint256 _stopChainID) external onlyOwner {
+        if (_startChainID > _stopChainID) {
+            revert InvalidRange(_startChainID, _stopChainID);
+        }
         for (uint256 i = _startChainID; i <= _stopChainID; i++) {
             _grantChainID(_grantee, i);
         }
@@ -140,32 +144,19 @@ contract Registry is IRegistry {
 
     function grantChainIDRangeIrrevocable(address _grantee, uint256 _startChainID, uint256 _stopChainID)
         external
-        onlyMultiSig
+        onlyOwner
     {
-        require(_startChainID <= _stopChainID, "Invalid range");
+        if (_startChainID > _stopChainID) {
+            revert InvalidRange(_startChainID, _stopChainID);
+        }
         for (uint256 i = _startChainID; i <= _stopChainID; i++) {
             _grantChainIDIrrevocable(_grantee, i);
         }
     }
 
     function _isGrantee(address _grantee, uint256 _chainID) internal view returns (bool) {
-        uint256 _bucket = _chainID / 256;
-        uint256 _bit = _chainID % 256;
-        return (granteeBitmap[_grantee][_bucket] & (1 << _bit)) != 0;
-    }
-
-    function _isAllowedL2ConfigUpdate(uint256 _chainID) internal view returns (bool) {
-        if (!onlyAdd) {
-            return true;
-        }
-        return l2ChainConfigurationHashMap[_chainID] == bytes32(0);
-    }
-
-    function _isAllowedL1ConfigUpdate(uint256 _chainID) internal view returns (bool) {
-        if (!onlyAdd) {
-            return true;
-        }
-        return l1ChainConfigurationHashMap[_chainID] == bytes32(0);
+        bytes32 role = _getChainRole(_chainID);
+        return hasRole(role, _grantee);
     }
 
     function isGrantee(address _grantee, uint256 _chainID) external view returns (bool) {

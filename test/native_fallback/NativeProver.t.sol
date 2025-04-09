@@ -88,7 +88,8 @@ contract ProverTest is Test {
             addresses: addresses,
             storageSlots: storageSlots,
             versionNumber: 1,
-            finalityDelaySeconds: 7200
+            finalityDelaySeconds: 7200,
+            l2Type: Type.Nitro
         });
 
         NativeProver.InitialL2Configuration[] memory initialL2Configs = new NativeProver.InitialL2Configuration[](1);
@@ -187,7 +188,8 @@ contract ProverTest is Test {
             addresses: addresses,
             storageSlots: storageSlots,
             versionNumber: 1,
-            finalityDelaySeconds: 7200
+            finalityDelaySeconds: 7200,
+            l2Type: Type.Nitro
         });
 
         // Create a new prover instance with the modified config
@@ -200,7 +202,7 @@ contract ProverTest is Test {
         // Set the mock L1Block with the calculated hash for the new prover
         mockL1Block.setBlockHash(l1BlockHash);
 
-        // Expect event to be emitted
+        // Expect L1WorldStateProven event to be emitted
         vm.expectEmit(true, true, true, true);
         emit L1WorldStateProven(100, l1StateRoot);
 
@@ -237,7 +239,7 @@ contract ProverTest is Test {
         // First prove L1 state
         prover.proveSettlementLayerState(rlpEncodedL1Header);
 
-        // Expect event to be emitted
+        // Expect L2WorldStateProven event to be emitted with proper parameters
         vm.expectEmit(true, true, true, true);
         emit L2WorldStateProven(l2ChainID, 200, l2StateRoot);
 
@@ -263,7 +265,7 @@ contract ProverTest is Test {
         // Should revert with SettlementChainStateRootNotProved
         vm.expectRevert(
             abi.encodeWithSelector(
-                NativeProver.SettlementChainStateRootNotProved.selector, l1StateRoot, invalidL1StateRoot
+                NativeProver.SettlementChainStateRootNotProven.selector, l1StateRoot, invalidL1StateRoot
             )
         );
         prover.proveSettledState(
@@ -278,8 +280,14 @@ contract ProverTest is Test {
         // Make mock prover return false
         mockStateProver.setShouldSucceed(false);
 
-        // Should revert with "Invalid settled state proof"
-        vm.expectRevert("Invalid settled state proof");
+        // Should revert with InvalidSettledStateProof error
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                NativeProver.InvalidSettledStateProof.selector,
+                l2ChainID,
+                l2StateRoot
+            )
+        );
         prover.proveSettledState(
             l2ChainID, l2StateRoot, rlpEncodedL2Header, l1StateRoot, _createMockSettledStateProof()
         );
@@ -311,7 +319,8 @@ contract ProverTest is Test {
             addresses: addresses,
             storageSlots: storageSlots,
             versionNumber: 1,
-            finalityDelaySeconds: 7200
+            finalityDelaySeconds: 7200,
+            l2Type: Type.Nitro
         });
 
         // 3. Create a new mock prover and initialize with our test chain
@@ -539,7 +548,8 @@ contract ProverTest is Test {
             addresses: addresses,
             storageSlots: storageSlots,
             versionNumber: 1,
-            finalityDelaySeconds: 3600
+            finalityDelaySeconds: 3600,
+            l2Type: Type.Nitro
         });
 
         // Create minimal proofs
@@ -564,7 +574,7 @@ contract ProverTest is Test {
         // Should revert with SettlementChainStateRootNotProved
         vm.expectRevert(
             abi.encodeWithSelector(
-                NativeProver.SettlementChainStateRootNotProved.selector,
+                NativeProver.SettlementChainStateRootNotProven.selector,
                 bytes32(0), // The current proven state root (0 since none is set)
                 unprovenStateRoot
             )
