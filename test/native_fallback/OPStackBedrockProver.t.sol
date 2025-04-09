@@ -3,7 +3,7 @@ pragma solidity 0.8.15;
 
 import {Test} from "forge-std/Test.sol";
 import {OPStackBedrockProver} from "../../contracts/core/native_fallback/L2/OPStackBedrockProver.sol";
-import {L2Configuration} from "../../contracts/libs/RegistryTypes.sol";
+import {L2Configuration, Type} from "../../contracts/libs/RegistryTypes.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 
@@ -32,7 +32,8 @@ contract OPStackBedrockProverTest is Test {
             addresses: addresses,
             storageSlots: storageSlots,
             versionNumber: 0, // Typical OP Stack version
-            finalityDelaySeconds: 100 // Use a smaller value to avoid overflow
+            finalityDelaySeconds: 100, // Use a smaller value to avoid overflow
+            l2Type: Type.OPStackCannon // Using the enum Type
         });
 
         // Mock state roots

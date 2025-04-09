@@ -17,7 +17,7 @@
 
 pragma solidity ^0.8.0;
 
-import {L2Configuration, L1Configuration, ProveScalarArgs} from "../libs/RegistryTypes.sol";
+import {L2Configuration, L1Configuration, ProveScalarArgs, UpdateL2ConfigArgs} from "../libs/RegistryTypes.sol";
 
 /**
  * @title INativeProver
@@ -52,15 +52,37 @@ interface INativeProver {
         bytes calldata _proof
     ) external;
 
+    function updateAndProve(
+        UpdateL2ConfigArgs calldata _updateArgs,
+        ProveScalarArgs calldata _proveArgs,
+        bytes calldata _rlpEncodedL1Header,
+        bytes memory _rlpEncodedL2Header,
+        bytes calldata _settledStateProof,
+        bytes[] calldata _l2StorageProof,
+        bytes calldata _rlpEncodedContractAccount,
+        bytes[] calldata _l2AccountProof
+    ) external returns (uint256 chainId, address storingContract, bytes32 storageValue);
+
     function proveStorageValue(
-        ProveScalarArgs calldata _args,
+        ProveScalarArgs calldata _proveArgs,
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractState,
         bytes[] calldata _l2AccountProof
     ) external view returns (uint256 chainId, address storingContract, bytes32 storageValue);
 
     function prove(
-        ProveScalarArgs calldata _args,
+        ProveScalarArgs calldata _proveArgs,
+        bytes calldata _rlpEncodedL1Header,
+        bytes memory _rlpEncodedL2Header,
+        bytes calldata _settledStateProof,
+        bytes[] calldata _l2StorageProof,
+        bytes calldata _rlpEncodedContractAccount,
+        bytes[] calldata _l2AccountProof
+    ) external view returns (uint256 chainId, address storingContract, bytes32 storageValue);
+
+    function configureAndProve(
+        UpdateL2ConfigArgs calldata _updateArgs,
+        ProveScalarArgs calldata _proveArgs,
         bytes calldata _rlpEncodedL1Header,
         bytes memory _rlpEncodedL2Header,
         bytes calldata _settledStateProof,

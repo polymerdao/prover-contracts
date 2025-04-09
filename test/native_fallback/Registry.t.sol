@@ -3,7 +3,8 @@ pragma solidity 0.8.15;
 
 import {Test} from "forge-std/Test.sol";
 import {Registry} from "../../contracts/core/native_fallback/L1/Registry.sol";
-import {L2Configuration, L1Configuration} from "../../contracts/libs/RegistryTypes.sol";
+import {L2Configuration, L1Configuration, Type} from "../../contracts/libs/RegistryTypes.sol";
+import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract RegistryTest is Test {
     Registry public registry;
@@ -16,6 +17,8 @@ contract RegistryTest is Test {
 
     event L2ChainConfigurationUpdated(uint256 indexed chainID, bytes32 indexed configHash);
     event L1ChainConfigurationUpdated(uint256 indexed chainID, bytes32 indexed configHash);
+    event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);
+    event NewIrrevocableGrantee(uint256 indexed chainID, address indexed grantee);
 
     function setUp() public {
         owner = address(0x1);
@@ -35,7 +38,8 @@ contract RegistryTest is Test {
             addresses: addresses,
             storageSlots: storageSlots,
             versionNumber: 1,
-            finalityDelaySeconds: 3600
+            finalityDelaySeconds: 3600,
+            l2Type: Type.OPStackBedrock
         });
 
         l1Config = L1Configuration({
@@ -53,11 +57,11 @@ contract RegistryTest is Test {
         initialL1Configs[0] = Registry.InitialL1Configuration({chainID: chainID, config: l1Config});
 
         vm.prank(owner);
-        registry = new Registry(owner, false, initialL2Configs, initialL1Configs);
+        registry = new Registry(owner, initialL2Configs, initialL1Configs);
     }
 
     function testConstructor() public view {
-        assertEq(registry.multiSigOwner(), owner);
+        assertEq(registry.owner(), owner);
 
         // Test initial configuration by calculating expected hash
         bytes32 l1ConfigHash = keccak256(abi.encode(l1Config));
@@ -71,6 +75,13 @@ contract RegistryTest is Test {
 
         // Verify user doesn't have access before grant
         assertFalse(registry.isGrantee(user, testChainID));
+
+        // Calculate expected role hash
+        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), testChainID));
+
+        // Expect the RoleGranted event
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(expectedRole, user, owner);
 
         // Grant access
         vm.prank(owner);
@@ -91,6 +102,11 @@ contract RegistryTest is Test {
         for (uint256 i = startChainID; i <= stopChainID; i++) {
             assertFalse(registry.isGrantee(user, i));
         }
+
+        // For chainID range we'll test just the first and last role grants
+        bytes32 firstRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), startChainID));
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(firstRole, user, owner);
 
         // Grant access to range
         vm.prank(owner);
@@ -121,8 +137,16 @@ contract RegistryTest is Test {
             addresses: newAddresses,
             storageSlots: newStorageSlots,
             versionNumber: 2,
-            finalityDelaySeconds: 7200
+            finalityDelaySeconds: 7200,
+            l2Type: Type.OPStackBedrock
         });
+
+        // Calculate expected role hash
+        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID));
+
+        // Expect the RoleGranted event
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(expectedRole, user, owner);
 
         // Grant access to user
         vm.prank(owner);
@@ -156,7 +180,8 @@ contract RegistryTest is Test {
             addresses: initialAddresses,
             storageSlots: initialStorageSlots,
             versionNumber: 1,
-            finalityDelaySeconds: 3600
+            finalityDelaySeconds: 3600,
+            l2Type: Type.OPStackBedrock
         });
 
         // Setup updated configuration
@@ -173,8 +198,16 @@ contract RegistryTest is Test {
             addresses: updatedAddresses,
             storageSlots: updatedStorageSlots,
             versionNumber: 2,
-            finalityDelaySeconds: 7200
+            finalityDelaySeconds: 7200,
+            l2Type: Type.OPStackBedrock
         });
+
+        // Calculate expected role hash
+        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID));
+
+        // Expect the RoleGranted event
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(expectedRole, user, owner);
 
         // Grant access to user for this chain ID
         vm.prank(owner);
@@ -211,6 +244,13 @@ contract RegistryTest is Test {
         registry.updateL2ChainConfiguration(newChainID, initialConfig);
 
         // Now we'll test that someone with a fresh granted permission can update properly
+        // Calculate expected role hash for user2
+        expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID));
+
+        // Expect the RoleGranted event
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(expectedRole, user2, owner);
+
         vm.prank(owner);
         registry.grantChainID(user2, newChainID);
 
@@ -223,7 +263,8 @@ contract RegistryTest is Test {
             addresses: updatedAddresses,
             storageSlots: updatedStorageSlots,
             versionNumber: 3,
-            finalityDelaySeconds: 10_800
+            finalityDelaySeconds: 10_800,
+            l2Type: Type.OPStackBedrock
         });
 
         bytes32 finalConfigHash = keccak256(abi.encode(finalConfig));
@@ -252,7 +293,8 @@ contract RegistryTest is Test {
             addresses: newAddresses,
             storageSlots: newStorageSlots,
             versionNumber: 2,
-            finalityDelaySeconds: 7200
+            finalityDelaySeconds: 7200,
+            l2Type: Type.OPStackBedrock
         });
 
         // Try to update without permission
@@ -264,21 +306,21 @@ contract RegistryTest is Test {
     function testOnlyOwnerCanGrantChainID() public {
         // Try to grant as non-owner
         vm.prank(user);
-        vm.expectRevert("Not authorized");
+        vm.expectRevert("Ownable: caller is not the owner");
         registry.grantChainID(user2, 999);
     }
 
     function testOnlyOwnerCanGrantChainIDRange() public {
         // Try to grant range as non-owner
         vm.prank(user);
-        vm.expectRevert("Not authorized");
+        vm.expectRevert("Ownable: caller is not the owner");
         registry.grantChainIDRange(user2, 1000, 1010);
     }
 
     function testInvalidRangeReverts() public {
         // Try invalid range (start > stop)
         vm.prank(owner);
-        vm.expectRevert("Invalid range");
+        vm.expectRevert(abi.encodeWithSelector(Registry.InvalidRange.selector, 1010, 1000));
         registry.grantChainIDRange(user, 1010, 1000);
     }
 
@@ -286,8 +328,8 @@ contract RegistryTest is Test {
         Registry.InitialL2Configuration[] memory initialL2Configs = new Registry.InitialL2Configuration[](0);
         Registry.InitialL1Configuration[] memory initialL1Configs = new Registry.InitialL1Configuration[](0);
 
-        vm.expectRevert("Invalid multiSig address");
-        new Registry(address(0), false, initialL2Configs, initialL1Configs);
+        vm.expectRevert("Ownable: new owner is the zero address");
+        new Registry(address(0), initialL2Configs, initialL1Configs);
     }
 
     function testUpdateL1ChainConfiguration() public {
@@ -301,6 +343,13 @@ contract RegistryTest is Test {
             settlementRegistryL2ConfigMappingSlot: 5,
             settlementRegistryL1ConfigMappingSlot: 6
         });
+
+        // Calculate expected role hash
+        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), l1ChainID));
+
+        // Expect the RoleGranted event
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(expectedRole, user, owner);
 
         // Grant access to user
         vm.prank(owner);
@@ -327,6 +376,17 @@ contract RegistryTest is Test {
     function testIrrevocableChainID() public {
         uint256 testChainID = 777;
 
+        // Calculate expected role hash
+        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), testChainID));
+
+        // Expect the RoleGranted event
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(expectedRole, user, owner);
+
+        // Expect the NewIrrevocableGrantee event
+        vm.expectEmit(true, true, true, true);
+        emit NewIrrevocableGrantee(testChainID, user);
+
         // Grant irrevocable access to user
         vm.prank(owner);
         registry.grantChainIDIrrevocable(user, testChainID);
@@ -349,6 +409,15 @@ contract RegistryTest is Test {
         uint256 startChainID = 2000;
         uint256 stopChainID = 2010;
 
+        // For chainID range we'll test just the first role grant
+        bytes32 firstRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), startChainID));
+        vm.expectEmit(true, true, true, true);
+        emit RoleGranted(firstRole, user, owner);
+
+        // Expect the first NewIrrevocableGrantee event
+        vm.expectEmit(true, true, true, true);
+        emit NewIrrevocableGrantee(startChainID, user);
+
         // Grant irrevocable access to range
         vm.prank(owner);
         registry.grantChainIDRangeIrrevocable(user, startChainID, stopChainID);
@@ -367,7 +436,7 @@ contract RegistryTest is Test {
 
         // Verify invalid range handling
         vm.prank(owner);
-        vm.expectRevert("Invalid range");
+        vm.expectRevert(abi.encodeWithSelector(Registry.InvalidRange.selector, stopChainID, startChainID));
         registry.grantChainIDRangeIrrevocable(user, stopChainID, startChainID);
     }
 
@@ -391,77 +460,5 @@ contract RegistryTest is Test {
         for (uint256 i = 0; i < slots.length; i++) {
             assertEq(slots[i], l2Config.storageSlots[i]);
         }
-    }
-
-    function testOnlyAddLimitation() public {
-        // Deploy a registry with onlyAdd set to true
-        Registry.InitialL2Configuration[] memory initialL2Configs = new Registry.InitialL2Configuration[](0);
-        Registry.InitialL1Configuration[] memory initialL1Configs = new Registry.InitialL1Configuration[](0);
-
-        Registry restrictedRegistry = new Registry(owner, true, initialL2Configs, initialL1Configs);
-
-        uint256 testChainID = 888;
-
-        // Grant access to user
-        vm.prank(owner);
-        restrictedRegistry.grantChainID(user, testChainID);
-
-        // Setup test configuration
-        address[] memory addresses = new address[](1);
-        addresses[0] = address(0x7);
-
-        uint256[] memory storageSlots = new uint256[](1);
-        storageSlots[0] = 20;
-
-        L2Configuration memory config = L2Configuration({
-            prover: address(0x8),
-            addresses: addresses,
-            storageSlots: storageSlots,
-            versionNumber: 2,
-            finalityDelaySeconds: 7200
-        });
-
-        // First update should work (adding a new config)
-        vm.prank(user);
-        restrictedRegistry.updateL2ChainConfiguration(testChainID, config);
-
-        // Second update to the same chain ID should fail
-        L2Configuration memory updatedConfig = L2Configuration({
-            prover: address(0x9),
-            addresses: addresses,
-            storageSlots: storageSlots,
-            versionNumber: 3,
-            finalityDelaySeconds: 7200
-        });
-
-        vm.prank(user);
-        vm.expectRevert("Existing config cannot be updated");
-        restrictedRegistry.updateL2ChainConfiguration(testChainID, updatedConfig);
-
-        // Same test for L1 configs
-        L1Configuration memory testL1Config = L1Configuration({
-            blockHashOracle: address(0x1234),
-            settlementBlocksDelay: 10,
-            settlementRegistry: address(0x5678),
-            settlementRegistryL2ConfigMappingSlot: 5,
-            settlementRegistryL1ConfigMappingSlot: 6
-        });
-
-        // First update should work (adding a new config)
-        vm.prank(user);
-        restrictedRegistry.updateL1ChainConfiguration(testChainID, testL1Config);
-
-        // Second update to the same chain ID should fail
-        L1Configuration memory updatedL1Config = L1Configuration({
-            blockHashOracle: address(0x9876),
-            settlementBlocksDelay: 20,
-            settlementRegistry: address(0x5432),
-            settlementRegistryL2ConfigMappingSlot: 7,
-            settlementRegistryL1ConfigMappingSlot: 8
-        });
-
-        vm.prank(user);
-        vm.expectRevert("Existing config cannot be updated");
-        restrictedRegistry.updateL1ChainConfiguration(testChainID, updatedL1Config);
     }
 }
