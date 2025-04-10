@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import {Base} from "test/utils/Base.t.sol";
-import {CrossL2Prover} from "contracts/core/CrossL2Prover.sol";
-import {SequencerSignatureVerifier} from "contracts/core/SequencerSignatureVerifier.sol";
+import {Base} from "./utils/Base.t.sol";
+import {CrossL2Prover} from "../../contracts/core/prove_api/CrossL2Prover.sol";
+import {SequencerSignatureVerifier} from "../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
 
-import {ISignatureVerifier} from "contracts/interfaces/ISignatureVerifier.sol";
-import {ICrossL2Prover} from "contracts/interfaces/ICrossL2Prover.sol";
+import {ISignatureVerifier} from "../../contracts/interfaces/ISignatureVerifier.sol";
+import {ICrossL2Prover} from "../../contracts/interfaces/ICrossL2Prover.sol";
 
 // These were two tests which test for some edge cases with RLP encoding which we can keep as regression testing in case
 // we change any low-level RLP encoding logic.
@@ -24,9 +24,9 @@ contract CrossL2ProverDevnet is Base {
     }
 
     function test_RLP_1() public {
-        bytes memory clientUpdate = load_bytes_from_hex("/test/payload/RLP/clientUpdate1.hex");
+        bytes memory clientUpdate = load_bytes_from_hex("/test/prove_api/payload/RLP/clientUpdate1.hex");
 
-        bytes memory proof = load_bytes_from_hex("/test/payload/RLP/proof1.hex");
+        bytes memory proof = load_bytes_from_hex("/test/prove_api/payload/RLP/proof1.hex");
 
         (bool success, bytes memory returnData) = address(prover).call(clientUpdate);
 
@@ -36,9 +36,9 @@ contract CrossL2ProverDevnet is Base {
     }
 
     function test_RLP_2() public {
-        bytes memory clientUpdate = load_bytes_from_hex("/test/payload/RLP/clientUpdate2.hex");
+        bytes memory clientUpdate = load_bytes_from_hex("/test/prove_api/payload/RLP/clientUpdate2.hex");
 
-        bytes memory proof = load_bytes_from_hex("/test/payload/RLP/proof2.hex");
+        bytes memory proof = load_bytes_from_hex("/test/prove_api/payload/RLP/proof2.hex");
 
         (bool success, bytes memory returnData) = address(prover).call(clientUpdate);
 

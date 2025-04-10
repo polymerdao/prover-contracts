@@ -2,15 +2,15 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import {SigningBase} from "test/utils/Signing.base.t.sol";
-import {CrossL2Prover} from "contracts/core/CrossL2Prover.sol";
-import {CrossL2ProverV2} from "contracts/core/CrossL2ProverV2.sol";
-import {SequencerSignatureVerifier} from "contracts/core/SequencerSignatureVerifier.sol";
-import {Ics23Proof, OpIcs23Proof} from "contracts/libs/ReceiptParser.sol";
-import {ISignatureVerifier} from "contracts/interfaces/ISignatureVerifier.sol";
-import {ICrossL2Prover} from "contracts/interfaces/ICrossL2Prover.sol";
+import {SigningBase} from "./utils/Signing.base.t.sol";
+import {CrossL2Prover} from "../../contracts/core/prove_api/CrossL2Prover.sol";
+import {CrossL2ProverV2} from "../../contracts/core/prove_api/CrossL2ProverV2.sol";
+import {SequencerSignatureVerifier} from "../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
+import {Ics23Proof, OpIcs23Proof} from "../../contracts/libs/ReceiptParser.sol";
+import {ISignatureVerifier} from "../../contracts/interfaces/ISignatureVerifier.sol";
+import {ICrossL2Prover} from "../../contracts/interfaces/ICrossL2Prover.sol";
 import {MerkleTrie} from "optimism/libraries/trie/MerkleTrie.sol";
-import {IAppStateVerifier} from "contracts/interfaces/IAppStateVerifier.sol";
+import {IAppStateVerifier} from "../../contracts/interfaces/IAppStateVerifier.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 
 contract CrossL2ProverTest is SigningBase {
@@ -25,7 +25,7 @@ contract CrossL2ProverTest is SigningBase {
             0x8D3921B96A3815F403Fb3a4c7fF525969d16f9E0,
             0x0000000000000000000000000000000000000000000000000000000000000385
         );
-        proof = load_proof("/test/payload/op-proof-v2.hex");
+        proof = load_proof("/test/prove_api/payload/op-proof-v2.hex");
     }
 
     // Test that a client update will fail if it doesn't have a valid sequencer signature
@@ -35,9 +35,9 @@ contract CrossL2ProverTest is SigningBase {
 
     function test_validate_event_and_getters() public {
         console2.log("calldata length", proof.length);
-        string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/op-event-v2-1.json"));
+        string memory expected = vm.readFile(string.concat(rootDir, "/test/prove_api/payload/op-event-v2-1.json"));
 
-        proof = load_proof("/test/payload/op-proof-v2-1.hex");
+        proof = load_proof("/test/prove_api/payload/op-proof-v2-1.hex");
         (uint32 chainId, address addr, bytes memory topics, bytes memory data) = crossProverV2.validateEvent(proof);
 
         uint32 expectedChainId = abi.decode(expected.parseRaw(".ChainID"), (uint32));
@@ -60,7 +60,7 @@ contract CrossL2ProverTest is SigningBase {
 
     function test_validate_receipt_new_2() public {
         console2.log("calldata length", proof.length);
-        string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/op-event-v2.json"));
+        string memory expected = vm.readFile(string.concat(rootDir, "/test/prove_api/payload/op-event-v2.json"));
 
         (uint32 chainId, address addr, bytes memory topics, bytes memory data) = crossProverV2.validateEvent(proof);
 
@@ -77,8 +77,8 @@ contract CrossL2ProverTest is SigningBase {
     }
 
     function test_solana_validate() public {
-        bytes memory solProof = load_proof("/test/payload/solana-proof.hex");
-        string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event.json"));
+        bytes memory solProof = load_proof("/test/prove_api/payload/solana-proof.hex");
+        string memory expected = vm.readFile(string.concat(rootDir, "/test/prove_api/payload/solana-event.json"));
         console2.log("calldata length", solProof.length);
 
         (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
@@ -89,8 +89,8 @@ contract CrossL2ProverTest is SigningBase {
     }
 
     function test_solana_validate_2() public {
-        bytes memory solProof = load_proof("/test/payload/solana-proof-2.hex");
-        string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
+        bytes memory solProof = load_proof("/test/prove_api/payload/solana-proof-2.hex");
+        string memory expected = vm.readFile(string.concat(rootDir, "/test/prove_api/payload/solana-event-2.json"));
         console2.log("calldata length", solProof.length);
 
         (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
