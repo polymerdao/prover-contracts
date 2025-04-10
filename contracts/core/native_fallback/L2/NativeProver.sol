@@ -63,7 +63,7 @@ contract NativeProver is INativeProver, IProverHelper {
 
     /**
      * @notice Block number is too recent to prove
-    */
+     */
     error NeedLaterBlock(uint256 _inputBlockNumber, uint256 _nextProvableBlockNumber);
 
     /**
@@ -102,27 +102,19 @@ contract NativeProver is INativeProver, IProverHelper {
     error IncorrectContractStorageRoot(bytes _contractStorageRoot);
 
     /**
-    * @notice Invalid L1 registry proof for L2 configuration update
-    */
-    error InvalidL2ConfigurationProof(
-        uint256 _chainID,
-        L2Configuration _config
-    );
+     * @notice Invalid L1 registry proof for L2 configuration update
+     */
+    error InvalidL2ConfigurationProof(uint256 _chainID, L2Configuration _config);
 
     /**
-    * @notice Invalid L1 registry proof for L1 configuration update
-    */
-    error InvalidL1ConfigurationProof(
-        L1Configuration _config
-    );
+     * @notice Invalid L1 registry proof for L1 configuration update
+     */
+    error InvalidL1ConfigurationProof(L1Configuration _config);
 
     /**
-    * @notice Invalid settled state proof
-    */
-    error InvalidSettledStateProof(
-        uint256 _chainID,
-        bytes32 _l2WorldStateRoot
-    );
+     * @notice Invalid settled state proof
+     */
+    error InvalidSettledStateProof(uint256 _chainID, bytes32 _l2WorldStateRoot);
 
     constructor(
         uint256 _chainID,
@@ -159,12 +151,12 @@ contract NativeProver is INativeProver, IProverHelper {
         bytes[] calldata _l1RegistryProof,
         bytes32 _l1WorldStateRoot
     ) external {
-        if (!_proveL2Configuration(
+        if (
+            !_proveL2Configuration(
                 _chainID, _config, _l1StorageProof, _rlpEncodedRegistryAccountData, _l1RegistryProof, _l1WorldStateRoot
-            )) {
-            revert InvalidL2ConfigurationProof(
-                _chainID, _config
-            );
+            )
+        ) {
+            revert InvalidL2ConfigurationProof(_chainID, _config);
         }
         l2ChainConfigurations[_chainID] = _config;
     }
@@ -186,12 +178,12 @@ contract NativeProver is INativeProver, IProverHelper {
         bytes[] calldata _l1RegistryProof,
         bytes32 _l1WorldStateRoot
     ) external {
-        if(!_proveL1Configuration(
+        if (
+            !_proveL1Configuration(
                 _config, _l1StorageProof, _rlpEncodedRegistryAccountData, _l1RegistryProof, _l1WorldStateRoot
-            )) {
-            revert InvalidL1ConfigurationProof(
-                _config
-            );
+            )
+        ) {
+            revert InvalidL1ConfigurationProof(_config);
         }
         L1_CONFIGURATION = _config;
     }
@@ -451,12 +443,12 @@ contract NativeProver is INativeProver, IProverHelper {
         }
 
         // Call out to the configured prover to verify proof of the settled L2 state root
-        if(!ISettledStateProver(conf.prover).proveSettledState(
+        if (
+            !ISettledStateProver(conf.prover).proveSettledState(
                 conf, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _proof
-            )) {
-            revert InvalidSettledStateProof(
-                _chainID, _l2WorldStateRoot
-            );
+            )
+        ) {
+            revert InvalidSettledStateProof(_chainID, _l2WorldStateRoot);
         }
 
         // Update proven state if newer block
@@ -569,12 +561,12 @@ contract NativeProver is INativeProver, IProverHelper {
         L2Configuration memory conf = l2ChainConfigurations[_args.chainID];
 
         // Call out to the configured prover to verify proof of the settled L2 state root
-        if(!ISettledStateProver(conf.prover).proveSettledState(
+        if (
+            !ISettledStateProver(conf.prover).proveSettledState(
                 conf, _args.l2WorldStateRoot, _rlpEncodedL2Header, _l1StateRoot, _settledStateProof
-            )) {
-            revert InvalidSettledStateProof(
-                _args.chainID, _args.l2WorldStateRoot
-            );
+            )
+        ) {
+            revert InvalidSettledStateProof(_args.chainID, _args.l2WorldStateRoot);
         }
     }
 

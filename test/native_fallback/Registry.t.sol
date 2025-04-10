@@ -75,14 +75,14 @@ contract RegistryTest is Test {
 
         // Verify user doesn't have access before grant
         assertFalse(registry.isGrantee(user, testChainID));
-        
+
         // Calculate expected role hash
         bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), testChainID));
-        
+
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(expectedRole, user, owner);
-        
+
         // Grant access
         vm.prank(owner);
         registry.grantChainID(user, testChainID);
@@ -102,12 +102,12 @@ contract RegistryTest is Test {
         for (uint256 i = startChainID; i <= stopChainID; i++) {
             assertFalse(registry.isGrantee(user, i));
         }
-        
+
         // For chainID range we'll test just the first and last role grants
         bytes32 firstRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), startChainID));
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(firstRole, user, owner);
-        
+
         // Grant access to range
         vm.prank(owner);
         registry.grantChainIDRange(user, startChainID, stopChainID);
@@ -143,11 +143,11 @@ contract RegistryTest is Test {
 
         // Calculate expected role hash
         bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID));
-        
+
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(expectedRole, user, owner);
-        
+
         // Grant access to user
         vm.prank(owner);
         registry.grantChainID(user, newChainID);
@@ -204,11 +204,11 @@ contract RegistryTest is Test {
 
         // Calculate expected role hash
         bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID));
-        
+
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(expectedRole, user, owner);
-        
+
         // Grant access to user for this chain ID
         vm.prank(owner);
         registry.grantChainID(user, newChainID);
@@ -246,11 +246,11 @@ contract RegistryTest is Test {
         // Now we'll test that someone with a fresh granted permission can update properly
         // Calculate expected role hash for user2
         expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID));
-        
+
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(expectedRole, user2, owner);
-        
+
         vm.prank(owner);
         registry.grantChainID(user2, newChainID);
 
@@ -346,11 +346,11 @@ contract RegistryTest is Test {
 
         // Calculate expected role hash
         bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), l1ChainID));
-        
+
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(expectedRole, user, owner);
-        
+
         // Grant access to user
         vm.prank(owner);
         registry.grantChainID(user, l1ChainID);
@@ -378,11 +378,11 @@ contract RegistryTest is Test {
 
         // Calculate expected role hash
         bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), testChainID));
-        
+
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(expectedRole, user, owner);
-        
+
         // Expect the NewIrrevocableGrantee event
         vm.expectEmit(true, true, true, true);
         emit NewIrrevocableGrantee(testChainID, user);
@@ -413,7 +413,7 @@ contract RegistryTest is Test {
         bytes32 firstRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), startChainID));
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(firstRole, user, owner);
-        
+
         // Expect the first NewIrrevocableGrantee event
         vm.expectEmit(true, true, true, true);
         emit NewIrrevocableGrantee(startChainID, user);

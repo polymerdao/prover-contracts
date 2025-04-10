@@ -58,7 +58,7 @@ contract IntegrationTest is Test {
     // Event declarations
     event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);
     event L2ChainConfigurationUpdated(uint256 indexed chainID, bytes32 indexed configHash);
-    
+
     // Standard test setup that integrates all components
     function setUp() public {
         owner = address(0x1);
@@ -137,21 +137,21 @@ contract IntegrationTest is Test {
 
         // Calculate expected role hash for bedrock chain ID
         bytes32 bedrockRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), bedrockChainID));
-        
+
         // Expect the RoleGranted event for bedrock chain
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(bedrockRole, address(mockProver), owner);
-        
+
         // Grant permissions in Registry for the Prover to update configs
         registry.grantChainID(address(mockProver), bedrockChainID);
-        
+
         // Calculate expected role hash for cannon chain ID
         bytes32 cannonRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), cannonChainID));
-        
+
         // Expect the RoleGranted event for cannon chain
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(cannonRole, address(mockProver), owner);
-        
+
         registry.grantChainID(address(mockProver), cannonChainID);
 
         vm.stopPrank();
@@ -180,21 +180,21 @@ contract IntegrationTest is Test {
 
         // Calculate expected role hash for bedrock chain ID
         bytes32 bedrockRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), bedrockChainID));
-        
+
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(bedrockRole, owner, owner);
-        
+
         // Grant permission to ourselves to update this specific chain ID
         registry.grantChainID(owner, bedrockChainID);
 
         // Calculate the config hash
         bytes32 configHash = keccak256(abi.encode(updatedBedrockConfig));
-        
+
         // Expect the L2ChainConfigurationUpdated event
         vm.expectEmit(true, true, true, true);
         emit L2ChainConfigurationUpdated(bedrockChainID, configHash);
-        
+
         // Update the registry configuration directly
         registry.updateL2ChainConfiguration(bedrockChainID, updatedBedrockConfig);
 

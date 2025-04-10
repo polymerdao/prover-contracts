@@ -281,13 +281,7 @@ contract ProverTest is Test {
         mockStateProver.setShouldSucceed(false);
 
         // Should revert with InvalidSettledStateProof error
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                NativeProver.InvalidSettledStateProof.selector,
-                l2ChainID,
-                l2StateRoot
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(NativeProver.InvalidSettledStateProof.selector, l2ChainID, l2StateRoot));
         prover.proveSettledState(
             l2ChainID, l2StateRoot, rlpEncodedL2Header, l1StateRoot, _createMockSettledStateProof()
         );

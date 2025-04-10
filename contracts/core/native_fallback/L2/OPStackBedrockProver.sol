@@ -74,18 +74,17 @@ contract OPStackBedrockProver is ISettledStateProver {
             bytes[] memory l1AccountProof
         ) = abi.decode(_proof, (bytes32, uint256, bytes[], bytes, bytes[]));
 
-        if(!_proveWorldStateBedrock(
+        if (
+            !_proveWorldStateBedrock(
                 _chainConfig,
                 BedrockScalarArgs(_l2WorldStateRoot, l2MessagePasserStateRoot, l2OutputIndex, _l1WorldStateRoot),
                 _rlpEncodedL2Header,
                 l1StorageProof,
                 rlpEncodedOutputOracleData,
                 l1AccountProof
-            )) {
-            revert InvalidBedrockProof(
-                _l2WorldStateRoot,
-                _l1WorldStateRoot
-            );
+            )
+        ) {
+            revert InvalidBedrockProof(_l2WorldStateRoot, _l1WorldStateRoot);
         }
         return true;
     }
