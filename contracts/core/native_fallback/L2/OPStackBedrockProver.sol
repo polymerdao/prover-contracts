@@ -22,6 +22,7 @@ import {SecureMerkleTrie} from "@eth-optimism/contracts-bedrock/src/libraries/tr
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {ISettledStateProver} from "../../../interfaces/ISettledStateProver.sol";
+import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
 contract OPStackBedrockProver is ISettledStateProver {
     /**
@@ -154,7 +155,7 @@ contract OPStackBedrockProver is ISettledStateProver {
             revert IncorrectOutputOracleStorageRoot(outputOracleStateRoot);
         }
 
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(outputRootStorageSlot), outputRoot, _l1StorageProof, bytes32(outputOracleStateRoot)
         );
 
@@ -198,25 +199,6 @@ contract OPStackBedrockProver is ISettledStateProver {
             number = number + uint256(uint8(_b[i])) * (2 ** (8 * (_b.length - (i + 1))));
         }
         return number;
-    }
-
-    /**
-     * @notice Validates a bytes32 storage value against a root
-     * @dev Encodes value as RLP before verification
-     * @param _key Storage slot key
-     * @param _val Expected bytes32 value
-     * @param _proof Merkle proof
-     * @param _root Expected root
-     */
-    function _proveStorageBytes32(bytes memory _key, bytes32 _val, bytes[] memory _proof, bytes32 _root)
-        internal
-        pure
-    {
-        // `RLPWriter.writeUint` properly encodes values by removing any leading zeros.
-        bytes memory rlpEncodedValue = RLPWriter.writeUint(uint256(_val));
-        if (!SecureMerkleTrie.verifyInclusionProof(_key, rlpEncodedValue, _proof, _root)) {
-            revert InvalidStorageProof(_key, rlpEncodedValue, _proof, _root);
-        }
     }
 
     /**

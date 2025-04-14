@@ -22,6 +22,7 @@ import {SecureMerkleTrie} from "@eth-optimism/contracts-bedrock/src/libraries/tr
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {ISettledStateProver} from "../../../interfaces/ISettledStateProver.sol";
+import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
 contract OPStackCannonProver is ISettledStateProver {
     struct DisputeGameFactoryProofData {
@@ -207,7 +208,7 @@ contract OPStackCannonProver is ISettledStateProver {
         // ensure faultDisputeGame is resolved
         // Prove that the FaultDispute game has been settled
         // storage proof for FaultDisputeGame rootClaim (means block is valid)
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(uint256(_faultDisputeGameRootClaimSlot)),
             _rootClaim,
             _faultDisputeGameProofData.faultDisputeGameRootClaimStorageProof,
@@ -224,7 +225,7 @@ contract OPStackCannonProver is ISettledStateProver {
         );
 
         // Verify game status storage proof
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(uint256(_faultDisputeGameStatusSlot)),
             faultDisputeGameStatusStorage,
             _faultDisputeGameProofData.faultDisputeGameStatusStorageProof,
@@ -283,7 +284,7 @@ contract OPStackCannonProver is ISettledStateProver {
         }
 
         // Verify storage and account proofs
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(disputeGameFactoryStorageSlot),
             _disputeGameFactoryProofData.gameId,
             _disputeGameFactoryProofData.disputeFaultGameStorageProof,
@@ -353,25 +354,6 @@ contract OPStackCannonProver is ISettledStateProver {
     {
         if (!SecureMerkleTrie.verifyInclusionProof(_address, _data, _proof, _root)) {
             revert InvalidAccountProof(_address, _data, _proof, _root);
-        }
-    }
-
-    /**
-     * @notice Validates a bytes32 storage value against a root
-     * @dev Encodes value as RLP before verification
-     * @param _key Storage slot key
-     * @param _val Expected bytes32 value
-     * @param _proof Merkle proof
-     * @param _root Expected root
-     */
-    function _proveStorageBytes32(bytes memory _key, bytes32 _val, bytes[] memory _proof, bytes32 _root)
-        internal
-        pure
-    {
-        // `RLPWriter.writeUint` properly encodes values by removing any leading zeros.
-        bytes memory rlpEncodedValue = RLPWriter.writeUint(uint256(_val));
-        if (!SecureMerkleTrie.verifyInclusionProof(_key, rlpEncodedValue, _proof, _root)) {
-            revert InvalidStorageProof(_key, rlpEncodedValue, _proof, _root);
         }
     }
 

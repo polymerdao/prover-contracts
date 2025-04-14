@@ -25,6 +25,7 @@ import {INativeProver} from "../../../interfaces/INativeProver.sol";
 import {IProverHelper} from "../../../interfaces/IProverHelper.sol";
 import {ISettledStateProver} from "../../../interfaces/ISettledStateProver.sol";
 import {L2Configuration, L1Configuration, Type, ProveScalarArgs} from "../../../libs/RegistryTypes.sol";
+import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
 contract NativeProver is INativeProver, IProverHelper {
     uint256 public immutable CHAIN_ID; // ChainID of the L2 chain this contract is deployed on
@@ -231,7 +232,7 @@ contract NativeProver is INativeProver, IProverHelper {
         bytes32 configHash = keccak256(abi.encode(_config));
         bytes32 configHashStorageSlot =
             bytes32((uint256(keccak256(abi.encode(_chainID))) + L1_CONFIGURATION.settlementRegistryL2ConfigMappingSlot));
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(configHashStorageSlot), configHash, _l1StorageProof, bytes32(registryStorageRoot)
         );
 
@@ -255,7 +256,8 @@ contract NativeProver is INativeProver, IProverHelper {
         bytes[] calldata _l1RegistryProof,
         bytes32 _l1WorldStateRoot
     ) internal view returns (bool) {
-        BlockProof memory existingSettlementBlockProof = provenStates[CHAIN_ID];
+        uint256 _chainID = CHAIN_ID;
+        BlockProof memory existingSettlementBlockProof = provenStates[_chainID];
 
         // Verify settlement chain state root
         if (existingSettlementBlockProof.stateRoot != _l1WorldStateRoot) {
@@ -278,8 +280,8 @@ contract NativeProver is INativeProver, IProverHelper {
         }
         bytes32 configHash = keccak256(abi.encode(_config));
         bytes32 configHashStorageSlot =
-            bytes32((uint256(keccak256(abi.encode(CHAIN_ID))) + L1_CONFIGURATION.settlementRegistryL1ConfigMappingSlot));
-        _proveStorageBytes32(
+            bytes32((uint256(keccak256(abi.encode(_chainID))) + L1_CONFIGURATION.settlementRegistryL1ConfigMappingSlot));
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(configHashStorageSlot), configHash, _l1StorageProof, bytes32(registryStorageRoot)
         );
 
@@ -297,25 +299,6 @@ contract NativeProver is INativeProver, IProverHelper {
     function proveStorage(bytes memory _key, bytes memory _val, bytes[] memory _proof, bytes32 _root) external pure {
         if (!SecureMerkleTrie.verifyInclusionProof(_key, _val, _proof, _root)) {
             revert InvalidStorageProof(_key, _val, _proof, _root);
-        }
-    }
-
-    /**
-     * @notice Validates a bytes32 storage value against a root
-     * @dev Encodes value as RLP before verification
-     * @param _key Storage slot key
-     * @param _val Expected bytes32 value
-     * @param _proof Merkle proof
-     * @param _root Expected root
-     */
-    function _proveStorageBytes32(bytes memory _key, bytes32 _val, bytes[] memory _proof, bytes32 _root)
-        internal
-        pure
-    {
-        // `RLPWriter.writeUint` properly encodes values by removing any leading zeros.
-        bytes memory rlpEncodedValue = RLPWriter.writeUint(uint256(_val));
-        if (!SecureMerkleTrie.verifyInclusionProof(_key, rlpEncodedValue, _proof, _root)) {
-            revert InvalidStorageProof(_key, rlpEncodedValue, _proof, _root);
         }
     }
 
@@ -408,13 +391,13 @@ contract NativeProver is INativeProver, IProverHelper {
         });
 
         // Verify block delay and update state
-        BlockProof memory existingBlockProof = provenStates[settlementChainId];
-        if (existingBlockProof.blockNumber + L1_CONFIGURATION.settlementBlocksDelay < blockProof.blockNumber) {
+        uint256 existingProofBlockNumber = provenStates[settlementChainId].blockNumber;
+        if (existingProofBlockNumber + L1_CONFIGURATION.settlementBlocksDelay < blockProof.blockNumber) {
             provenStates[settlementChainId] = blockProof;
             emit L1WorldStateProven(blockProof.blockNumber, blockProof.stateRoot);
         } else {
             revert NeedLaterBlock(
-                blockProof.blockNumber, existingBlockProof.blockNumber + L1_CONFIGURATION.settlementBlocksDelay
+                blockProof.blockNumber, existingProofBlockNumber + L1_CONFIGURATION.settlementBlocksDelay
             );
         }
     }
@@ -504,7 +487,7 @@ contract NativeProver is INativeProver, IProverHelper {
         );
 
         // Verify the storage value exists in the storage tree
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(_args.storageSlot), _args.storageValue, _l2StorageProof, bytes32(storageRoot)
         );
 
@@ -588,7 +571,7 @@ contract NativeProver is INativeProver, IProverHelper {
         );
 
         // Verify the storage value exists in the storage tree
-        _proveStorageBytes32(
+        ProverHelpers.proveStorageBytes32(
             abi.encodePacked(_args.storageSlot), _args.storageValue, _l2StorageProof, bytes32(storageRoot)
         );
     }
