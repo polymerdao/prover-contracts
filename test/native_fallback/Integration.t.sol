@@ -37,7 +37,7 @@ contract MockProver is NativeProver {
         // Set L1 state root in the proven states map
         BlockProof memory blockProof =
             BlockProof({blockNumber: 100, blockHash: bytes32(uint256(0xabcdef)), stateRoot: _l1WorldStateRoot});
-        provenStates[CHAIN_ID] = blockProof;
+        provenStates[L1_CHAIN_ID] = blockProof;
 
         // Update the chain configuration directly
         l2ChainConfigurations[_chainID] = _config;

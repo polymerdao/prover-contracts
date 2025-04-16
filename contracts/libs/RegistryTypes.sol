@@ -57,3 +57,10 @@ struct ProveScalarArgs {
     bytes32 storageValue;
     bytes32 l2WorldStateRoot;
 }
+
+struct UpdateL2ConfigArgs {
+    L2Configuration config;
+    bytes[] l1StorageProof;
+    bytes rlpEncodedRegistryAccountData;
+    bytes[] l1RegistryProof;
+}
