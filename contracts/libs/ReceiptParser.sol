@@ -53,6 +53,9 @@ struct OpL2StateProof {
  * A library for helpers for proving peptide state
  */
 library ReceiptParser {
+    // taken from lib/openzeppelin-contracts/contracts/utils/Strings.sol
+    bytes16 private constant _SYMBOLS = "0123456789abcdef";
+
     error invalidAddressBytes();
 
     function toStr(uint256 _number) public pure returns (string memory outStr) {
@@ -78,6 +81,20 @@ library ReceiptParser {
         }
 
         outStr = string(buffer);
+    }
+
+    // taken from lib/openzeppelin-contracts/contracts/utils/Strings.sol
+    // with minor modifications
+    function toHex(uint256 value, uint256 length) public pure returns (string memory) {
+        bytes memory buffer = new bytes(2 * length);
+        for (uint256 i = 2 * length - 1; i > 0; --i) {
+            buffer[i] = _SYMBOLS[value & 0xf];
+            value >>= 4;
+        }
+        buffer[0] = _SYMBOLS[value & 0xf];
+        value >>= 4;
+        require(value == 0, "Strings: hex length insufficient");
+        return string(buffer);
     }
 
     function bytesToAddr(bytes memory a) public pure returns (address addr) {
@@ -162,6 +179,31 @@ library ReceiptParser {
             toStr(receiptIndex),
             "/",
             toStr(logIndex)
+        );
+    }
+
+    // computes the root key for a solana event. The transaction signature (64 bytes) is split in two bytes32
+    // high and low variables to make the hex conversion more gas efficient
+    function solanaEventRootKey(
+        uint32 chainId,
+        string memory clientType,
+        uint256 height,
+        bytes32 txSignatureHigh,
+        bytes32 txSignatureLow,
+        bytes32 programID
+    ) internal pure returns (bytes memory) {
+        return abi.encodePacked(
+            "chain/",
+            toStr(uint256(chainId)),
+            "/storedLogs/",
+            clientType,
+            "/",
+            toStr(height),
+            "/",
+            toHex(uint256(txSignatureHigh), 32),
+            toHex(uint256(txSignatureLow), 32),
+            "/",
+            toHex(uint256(programID), 32)
         );
     }
 }
