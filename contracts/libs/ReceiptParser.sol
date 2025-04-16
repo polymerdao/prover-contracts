@@ -164,4 +164,29 @@ library ReceiptParser {
             toStr(logIndex)
         );
     }
+
+    // computes the root key for a solana event. The transaction signature (64 bytes) is split in two bytes32
+    // high and low variables to make the hex conversion more gas efficient
+    function solanaEventRootKey(
+        uint32 chainId,
+        string memory clientType,
+        uint64 height,
+        bytes32 txSignatureHigh,
+        bytes32 txSignatureLow,
+        bytes32 programID
+    ) internal pure returns (bytes memory) {
+        return abi.encodePacked(
+            "chain/",
+            toStr(uint256(chainId)),
+            "/storedLogs/",
+            clientType,
+            "/",
+            height,
+            "/",
+            txSignatureHigh,
+            txSignatureLow,
+            "/",
+            programID
+        );
+    }
 }
