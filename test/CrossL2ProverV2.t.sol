@@ -6,7 +6,7 @@ import {SigningBase} from "test/utils/Signing.base.t.sol";
 import {CrossL2Prover} from "contracts/core/CrossL2Prover.sol";
 import {CrossL2ProverV2} from "contracts/core/CrossL2ProverV2.sol";
 import {SequencerSignatureVerifier} from "contracts/core/SequencerSignatureVerifier.sol";
-import {Ics23Proof, OpIcs23Proof} from "contracts/libs/ReceiptParser.sol";
+import {ReceiptParser, Ics23Proof, OpIcs23Proof} from "contracts/libs/ReceiptParser.sol";
 import {ISignatureVerifier} from "contracts/interfaces/ISignatureVerifier.sol";
 import {ICrossL2Prover} from "contracts/interfaces/ICrossL2Prover.sol";
 import {MerkleTrie} from "optimism/libraries/trie/MerkleTrie.sol";
@@ -100,6 +100,19 @@ contract CrossL2ProverTest is SigningBase {
         assertEq(chainId, 2);
         assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
         assertEq(logMsges, abi.decode(expected.parseRaw(".logMessages"), (string[])));
+    }
+
+    function test_solana_event_root_key() public pure {
+        bytes32 txSignatureHigh = hex"abb0a5d6f2eeb8f87a7549a3ef8f67d805e4985a8e6a51d0070f2f87d5b789d0";
+        bytes32 txSignatureLow = hex"2c6b1bfb36f0b5a69c57f4947f1d0a847bc12a98cfdfc6e2fc8c5e5d2b68d47b";
+        bytes32 programID = hex"3d2cf5c36c4571fc624b1e7dc0552b997c8e1f5e5b405afad1ad8b2f146e63f9";
+
+        bytes memory expected = abi.encodePacked(
+            "chain/2/storedLogs/proof_api/", uint64(42), "/", txSignatureHigh, txSignatureLow, "/", programID
+        );
+        assertEq(
+            expected, ReceiptParser.solanaEventRootKey(2, "proof_api", 42, txSignatureHigh, txSignatureLow, programID)
+        );
     }
 
     // Test valid peptide proof but invalid event hash
