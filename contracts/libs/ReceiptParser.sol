@@ -19,6 +19,7 @@ pragma solidity ^0.8.0;
 
 import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {Bytes} from "optimism/libraries/Bytes.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 // OpIcs23ProofPath represents a commitment path in an ICS23 proof, which consists of a commitment prefix and a suffix.
 struct OpIcs23ProofPath {
@@ -54,31 +55,6 @@ struct OpL2StateProof {
  */
 library ReceiptParser {
     error invalidAddressBytes();
-
-    function toStr(uint256 _number) public pure returns (string memory outStr) {
-        if (_number == 0) {
-            return "0";
-        }
-
-        uint256 length;
-        uint256 number = _number;
-
-        // Determine the length of the string
-        while (number != 0) {
-            length++;
-            number /= 10;
-        }
-
-        bytes memory buffer = new bytes(length);
-
-        // Convert each digit to its ASCII representation
-        for (uint256 i = length; i > 0; i--) {
-            buffer[i - 1] = bytes1(uint8(48 + (_number % 10)));
-            _number /= 10;
-        }
-
-        outStr = string(buffer);
-    }
 
     function bytesToAddr(bytes memory a) public pure returns (address addr) {
         if (a.length != 20) {
@@ -142,7 +118,9 @@ library ReceiptParser {
         pure
         returns (bytes memory proofKey)
     {
-        proofKey = abi.encodePacked("chain/", chainId, "/storedReceipts/", clientType, "/receiptRoot/", toStr(height));
+        proofKey = abi.encodePacked(
+            "chain/", chainId, "/storedReceipts/", clientType, "/receiptRoot/", Strings.toString(height)
+        );
     }
 
     function eventRootKey(uint32 chainId, string memory clientType, uint256 height, uint16 receiptIndex, uint8 logIndex)
@@ -153,15 +131,15 @@ library ReceiptParser {
         // TODO actually change this to the decided structure
         return abi.encodePacked(
             "chain/",
-            toStr(uint256(chainId)),
+            Strings.toString(uint256(chainId)),
             "/storedLogs/",
             clientType,
             "/",
-            toStr(height),
+            Strings.toString(height),
             "/",
-            toStr(receiptIndex),
+            Strings.toString(receiptIndex),
             "/",
-            toStr(logIndex)
+            Strings.toString(logIndex)
         );
     }
 
@@ -177,7 +155,7 @@ library ReceiptParser {
     ) internal pure returns (bytes memory) {
         return abi.encodePacked(
             "chain/",
-            toStr(uint256(chainId)),
+            Strings.toString(uint256(chainId)),
             "/storedLogs/",
             clientType,
             "/",
