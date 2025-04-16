@@ -17,7 +17,7 @@
 
 pragma solidity 0.8.15;
 
-import {ISignatureVerifier} from "../interfaces/ISignatureVerifier.sol";
+import {ISignatureVerifier} from "../../interfaces/ISignatureVerifier.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 /**
