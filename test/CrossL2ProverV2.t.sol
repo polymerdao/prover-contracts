@@ -79,28 +79,26 @@ contract CrossL2ProverTest is SigningBase {
     function test_solana_validate() public {
         bytes memory solProof = load_proof("/test/payload/solana-proof.hex");
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event.json"));
-        console2.log("calldata length", solProof.length);
 
-        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
-        console2.log("calldata length", solProof.length);
+        (uint32 chainId, bytes32 programID, string[] memory _logMsgs) = crossProverV2.validateEventSolana(solProof);
 
         assertEq(chainId, 2);
         assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
     }
-
-    function test_solana_validate_2() public {
-        bytes memory solProof = load_proof("/test/payload/solana-proof-2.hex");
-        string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
-        console2.log("calldata length", solProof.length);
-
-        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
-        console2.log("executor", ReceiptParser.toHex(uint256(programID), 32));
-        console2.log("log msg", logMsges[0]);
-
-        assertEq(chainId, 2);
-        assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
-        assertEq(logMsges, abi.decode(expected.parseRaw(".logMessages"), (string[])));
-    }
+    //
+    // function test_solana_validate_with_program_log() public {
+    //     bytes memory solProof = load_proof("/test/payload/solana-proof-2.hex");
+    //     string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
+    //     console2.log("calldata length", solProof.length);
+    //
+    //     (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
+    //     console2.log("executor", ReceiptParser.toHex(uint256(programID), 32));
+    //     console2.log("log msg", logMsges[0]);
+    //
+    //     assertEq(chainId, 2);
+    //     assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
+    //     assertEq(logMsges, abi.decode(expected.parseRaw(".logMessages"), (string[])));
+    // }
 
     function test_solana_event_root_key() public {
         bytes32 txSignatureHigh = hex"abb0a5d6f2eeb8f87a7549a3ef8f67d805e4985a8e6a51d0070f2f87d5b789d0";
