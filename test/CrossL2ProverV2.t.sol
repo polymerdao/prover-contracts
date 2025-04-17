@@ -58,7 +58,7 @@ contract CrossL2ProverTest is SigningBase {
         _checkInspectLogIndentifier(proof, expected);
     }
 
-    function test_validate_receipt_new_2() public {
+    function test_validate_receipt_new_2() public view {
         console2.log("calldata length", proof.length);
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/op-event-v2.json"));
 
@@ -76,19 +76,17 @@ contract CrossL2ProverTest is SigningBase {
         assertEq(data, abi.encodePacked(abi.decode(expected.parseRaw(".data"), (bytes32))));
     }
 
-    function test_solana_validate() public {
+    function test_solana_validate() public view {
         bytes memory solProof = load_proof("/test/payload/solana-proof.hex");
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event.json"));
-        console2.log("calldata length", solProof.length);
 
-        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
-        console2.log("calldata length", solProof.length);
+        (uint32 chainId, bytes32 programID, string[] memory _logMsgs) = crossProverV2.validateEventSolana(solProof);
 
         assertEq(chainId, 2);
         assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
     }
 
-    function test_solana_validate_2() public {
+    function test_solana_validate_with_program_log() public view {
         bytes memory solProof = load_proof("/test/payload/solana-proof-2.hex");
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
         console2.log("calldata length", solProof.length);
