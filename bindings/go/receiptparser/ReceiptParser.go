@@ -31,7 +31,7 @@ var (
 
 // ReceiptParserMetaData contains all meta data concerning the ReceiptParser contract.
 var ReceiptParserMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"function\",\"name\":\"bytesToAddr\",\"inputs\":[{\"name\":\"a\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"addr\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"toStr\",\"inputs\":[{\"name\":\"_number\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"outStr\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"pure\"},{\"type\":\"error\",\"name\":\"invalidAddressBytes\",\"inputs\":[]}]",
+	ABI: "[{\"type\":\"function\",\"name\":\"bytesToAddr\",\"inputs\":[{\"name\":\"a\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"addr\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"toHex\",\"inputs\":[{\"name\":\"value\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"length\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"pure\"},{\"type\":\"error\",\"name\":\"invalidAddressBytes\",\"inputs\":[]}]",
 }
 
 // ReceiptParserABI is the input ABI used to generate the binding from.
@@ -211,12 +211,12 @@ func (_ReceiptParser *ReceiptParserCallerSession) BytesToAddr(a []byte) (common.
 	return _ReceiptParser.Contract.BytesToAddr(&_ReceiptParser.CallOpts, a)
 }
 
-// ToStr is a free data retrieval call binding the contract method 0x91d6df7d.
+// ToHex is a free data retrieval call binding the contract method 0xe1425395.
 //
-// Solidity: function toStr(uint256 _number) pure returns(string outStr)
-func (_ReceiptParser *ReceiptParserCaller) ToStr(opts *bind.CallOpts, _number *big.Int) (string, error) {
+// Solidity: function toHex(uint256 value, uint256 length) pure returns(string)
+func (_ReceiptParser *ReceiptParserCaller) ToHex(opts *bind.CallOpts, value *big.Int, length *big.Int) (string, error) {
 	var out []interface{}
-	err := _ReceiptParser.contract.Call(opts, &out, "toStr", _number)
+	err := _ReceiptParser.contract.Call(opts, &out, "toHex", value, length)
 
 	if err != nil {
 		return *new(string), err
@@ -228,16 +228,16 @@ func (_ReceiptParser *ReceiptParserCaller) ToStr(opts *bind.CallOpts, _number *b
 
 }
 
-// ToStr is a free data retrieval call binding the contract method 0x91d6df7d.
+// ToHex is a free data retrieval call binding the contract method 0xe1425395.
 //
-// Solidity: function toStr(uint256 _number) pure returns(string outStr)
-func (_ReceiptParser *ReceiptParserSession) ToStr(_number *big.Int) (string, error) {
-	return _ReceiptParser.Contract.ToStr(&_ReceiptParser.CallOpts, _number)
+// Solidity: function toHex(uint256 value, uint256 length) pure returns(string)
+func (_ReceiptParser *ReceiptParserSession) ToHex(value *big.Int, length *big.Int) (string, error) {
+	return _ReceiptParser.Contract.ToHex(&_ReceiptParser.CallOpts, value, length)
 }
 
-// ToStr is a free data retrieval call binding the contract method 0x91d6df7d.
+// ToHex is a free data retrieval call binding the contract method 0xe1425395.
 //
-// Solidity: function toStr(uint256 _number) pure returns(string outStr)
-func (_ReceiptParser *ReceiptParserCallerSession) ToStr(_number *big.Int) (string, error) {
-	return _ReceiptParser.Contract.ToStr(&_ReceiptParser.CallOpts, _number)
+// Solidity: function toHex(uint256 value, uint256 length) pure returns(string)
+func (_ReceiptParser *ReceiptParserCallerSession) ToHex(value *big.Int, length *big.Int) (string, error) {
+	return _ReceiptParser.Contract.ToHex(&_ReceiptParser.CallOpts, value, length)
 }

@@ -19,6 +19,7 @@ pragma solidity ^0.8.0;
 
 import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {Bytes} from "optimism/libraries/Bytes.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 // OpIcs23ProofPath represents a commitment path in an ICS23 proof, which consists of a commitment prefix and a suffix.
 struct OpIcs23ProofPath {
@@ -53,31 +54,23 @@ struct OpL2StateProof {
  * A library for helpers for proving peptide state
  */
 library ReceiptParser {
+    // taken from lib/openzeppelin-contracts/contracts/utils/Strings.sol
+    bytes16 private constant _SYMBOLS = "0123456789abcdef";
+
     error invalidAddressBytes();
 
-    function toStr(uint256 _number) public pure returns (string memory outStr) {
-        if (_number == 0) {
-            return "0";
+    // taken from lib/openzeppelin-contracts/contracts/utils/Strings.sol
+    // with minor modifications
+    function toHex(uint256 value, uint256 length) public pure returns (string memory) {
+        bytes memory buffer = new bytes(2 * length);
+        for (uint256 i = 2 * length - 1; i > 0; --i) {
+            buffer[i] = _SYMBOLS[value & 0xf];
+            value >>= 4;
         }
-
-        uint256 length;
-        uint256 number = _number;
-
-        // Determine the length of the string
-        while (number != 0) {
-            length++;
-            number /= 10;
-        }
-
-        bytes memory buffer = new bytes(length);
-
-        // Convert each digit to its ASCII representation
-        for (uint256 i = length; i > 0; i--) {
-            buffer[i - 1] = bytes1(uint8(48 + (_number % 10)));
-            _number /= 10;
-        }
-
-        outStr = string(buffer);
+        buffer[0] = _SYMBOLS[value & 0xf];
+        value >>= 4;
+        require(value == 0, "Strings: hex length insufficient");
+        return string(buffer);
     }
 
     function bytesToAddr(bytes memory a) public pure returns (address addr) {
@@ -142,7 +135,9 @@ library ReceiptParser {
         pure
         returns (bytes memory proofKey)
     {
-        proofKey = abi.encodePacked("chain/", chainId, "/storedReceipts/", clientType, "/receiptRoot/", toStr(height));
+        proofKey = abi.encodePacked(
+            "chain/", chainId, "/storedReceipts/", clientType, "/receiptRoot/", Strings.toString(height)
+        );
     }
 
     function eventRootKey(uint32 chainId, string memory clientType, uint256 height, uint16 receiptIndex, uint8 logIndex)
@@ -153,15 +148,40 @@ library ReceiptParser {
         // TODO actually change this to the decided structure
         return abi.encodePacked(
             "chain/",
-            toStr(uint256(chainId)),
+            Strings.toString(uint256(chainId)),
             "/storedLogs/",
             clientType,
             "/",
-            toStr(height),
+            Strings.toString(height),
             "/",
-            toStr(receiptIndex),
+            Strings.toString(receiptIndex),
             "/",
-            toStr(logIndex)
+            Strings.toString(logIndex)
+        );
+    }
+
+    // computes the root key for a solana event. The transaction signature (64 bytes) is split in two bytes32
+    // high and low variables to make the hex conversion more gas efficient
+    function solanaEventRootKey(
+        uint32 chainId,
+        string memory clientType,
+        uint256 height,
+        bytes32 txSignatureHigh,
+        bytes32 txSignatureLow,
+        bytes32 programID
+    ) internal pure returns (bytes memory) {
+        return abi.encodePacked(
+            "chain/",
+            Strings.toString(uint256(chainId)),
+            "/storedLogs/",
+            clientType,
+            "/",
+            Strings.toString(height),
+            "/",
+            toHex(uint256(txSignatureHigh), 32),
+            toHex(uint256(txSignatureLow), 32),
+            "/",
+            toHex(uint256(programID), 32)
         );
     }
 }

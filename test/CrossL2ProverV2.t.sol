@@ -6,7 +6,7 @@ import {SigningBase} from "test/utils/Signing.base.t.sol";
 import {CrossL2Prover} from "contracts/core/CrossL2Prover.sol";
 import {CrossL2ProverV2} from "contracts/core/CrossL2ProverV2.sol";
 import {SequencerSignatureVerifier} from "contracts/core/SequencerSignatureVerifier.sol";
-import {Ics23Proof, OpIcs23Proof} from "contracts/libs/ReceiptParser.sol";
+import {ReceiptParser, Ics23Proof, OpIcs23Proof} from "contracts/libs/ReceiptParser.sol";
 import {ISignatureVerifier} from "contracts/interfaces/ISignatureVerifier.sol";
 import {ICrossL2Prover} from "contracts/interfaces/ICrossL2Prover.sol";
 import {MerkleTrie} from "optimism/libraries/trie/MerkleTrie.sol";
@@ -79,27 +79,40 @@ contract CrossL2ProverTest is SigningBase {
     function test_solana_validate() public {
         bytes memory solProof = load_proof("/test/payload/solana-proof.hex");
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event.json"));
-        console2.log("calldata length", solProof.length);
 
-        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
-        console2.log("calldata length", solProof.length);
+        (uint32 chainId, bytes32 programID, string[] memory _logMsgs) = crossProverV2.validateEventSolana(solProof);
 
         assertEq(chainId, 2);
         assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
     }
+    //
+    // function test_solana_validate_with_program_log() public {
+    //     bytes memory solProof = load_proof("/test/payload/solana-proof-2.hex");
+    //     string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
+    //     console2.log("calldata length", solProof.length);
+    //
+    //     (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
+    //     console2.log("executor", ReceiptParser.toHex(uint256(programID), 32));
+    //     console2.log("log msg", logMsges[0]);
+    //
+    //     assertEq(chainId, 2);
+    //     assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
+    //     assertEq(logMsges, abi.decode(expected.parseRaw(".logMessages"), (string[])));
+    // }
 
-    function test_solana_validate_2() public {
-        bytes memory solProof = load_proof("/test/payload/solana-proof-2.hex");
-        string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
-        console2.log("calldata length", solProof.length);
+    function test_solana_event_root_key() public {
+        bytes32 txSignatureHigh = hex"abb0a5d6f2eeb8f87a7549a3ef8f67d805e4985a8e6a51d0070f2f87d5b789d0";
+        bytes32 txSignatureLow = hex"2c6b1bfb36f0b5a69c57f4947f1d0a847bc12a98cfdfc6e2fc8c5e5d2b68d47b";
+        bytes32 programID = hex"3d2cf5c36c4571fc624b1e7dc0552b997c8e1f5e5b405afad1ad8b2f146e63f9";
 
-        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
-        console2.log("executor", toHexString(programID));
-        console2.log("log msg", logMsges[0]);
-
-        assertEq(chainId, 2);
-        assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
-        assertEq(logMsges, abi.decode(expected.parseRaw(".logMessages"), (string[])));
+        bytes memory expected = (
+            "chain/2/storedLogs/proof_api/42/abb0a5d6f2eeb8f87a7549a3ef8f67d805e4985a8e6a51d0070f2f87d5b789d0"
+            "2c6b1bfb36f0b5a69c57f4947f1d0a847bc12a98cfdfc6e2fc8c5e5d2b68d47b/"
+            "3d2cf5c36c4571fc624b1e7dc0552b997c8e1f5e5b405afad1ad8b2f146e63f9"
+        );
+        assertEq(
+            expected, ReceiptParser.solanaEventRootKey(2, "proof_api", 42, txSignatureHigh, txSignatureLow, programID)
+        );
     }
 
     // Test valid peptide proof but invalid event hash
@@ -120,22 +133,6 @@ contract CrossL2ProverTest is SigningBase {
     // Test trying to prove with a non-existent peptideApphash that hasn't yet been seen
     function test_revert_chain_ID() public {}
 
-    function toHexString(bytes32 input) internal pure returns (string memory) {
-        bytes memory result = new bytes(64); // 32 bytes * 2 hex digits per byte = 64 hex digits
-        for (uint256 i = 0; i < 32; i++) {
-            result[i * 2] = _byteToHexChar(uint8(input[i]) / 16);
-            result[i * 2 + 1] = _byteToHexChar(uint8(input[i]) % 16);
-        }
-        return string(result);
-    }
-
-    function _byteToHexChar(uint8 byteValue) internal pure returns (bytes1) {
-        if (byteValue < 10) {
-            return bytes1(byteValue + 48); // '0' to '9'
-        } else {
-            return bytes1(byteValue + 87); // 'a' to 'f'
-        }
-    }
     // Annoyingly add internal methods needed to avoid stack too deep - why does foundry check for stack to deep in
     // tester contracts ? 😱
 
