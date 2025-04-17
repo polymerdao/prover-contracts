@@ -16,6 +16,7 @@ contract Base is Test {
     // Load a receipt proof specifically for testing receipt proofs for opstack and arbitrum receipts
     function load_receipt(string memory proofPath, string memory receiptPath)
         internal
+        view
         returns (bytes memory receiptIdx, bytes[] memory receiptProof, bytes32 receiptRoot, bytes memory receiptRLP)
     {
         (receiptRLP) = vm.parseBytes(vm.readFile(string.concat(rootDir, receiptPath)));
@@ -27,7 +28,7 @@ contract Base is Test {
     }
 
     // Load a full proof bytes proof from a file into calldata
-    function load_proof(string memory filepath) internal returns (bytes memory proof) {
+    function load_proof(string memory filepath) internal view returns (bytes memory proof) {
         return vm.parseBytes(vm.readFile(string.concat(rootDir, filepath)));
     }
 
@@ -41,7 +42,7 @@ contract Base is Test {
             .checked_write(appHash);
     }
 
-    function load_bytes_from_hex(string memory filepath) internal returns (bytes memory) {
+    function load_bytes_from_hex(string memory filepath) internal view returns (bytes memory) {
         return vm.parseBytes(vm.readFile(string.concat(rootDir, filepath)));
     }
 }

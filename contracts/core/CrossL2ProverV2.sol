@@ -94,34 +94,30 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         (emittingContract, topics, unindexedData) = this.parseEvent(rawEvent, uint8(proof[120]));
     }
 
-    //  SOLANA DECODING
-    //  +--------------------------------------------------+
-    //  |  state root (32 bytes)                           | 0:32
-    //  +--------------------------------------------------+
-    //  |  signature (65 bytes)                            | 32:97
-    //  +--------------------------------------------------+
-    //  |  source chain ID (big endian, 4 bytes)           | 97:101
-    //  +--------------------------------------------------+
-    //  |  peptide height (big endian, 8 bytes)            | 101:109
-    //  +--------------------------------------------------+
-    //  |  source chain block height (big endian, 8 bytes) | 109:117
-    //  +--------------------------------------------------+
-    //  |  receipt index (big endian, 2 bytes)             | 117:119
-    //  +--------------------------------------------------+
-    //  |  event index (1 byte)                            | 119
-    //  +--------------------------------------------------+
-    //  |  num Log Messages (1 byte)                       | 120
-    //  +--------------------------------------------------+
-    //  |  solana program IDexecutor (32 bytes)            | 121:153
-    //  +--------------------------------------------------+
-    //  |  end of current log message (2 bytes)            | 153 : 155    <-----<
-    //  +--------------------------------------------------+
-    //  |  current log message  (X Bytes)                  | 155 : 155 + X -----^ REPEAT PROCESS UNTIL HIT NUM LOG
-    // MESSAGES
-    //  +--------------------------------------------------+
-    //  |  iavl proof (Y bytes)                            |
-    //  +--------------------------------------------------+
-
+    // SOLANA DECODING
+    //          +---------------------------------------------------+
+    // 0:32     |  state root                 (32 bytes)            |
+    //          +---------------------------------------------------+
+    // 32:97    |  signature                  (65 bytes)            |
+    //          +---------------------------------------------------+
+    // 97:101   |  source chain ID            (big endian, 4 bytes) |
+    //          +---------------------------------------------------+
+    // 101:109  |  peptide height             (big endian, 8 bytes) |
+    //          +---------------------------------------------------+
+    // 109:117  |  source chain block height  (big endian, 8 bytes) |
+    //          +---------------------------------------------------+
+    // 117      |  number of log messages     (1 byte)              |
+    //          +---------------------------------------------------+
+    // 118:150  |  txSignature (high)         (32 bytes)            |
+    //          +---------------------------------------------------+
+    // 150:182  |  txSignature (low)          (32 bytes)            |
+    //          +---------------------------------------------------+
+    // 182:214  |  programID                  (32 bytes)            |
+    //          +---------------------------------------------------+
+    // 214:216  |  (currLogMsgDataEnd,logMsg) (2 bytes, X bytes)    |
+    //          +---------------------------------------------------+
+    //          |  iavl proof                 (x bytes)             |
+    //          +---------------------------------------------------+
     function validateEventSolana(bytes calldata proof)
         external
         view
@@ -131,34 +127,39 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         chainId = uint32(bytes4(proof[97:101]));
 
         _verifySequencerSignature(
-            bytes32(proof[:32]),
-            uint64(bytes8(proof[101:109])),
-            uint8(proof[96]),
-            bytes32(proof[32:64]),
-            bytes32(proof[64:96])
+            bytes32(proof[:32]), // apphash
+            uint64(bytes8(proof[101:109])), // peptide height
+            uint8(proof[96]), // signature: v component
+            bytes32(proof[32:64]), // signature: r component
+            bytes32(proof[64:96]) // signature: s component
         );
-        programID = bytes32(proof[121:153]);
+        programID = bytes32(proof[182:214]);
 
-        uint256 currLogMessageStart = 153;
-        uint256 currentLogMessageEnd = 153; // Edge case for 0 log messages, iavl starts at 153.
+        uint256 currLogMessageStart = 214;
+        uint256 currentLogMessageEnd = 214; // Edge case for 0 log messages
 
-        logMessages = new string[](uint8((proof[120])));
+        logMessages = new string[](uint8((proof[117]))); // number of log messages
 
-        for (uint256 i = 0; i < uint8((proof[120])); i++) {
+        for (uint256 i = 0; i < logMessages.length; ++i) {
             currentLogMessageEnd = uint16(bytes2(proof[currLogMessageStart:currLogMessageStart + 2]));
             logMessages[i] = string(proof[currLogMessageStart + 2:currentLogMessageEnd]);
             currLogMessageStart = currentLogMessageEnd;
         }
 
         bytes memory rawEvent = abi.encodePacked(programID);
-        for (uint256 i = 0; i < uint8((proof[120])); i++) {
+        for (uint256 i = 0; i < uint8((proof[117])); ++i) {
             rawEvent = abi.encodePacked(rawEvent, logMessages[i]);
         }
 
         this.verifyMembership(
-            bytes32(proof[:32]),
-            ReceiptParser.eventRootKey(
-                chainId, clientType, uint64(bytes8(proof[109:117])), uint16(bytes2(proof[117:119])), uint8(proof[119])
+            bytes32(proof[:32]), // apphash
+            ReceiptParser.solanaEventRootKey(
+                chainId,
+                clientType,
+                uint64(bytes8(proof[109:117])), // height
+                bytes32(proof[118:150]), // tx signature high
+                bytes32(proof[150:182]), // tx signature low
+                programID
             ),
             keccak256(rawEvent),
             proof[currentLogMessageEnd:]
@@ -202,7 +203,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         bytes32 prehash = sha256(abi.encodePacked(proof[2:path0start], key, hex"20", sha256(abi.encodePacked(value))));
         uint256 offset = path0start;
 
-        for (uint256 i = 0; i < uint256(uint8(proof[0])); i++) {
+        for (uint256 i = 0; i < uint256(uint8(proof[0])); ++i) {
             uint256 suffixstart = uint256(uint8(proof[offset]));
             uint256 suffixend = uint256(uint8(proof[offset + 1]));
 
