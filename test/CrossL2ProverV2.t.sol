@@ -80,7 +80,7 @@ contract CrossL2ProverTest is SigningBase {
         bytes memory solProof = load_proof("/test/payload/solana-proof.hex");
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event.json"));
 
-        (uint32 chainId, bytes32 programID, string[] memory _logMsgs) = crossProverV2.validateEventSolana(solProof);
+        (uint32 chainId, bytes32 programID, string[] memory _logMsgs) = crossProverV2.validateSolLogs(solProof);
 
         assertEq(chainId, 2);
         assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
@@ -91,7 +91,7 @@ contract CrossL2ProverTest is SigningBase {
         string memory expected = vm.readFile(string.concat(rootDir, "/test/payload/solana-event-2.json"));
         console2.log("calldata length", solProof.length);
 
-        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateEventSolana(solProof);
+        (uint32 chainId, bytes32 programID, string[] memory logMsges) = crossProverV2.validateSolLogs(solProof);
         console2.log("executor", toHexString(programID));
         console2.log("log msg", logMsges[0]);
 

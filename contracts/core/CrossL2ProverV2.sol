@@ -118,7 +118,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     //          +---------------------------------------------------+
     //          |  iavl proof                 (x bytes)             |
     //          +---------------------------------------------------+
-    function validateEventSolana(bytes calldata proof)
+    function validateSolLogs(bytes calldata proof)
         external
         view
         virtual
