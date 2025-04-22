@@ -17,8 +17,11 @@ CONTRACT_ABI_FILES = $(foreach pattern,$(CONTRACT_ABI_PATTERNS),$(wildcard $(pat
 CONTRACT_BOTH_FILES = $(foreach pattern,$(CONTRACT_JSON_PATTERNS),$(wildcard $(pattern)))
 CONTRACT_JSON_FILES = $(filter-out $(CONTRACT_ABI_FILES),$(CONTRACT_BOTH_FILES))
 
-.PHONY: build-contracts bindings-gen-go bindings-gen-ts
+.PHONY: test
+test:
+	forge test
 
+.PHONY: build-contracts
 build-contracts:
 	echo "Building contracts"; \
 	rm -frd ./out; \
@@ -35,6 +38,7 @@ build-contracts:
 # as they are not publicly exposed, but rather used within the contract itself.
 #
 # 	ABIGen issue ref: https://github.com/ethereum/solidity/issues/9278
+.PHONY: bindings-gen-go
 bindings-gen-go: build-contracts
 	echo "Generating Go Prover Contracts bindings..."; \
 	rm -rfd ./bindings/go/* ; \
@@ -50,6 +54,7 @@ bindings-gen-go: build-contracts
 	done; \
 	echo "Done."
 
+.PHONY: bindings-gen-ts
 bindings-gen-ts: build-contracts
 	echo "Generating TypeScript bindings..."; \
 	rm -rfd ./src/evm/contracts/*; \
