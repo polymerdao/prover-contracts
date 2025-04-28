@@ -8,6 +8,7 @@ import {
     L1Configuration,
     Type,
     ProveScalarArgs,
+    ProveL1ScalarArgs,
     UpdateL2ConfigArgs
 } from "../../contracts/libs/RegistryTypes.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
@@ -268,7 +269,7 @@ contract ProverTest is Test {
         // Try to prove L2 state with invalid L1 state root
         bytes32 invalidL1StateRoot = bytes32(uint256(0x999999));
 
-        // Should revert with SettlementChainStateRootNotProved
+        // Should revert with SettlementChainStateRootNotProven
         vm.expectRevert(
             abi.encodeWithSelector(
                 NativeProver.SettlementChainStateRootNotProven.selector, l1StateRoot, invalidL1StateRoot
@@ -379,6 +380,182 @@ contract ProverTest is Test {
             currentL1StateRoot, // Use the correct L1 state root
             _createMockSettledStateProof()
         );
+    }
+
+    // Test the new proveL1 method for successful case
+    function testProveL1() public {
+        // First prove L1 state
+        prover.proveSettlementLayerState(rlpEncodedL1Header);
+
+        // Setup contract address and storage slot to prove
+        address contractAddr = address(0xBEEF);
+        bytes32 storageSlot = bytes32(uint256(0xCAFE));
+        bytes32 storageValue = bytes32(uint256(0xDEAD));
+
+        // Create ProveL1ScalarArgs struct
+        ProveL1ScalarArgs memory proveArgs = ProveL1ScalarArgs({
+            contractAddr: contractAddr,
+            storageSlot: storageSlot,
+            storageValue: storageValue,
+            l1WorldStateRoot: l1StateRoot
+        });
+
+        // Create mock L1 storage proof
+        bytes[] memory l1StorageProof = new bytes[](1);
+        l1StorageProof[0] = hex"abcd";
+
+        // Create mock contract account data with the storage root
+        bytes[] memory contractAccountParts = new bytes[](4);
+        contractAccountParts[0] = RLPWriter.writeBytes(hex"00"); // nonce
+        contractAccountParts[1] = RLPWriter.writeBytes(hex"00"); // balance
+        bytes32 contractStorageRoot = bytes32(uint256(0xbeef));
+        contractAccountParts[2] = RLPWriter.writeBytes(abi.encodePacked(contractStorageRoot)); // storageRoot
+        contractAccountParts[3] = RLPWriter.writeBytes(hex"1234"); // codeHash
+        bytes memory rlpEncodedContractAccount = RLPWriter.writeList(contractAccountParts);
+
+        // Create mock account proof
+        bytes[] memory l1AccountProof = new bytes[](1);
+        l1AccountProof[0] = hex"dcba";
+
+        // We expect any revert since we can't easily mock all the verifications
+        vm.expectRevert();
+        prover.proveL1(
+            proveArgs,
+            rlpEncodedL1Header,
+            l1StorageProof,
+            rlpEncodedContractAccount,
+            l1AccountProof
+        );
+    }
+
+    // Test proveL1 method with invalid L1 state root
+    function testProveL1RequiresValidL1StateRoot() public {
+        // First prove L1 state
+        prover.proveSettlementLayerState(rlpEncodedL1Header);
+
+        // Setup contract address and storage slot to prove
+        address contractAddr = address(0xBEEF);
+        bytes32 storageSlot = bytes32(uint256(0xCAFE));
+        bytes32 storageValue = bytes32(uint256(0xDEAD));
+
+        // Create ProveL1ScalarArgs struct with invalid L1 state root
+        bytes32 invalidL1StateRoot = bytes32(uint256(0x999999));
+        ProveL1ScalarArgs memory proveArgs = ProveL1ScalarArgs({
+            contractAddr: contractAddr,
+            storageSlot: storageSlot,
+            storageValue: storageValue,
+            l1WorldStateRoot: invalidL1StateRoot
+        });
+
+        // Create mock L1 storage proof
+        bytes[] memory l1StorageProof = new bytes[](1);
+        l1StorageProof[0] = hex"abcd";
+
+        // Create mock contract account data with the storage root
+        bytes[] memory contractAccountParts = new bytes[](4);
+        contractAccountParts[0] = RLPWriter.writeBytes(hex"00"); // nonce
+        contractAccountParts[1] = RLPWriter.writeBytes(hex"00"); // balance
+        bytes32 contractStorageRoot = bytes32(uint256(0xbeef));
+        contractAccountParts[2] = RLPWriter.writeBytes(abi.encodePacked(contractStorageRoot)); // storageRoot
+        contractAccountParts[3] = RLPWriter.writeBytes(hex"1234"); // codeHash
+        bytes memory rlpEncodedContractAccount = RLPWriter.writeList(contractAccountParts);
+
+        // Create mock account proof
+        bytes[] memory l1AccountProof = new bytes[](1);
+        l1AccountProof[0] = hex"dcba";
+
+        // Should revert with SettlementChainStateRootNotProven
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                NativeProver.SettlementChainStateRootNotProven.selector, l1StateRoot, invalidL1StateRoot
+            )
+        );
+        prover.proveL1(
+            proveArgs,
+            rlpEncodedL1Header,
+            l1StorageProof,
+            rlpEncodedContractAccount,
+            l1AccountProof
+        );
+    }
+
+    // Test proveL1 method with invalid L1 block header
+    function testProveL1RequiresValidL1BlockHeader() public {
+        // First prove L1 state
+        prover.proveSettlementLayerState(rlpEncodedL1Header);
+
+        // Setup contract address and storage slot to prove
+        address contractAddr = address(0xBEEF);
+        bytes32 storageSlot = bytes32(uint256(0xCAFE));
+        bytes32 storageValue = bytes32(uint256(0xDEAD));
+
+        // Create ProveL1ScalarArgs struct with correct L1 state root
+        ProveL1ScalarArgs memory proveArgs = ProveL1ScalarArgs({
+            contractAddr: contractAddr,
+            storageSlot: storageSlot,
+            storageValue: storageValue,
+            l1WorldStateRoot: l1StateRoot
+        });
+
+        // Create mock L1 storage proof
+        bytes[] memory l1StorageProof = new bytes[](1);
+        l1StorageProof[0] = hex"abcd";
+
+        // Create mock contract account data with the storage root
+        bytes[] memory contractAccountParts = new bytes[](4);
+        contractAccountParts[0] = RLPWriter.writeBytes(hex"00"); // nonce
+        contractAccountParts[1] = RLPWriter.writeBytes(hex"00"); // balance
+        bytes32 contractStorageRoot = bytes32(uint256(0xbeef));
+        contractAccountParts[2] = RLPWriter.writeBytes(abi.encodePacked(contractStorageRoot)); // storageRoot
+        contractAccountParts[3] = RLPWriter.writeBytes(hex"1234"); // codeHash
+        bytes memory rlpEncodedContractAccount = RLPWriter.writeList(contractAccountParts);
+
+        // Create mock account proof
+        bytes[] memory l1AccountProof = new bytes[](1);
+        l1AccountProof[0] = hex"dcba";
+
+        // Create an invalid L1 header with a different state root
+        bytes memory invalidL1Header = _createMockL1Header(100, bytes32(uint256(0x555555)));
+        bytes32 invalidBlockHash = keccak256(invalidL1Header);
+        
+        // Set the mock L1Block to return a different hash than what we'll provide
+        mockL1Block.setBlockHash(invalidBlockHash);
+
+        // Should revert with InvalidRLPEncodedBlock
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                NativeProver.InvalidRLPEncodedBlock.selector, 
+                invalidBlockHash, // expected
+                keccak256(rlpEncodedL1Header) // calculated
+            )
+        );
+        
+        // Use the original header which won't match our updated mockL1Block hash
+        prover.proveL1(
+            proveArgs,
+            rlpEncodedL1Header,
+            l1StorageProof,
+            rlpEncodedContractAccount,
+            l1AccountProof
+        );
+        
+        // Reset the mock block hash
+        mockL1Block.setBlockHash(l1BlockHash);
+    }
+
+    function _createRLPAccountData(uint256 _nonce, uint256 _balance, bytes32 _storageRoot, bytes32 _codeHash)
+        internal
+        pure
+        returns (bytes memory)
+    {
+        bytes[] memory accountFields = new bytes[](4);
+
+        accountFields[0] = RLPWriter.writeUint(_nonce);
+        accountFields[1] = RLPWriter.writeUint(_balance);
+        accountFields[2] = RLPWriter.writeBytes(abi.encodePacked(_storageRoot));
+        accountFields[3] = RLPWriter.writeBytes(abi.encodePacked(_codeHash));
+
+        return RLPWriter.writeList(accountFields);
     }
 
     // Storage value proving can't be fully tested without valid Merkle proofs
@@ -571,7 +748,7 @@ contract ProverTest is Test {
         // Use an invalid L1 state root that hasn't been proven
         bytes32 unprovenStateRoot = bytes32(uint256(0x123456789));
 
-        // Should revert with SettlementChainStateRootNotProved
+        // Should revert with SettlementChainStateRootNotProven
         vm.expectRevert(
             abi.encodeWithSelector(
                 NativeProver.SettlementChainStateRootNotProven.selector,

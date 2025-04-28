@@ -6,7 +6,7 @@ import {Registry} from "../../contracts/core/native_fallback/L1/Registry.sol";
 import {NativeProver} from "../../contracts/core/native_fallback/L2/NativeProver.sol";
 import {OPStackBedrockProver} from "../../contracts/core/native_fallback/L2/OPStackBedrockProver.sol";
 import {OPStackCannonProver} from "../../contracts/core/native_fallback/L2/OPStackCannonProver.sol";
-import {L2Configuration, L1Configuration, Type, ProveScalarArgs} from "../../contracts/libs/RegistryTypes.sol";
+import {L2Configuration, L1Configuration, Type, ProveScalarArgs, ProveL1ScalarArgs} from "../../contracts/libs/RegistryTypes.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {MockIL1Block} from "./mock/MockIL1Block.sol";
@@ -346,6 +346,114 @@ contract IntegrationTest is Test {
         // are checked in sequence, validating the full prove flow
     }
 
+    // Test the new proveL1 method in an integration context
+    function testProveL1Flow(uint256 _blockNumber, bytes32 _storageValue) public {
+        // Make sure block number is large enough to satisfy any settlement delay requirements
+        vm.assume(_blockNumber >= 20 && _blockNumber < type(uint64).max);
+
+        // 1. Create L1 header with a state root we'll use
+        bytes32 mockL1StateRoot = bytes32(uint256(0xdeadbeef));
+        bytes memory rlpEncodedL1Header = _createMockL1Header(_blockNumber, mockL1StateRoot);
+
+        // Calculate hash and set in the mock L1Block
+        bytes32 mockL1BlockHash = keccak256(rlpEncodedL1Header);
+        mockL1Block.setBlockHash(mockL1BlockHash);
+
+        // 2. Prove the settlement layer state
+        vm.expectEmit(true, true, true, true);
+        emit L1WorldStateProven(_blockNumber, mockL1StateRoot);
+        mockProver.proveSettlementLayerState(rlpEncodedL1Header);
+
+        // 3. Setup parameters for proveL1
+        address l1ContractAddr = address(0x9999);
+        bytes32 storageSlot = bytes32(uint256(0x8888));
+
+        // Create ProveL1ScalarArgs
+        ProveL1ScalarArgs memory proveArgs = ProveL1ScalarArgs({
+            contractAddr: l1ContractAddr,
+            storageSlot: storageSlot,
+            storageValue: _storageValue,
+            l1WorldStateRoot: mockL1StateRoot
+        });
+
+        // 4. Create mock L1 storage proof
+        bytes[] memory l1StorageProof = new bytes[](1);
+        l1StorageProof[0] = new bytes(64); // Empty mock proof
+
+        // 5. Create mock contract account data with storage root
+        bytes memory mockContractAccount = _createMockContractAccount();
+
+        // 6. Create mock account proof
+        bytes[] memory l1AccountProof = new bytes[](1);
+        l1AccountProof[0] = new bytes(64); // Empty mock proof
+
+        // Try to prove the L1 state - should revert due to Merkle proof verification
+        vm.expectRevert();
+        mockProver.proveL1(
+            proveArgs,
+            rlpEncodedL1Header,
+            l1StorageProof,
+            mockContractAccount,
+            l1AccountProof
+        );
+
+        // If we were able to properly mock the Merkle verification, we'd verify the return values:
+        // (uint256 chainId, address storingContract, bytes32 storageValue) = mockProver.proveL1(...)
+    }
+
+    // Test proveL1 method with an invalid L1 state root
+    function testProveL1WithInvalidStateRoot(uint256 _blockNumber, bytes32 _storageValue) public {
+        // Make sure block number is suitable
+        vm.assume(_blockNumber >= 20 && _blockNumber < type(uint64).max);
+
+        // 1. Create and prove a valid L1 header
+        bytes32 validL1StateRoot = bytes32(uint256(0xdeadbeef));
+        bytes memory rlpEncodedL1Header = _createMockL1Header(_blockNumber, validL1StateRoot);
+
+        // Set mock block hash
+        bytes32 mockL1BlockHash = keccak256(rlpEncodedL1Header);
+        mockL1Block.setBlockHash(mockL1BlockHash);
+
+        // Prove settlement layer state
+        mockProver.proveSettlementLayerState(rlpEncodedL1Header);
+
+        // 2. Setup parameters with an INVALID state root
+        bytes32 invalidL1StateRoot = bytes32(uint256(0x999999));
+
+        ProveL1ScalarArgs memory proveArgs = ProveL1ScalarArgs({
+            contractAddr: address(0x9999),
+            storageSlot: bytes32(uint256(0x8888)),
+            storageValue: _storageValue,
+            l1WorldStateRoot: invalidL1StateRoot // Using invalid state root
+        });
+
+        // Create mocks
+        bytes[] memory l1StorageProof = new bytes[](1);
+        l1StorageProof[0] = new bytes(64);
+
+        bytes memory mockContractAccount = _createMockContractAccount();
+
+        bytes[] memory l1AccountProof = new bytes[](1);
+        l1AccountProof[0] = new bytes(64);
+
+        // Should revert with SettlementChainStateRootNotProven since we're using an invalid state root
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                NativeProver.SettlementChainStateRootNotProven.selector,
+                validL1StateRoot, // The proven state root
+                invalidL1StateRoot // The invalid state root we're trying to use
+            )
+        );
+
+        mockProver.proveL1(
+            proveArgs,
+            rlpEncodedL1Header,
+            l1StorageProof,
+            mockContractAccount,
+            l1AccountProof
+        );
+    }
+
     // Helper function to create a mock L1 header
     function _createMockL1Header(uint256 _blockNumber, bytes32 _stateRoot) internal pure returns (bytes memory) {
         bytes[] memory encodedHeaderParts = new bytes[](15);
@@ -497,6 +605,63 @@ contract IntegrationTest is Test {
         // Call prove with our data
         mockProver.prove(
             proveArgs, rlpEncodedL1Header, rlpEncodedL2Header, settledStateProof, storageProof, accountRLP, accountProof
+        );
+    }
+
+    // Test the proveL1 method with semi-real proof data
+    function testProveL1WithSemiRealProofData() public {
+        // Use a specific block number
+        uint256 blockNumber = 100;
+
+        // Setup test parameters for L1 proof
+        bytes32 storageValue = bytes32(uint256(0xdadacafe)); // Value to prove
+        address contractAddr = address(0x1A2b3c4D5e6F7890123456789aBcdeF012345678);
+        bytes32 storageSlot = bytes32(uint256(0x1234));
+
+        // Create L1 header with state root
+        bytes32 l1StateRoot = bytes32(uint256(0xf5f6f7f8));
+        bytes memory rlpEncodedL1Header = _createMockL1Header(blockNumber, l1StateRoot);
+
+        // Calculate hash and set in mock L1Block
+        bytes32 l1BlockHash = keccak256(rlpEncodedL1Header);
+        mockL1Block.setBlockHash(l1BlockHash);
+
+        // Create storage trie root
+        bytes32 storageTrieRoot = _generateStorageTrieRoot(storageSlot, storageValue);
+
+        // Create account data with storage root
+        bytes memory accountRLP = _createRLPAccountData(
+            1, // nonce
+            1000, // balance
+            storageTrieRoot, // storage root
+            keccak256(abi.encodePacked("L1ContractCode")) // code hash
+        );
+
+        // Create Merkle proofs
+        (bytes[] memory accountProof, bytes[] memory storageProof) =
+            _generateSemiRealProofs(contractAddr, accountRLP, storageSlot, storageValue);
+
+        // Build arguments for proveL1
+        ProveL1ScalarArgs memory proveArgs = ProveL1ScalarArgs({
+            contractAddr: contractAddr,
+            storageSlot: storageSlot,
+            storageValue: storageValue,
+            l1WorldStateRoot: l1StateRoot
+        });
+
+        // Prove L1 settlement layer state first
+        mockProver.proveSettlementLayerState(rlpEncodedL1Header);
+
+        // We expect a revert due to the semi-real Merkle proofs
+        vm.expectRevert();
+
+        // Call proveL1 with our data
+        mockProver.proveL1(
+            proveArgs,
+            rlpEncodedL1Header,
+            storageProof,
+            accountRLP,
+            accountProof
         );
     }
 
