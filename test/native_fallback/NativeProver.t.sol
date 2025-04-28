@@ -419,13 +419,7 @@ contract ProverTest is Test {
 
         // We expect any revert since we can't easily mock all the verifications
         vm.expectRevert();
-        prover.proveL1(
-            proveArgs,
-            rlpEncodedL1Header,
-            l1StorageProof,
-            rlpEncodedContractAccount,
-            l1AccountProof
-        );
+        prover.proveL1(proveArgs, rlpEncodedL1Header, l1StorageProof, rlpEncodedContractAccount, l1AccountProof);
     }
 
     // Test proveL1 method with invalid L1 state root
@@ -470,13 +464,7 @@ contract ProverTest is Test {
                 NativeProver.SettlementChainStateRootNotProven.selector, l1StateRoot, invalidL1StateRoot
             )
         );
-        prover.proveL1(
-            proveArgs,
-            rlpEncodedL1Header,
-            l1StorageProof,
-            rlpEncodedContractAccount,
-            l1AccountProof
-        );
+        prover.proveL1(proveArgs, rlpEncodedL1Header, l1StorageProof, rlpEncodedContractAccount, l1AccountProof);
     }
 
     // Test proveL1 method with invalid L1 block header
@@ -517,28 +505,22 @@ contract ProverTest is Test {
         // Create an invalid L1 header with a different state root
         bytes memory invalidL1Header = _createMockL1Header(100, bytes32(uint256(0x555555)));
         bytes32 invalidBlockHash = keccak256(invalidL1Header);
-        
+
         // Set the mock L1Block to return a different hash than what we'll provide
         mockL1Block.setBlockHash(invalidBlockHash);
 
         // Should revert with InvalidRLPEncodedBlock
         vm.expectRevert(
             abi.encodeWithSelector(
-                NativeProver.InvalidRLPEncodedBlock.selector, 
+                NativeProver.InvalidRLPEncodedBlock.selector,
                 invalidBlockHash, // expected
                 keccak256(rlpEncodedL1Header) // calculated
             )
         );
-        
+
         // Use the original header which won't match our updated mockL1Block hash
-        prover.proveL1(
-            proveArgs,
-            rlpEncodedL1Header,
-            l1StorageProof,
-            rlpEncodedContractAccount,
-            l1AccountProof
-        );
-        
+        prover.proveL1(proveArgs, rlpEncodedL1Header, l1StorageProof, rlpEncodedContractAccount, l1AccountProof);
+
         // Reset the mock block hash
         mockL1Block.setBlockHash(l1BlockHash);
     }

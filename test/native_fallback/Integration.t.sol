@@ -6,7 +6,13 @@ import {Registry} from "../../contracts/core/native_fallback/L1/Registry.sol";
 import {NativeProver} from "../../contracts/core/native_fallback/L2/NativeProver.sol";
 import {OPStackBedrockProver} from "../../contracts/core/native_fallback/L2/OPStackBedrockProver.sol";
 import {OPStackCannonProver} from "../../contracts/core/native_fallback/L2/OPStackCannonProver.sol";
-import {L2Configuration, L1Configuration, Type, ProveScalarArgs, ProveL1ScalarArgs} from "../../contracts/libs/RegistryTypes.sol";
+import {
+    L2Configuration,
+    L1Configuration,
+    Type,
+    ProveScalarArgs,
+    ProveL1ScalarArgs
+} from "../../contracts/libs/RegistryTypes.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {MockIL1Block} from "./mock/MockIL1Block.sol";
@@ -389,13 +395,7 @@ contract IntegrationTest is Test {
 
         // Try to prove the L1 state - should revert due to Merkle proof verification
         vm.expectRevert();
-        mockProver.proveL1(
-            proveArgs,
-            rlpEncodedL1Header,
-            l1StorageProof,
-            mockContractAccount,
-            l1AccountProof
-        );
+        mockProver.proveL1(proveArgs, rlpEncodedL1Header, l1StorageProof, mockContractAccount, l1AccountProof);
 
         // If we were able to properly mock the Merkle verification, we'd verify the return values:
         // (uint256 chainId, address storingContract, bytes32 storageValue) = mockProver.proveL1(...)
@@ -445,13 +445,7 @@ contract IntegrationTest is Test {
             )
         );
 
-        mockProver.proveL1(
-            proveArgs,
-            rlpEncodedL1Header,
-            l1StorageProof,
-            mockContractAccount,
-            l1AccountProof
-        );
+        mockProver.proveL1(proveArgs, rlpEncodedL1Header, l1StorageProof, mockContractAccount, l1AccountProof);
     }
 
     // Helper function to create a mock L1 header
@@ -656,13 +650,7 @@ contract IntegrationTest is Test {
         vm.expectRevert();
 
         // Call proveL1 with our data
-        mockProver.proveL1(
-            proveArgs,
-            rlpEncodedL1Header,
-            storageProof,
-            accountRLP,
-            accountProof
-        );
+        mockProver.proveL1(proveArgs, rlpEncodedL1Header, storageProof, accountRLP, accountProof);
     }
 
     // Helper function to create semi-real Merkle proofs
