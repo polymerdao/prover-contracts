@@ -29,6 +29,7 @@ import {
     L1Configuration,
     Type,
     ProveScalarArgs,
+    ProveL1ScalarArgs,
     UpdateL2ConfigArgs
 } from "../../../libs/RegistryTypes.sol";
 import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
@@ -643,6 +644,27 @@ contract NativeProver is INativeProver, IProverHelper {
         return (_proveArgs.chainID, _proveArgs.contractAddr, _proveArgs.storageValue);
     }
 
+    function proveL1(
+        ProveL1ScalarArgs calldata _args,
+        bytes calldata _rlpEncodedL1Header,
+        bytes[] calldata _l1StorageProof,
+        bytes calldata _rlpEncodedContractAccount,
+        bytes[] calldata _l1AccountProof
+    ) external view returns (uint256 chainID, address storingContract, bytes32 storageValue) {
+        // First prove the L1 view
+        bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
+
+        // Check that the expected L1 state root matches the verified one
+        if (_l1StateRoot != _args.l1WorldStateRoot) {
+            revert SettlementChainStateRootNotProven(_l1StateRoot, _args.l1WorldStateRoot);
+        }
+
+        // Now prove storage against the L1 state root
+        _proveL1StorageInState(_args, _l1StorageProof, _rlpEncodedContractAccount, _l1AccountProof);
+
+        return (L1_CHAIN_ID, _args.contractAddr, _args.storageValue);
+    }
+
     /**
      * @notice Validates the L1 block data and extracts state root
      * @param _rlpEncodedL1Header The encoded L1 header
@@ -711,6 +733,29 @@ contract NativeProver is INativeProver, IProverHelper {
         // Verify the account exists in the state tree
         _proveAccount(
             abi.encodePacked(_args.contractAddr), _rlpEncodedContractAccount, _l2AccountProof, _args.l2WorldStateRoot
+        );
+
+        // Verify the storage value exists in the storage tree
+        ProverHelpers.proveStorageBytes32(
+            abi.encodePacked(_args.storageSlot), _args.storageValue, _l2StorageProof, bytes32(storageRoot)
+        );
+    }
+
+    function _proveL1StorageInState(
+        ProveL1ScalarArgs calldata _args,
+        bytes[] calldata _l2StorageProof,
+        bytes calldata _rlpEncodedContractAccount,
+        bytes[] calldata _l2AccountProof
+    ) internal pure {
+        bytes memory storageRoot = RLPReader.readBytes(RLPReader.readList(_rlpEncodedContractAccount)[2]);
+
+        if (storageRoot.length > 32) {
+            revert IncorrectContractStorageRoot(storageRoot);
+        }
+
+        // Verify the account exists in the state tree
+        _proveAccount(
+            abi.encodePacked(_args.contractAddr), _rlpEncodedContractAccount, _l2AccountProof, _args.l1WorldStateRoot
         );
 
         // Verify the storage value exists in the storage tree
