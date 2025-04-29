@@ -88,7 +88,7 @@ contract ComputeCreate2Addresses is Script {
         });
         
         // Create empty array for initial L2 configurations
-        NativeProver.InitialL2Configuration[] memory initialL2Configs = new NativeProver.InitialL2Configuration[](0);
+        NativeProver.InitialL2Configuration[] memory initialL2NativeConfigs = new NativeProver.InitialL2Configuration[](0);
         
         // Compute init code with constructor args
         bytes memory nativeProverInitCode = abi.encodePacked(

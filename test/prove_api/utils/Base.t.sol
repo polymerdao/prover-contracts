@@ -45,4 +45,8 @@ contract Base is Test {
     function load_bytes_from_hex(string memory filepath) internal view returns (bytes memory) {
         return vm.parseBytes(vm.readFile(string.concat(rootDir, filepath)));
     }
+
+    function load_str_from_hex(string memory filepath) internal view returns (bytes memory) {
+        return vm.readFileBinary(string.concat(rootDir, filepath));
+    }
 }
