@@ -48,5 +48,5 @@ OUTFILE=~/Code/prover-contracts/test/native_fallback/payload/native-proof.hex
 echo $PROOF > $OUTFILE
 echo "Proof written to $OUTFILE"
 
-cast code $OP_NATIVE_PROVER --rpc-url $OP_RPC_URL > ~/Code/prover-contracts/test/native_fallback/payload/op-prover-bytecode.hex 
-cast code $BASE_NATIVE_PROVER --rpc-url $OP_RPC_URL > ~/Code/prover-contracts/test/native_fallback/payload/base-prover-bytecode.hex 
+cast code $OP_NATIVE_PROVER -r $OP_RPC_URL > ~/Code/prover-contracts/test/native_fallback/payload/op-prover-bytecode.hex 
+cast code $BASE_NATIVE_PROVER -r $OP_RPC_URL > ~/Code/prover-contracts/test/native_fallback/payload/base-prover-bytecode.hex 
