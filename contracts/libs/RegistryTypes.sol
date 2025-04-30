@@ -58,6 +58,13 @@ struct ProveScalarArgs {
     bytes32 l2WorldStateRoot;
 }
 
+struct ProveL1ScalarArgs {
+    address contractAddr;
+    bytes32 storageSlot;
+    bytes32 storageValue;
+    bytes32 l1WorldStateRoot;
+}
+
 struct UpdateL2ConfigArgs {
     L2Configuration config;
     bytes[] l1StorageProof;

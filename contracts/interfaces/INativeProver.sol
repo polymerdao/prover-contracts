@@ -17,7 +17,13 @@
 
 pragma solidity ^0.8.0;
 
-import {L2Configuration, L1Configuration, ProveScalarArgs, UpdateL2ConfigArgs} from "../libs/RegistryTypes.sol";
+import {
+    L2Configuration,
+    L1Configuration,
+    ProveScalarArgs,
+    ProveL1ScalarArgs,
+    UpdateL2ConfigArgs
+} from "../libs/RegistryTypes.sol";
 
 /**
  * @title INativeProver
@@ -89,5 +95,13 @@ interface INativeProver {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l2AccountProof
+    ) external view returns (uint256 chainId, address storingContract, bytes32 storageValue);
+
+    function proveL1(
+        ProveL1ScalarArgs calldata _proveArgs,
+        bytes calldata _rlpEncodedL1Header,
+        bytes[] calldata _l1StorageProof,
+        bytes calldata _rlpEncodedContractAccount,
+        bytes[] calldata _l1AccountProof
     ) external view returns (uint256 chainId, address storingContract, bytes32 storageValue);
 }
