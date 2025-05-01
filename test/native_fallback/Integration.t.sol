@@ -20,11 +20,9 @@ import {ISettledStateProver} from "../../contracts/interfaces/ISettledStateProve
 
 // Create a helper contract that exposes the internal methods of Prover for testing
 contract MockProver is NativeProver {
-    constructor(
-        uint256 _chainID,
-        L1Configuration memory _l1Configuration,
-        InitialL2Configuration[] memory _initialL2Configurations
-    ) NativeProver(_chainID, _l1Configuration, _initialL2Configurations) {}
+    constructor(address _owner, uint256 _chainID, InitialL2Configuration[] memory _initialL2Configurations)
+        NativeProver(_owner, _chainID, _initialL2Configurations)
+    {}
 
     // Expose internal method for testing
     function exposeSetInitialChainConfiguration(uint256 _chainID, L2Configuration memory _config) external {
@@ -141,7 +139,8 @@ contract IntegrationTest is Test {
         });
 
         // Create MockProver
-        mockProver = new MockProver(l2ChainID, l1Config, proverInitialConfigs);
+        mockProver = new MockProver(owner, l2ChainID, proverInitialConfigs);
+        mockProver.setInitialL1Config(l1Config);
 
         // Calculate expected role hash for bedrock chain ID
         bytes32 bedrockRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), bedrockChainID));

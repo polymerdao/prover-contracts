@@ -24,6 +24,7 @@ import {IL1Block} from "../../../interfaces/IL1Block.sol";
 import {INativeProver} from "../../../interfaces/INativeProver.sol";
 import {IProverHelper} from "../../../interfaces/IProverHelper.sol";
 import {ISettledStateProver} from "../../../interfaces/ISettledStateProver.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {
     L2Configuration,
     L1Configuration,
@@ -34,7 +35,7 @@ import {
 } from "../../../libs/RegistryTypes.sol";
 import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
-contract NativeProver is INativeProver, IProverHelper {
+contract NativeProver is Ownable, INativeProver, IProverHelper {
     uint256 public immutable L1_CHAIN_ID; // Chain ID of the settlement chain
 
     L1Configuration public L1_CONFIGURATION; // Configuration for L1
@@ -124,20 +125,30 @@ contract NativeProver is INativeProver, IProverHelper {
      */
     error InvalidSettledStateProof(uint256 _chainID, bytes32 _l2WorldStateRoot);
 
-    constructor(
-        uint256 _l1ChainID,
-        L1Configuration memory _l1Configuration,
-        InitialL2Configuration[] memory _initialL2Configurations
-    ) {
-        L1_CONFIGURATION = _l1Configuration;
+    /**
+     * @notice Constructor briefly sets an owner which can set the l1 registry information one time and then transfers
+     * ownership away
+     * This is to allow for NativeProver contracts to have the same addresses when using create2 even if they have
+     * different l1 configs.
+     *
+     */
+    constructor(address _owner, uint256 _l1ChainID, InitialL2Configuration[] memory _initialL2Configurations)
+        Ownable()
+    {
         L1_CHAIN_ID = _l1ChainID;
         for (uint256 i = 0; i < _initialL2Configurations.length; ++i) {
             _setInitialChainConfiguration(_initialL2Configurations[i].chainID, _initialL2Configurations[i].config);
         }
+        transferOwnership(_owner);
     }
 
     function _setInitialChainConfiguration(uint256 _chainID, L2Configuration memory _config) internal {
         l2ChainConfigurations[_chainID] = _config;
+    }
+
+    function setInitialL1Config(L1Configuration memory _l1Configuration) public onlyOwner {
+        L1_CONFIGURATION = _l1Configuration;
+        renounceOwnership();
     }
 
     /**
