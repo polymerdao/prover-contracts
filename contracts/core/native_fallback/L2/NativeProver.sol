@@ -516,6 +516,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
      * @param _l2AccountProof Proof data for storing contract on the L2
      * @return chainID Destination chain ID
      * @return storingContract Address of storing contract
+     * @return storageSlot Slot used to verify
      * @return storageValue Verified storage value
      */
     function proveStorageValue(
@@ -523,7 +524,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractState,
         bytes[] calldata _l2AccountProof
-    ) public view returns (uint256 chainID, address storingContract, bytes32 storageValue) {
+    ) public view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
         // Verify L2 state root is proven
         BlockProof memory existingBlockProof = provenStates[_args.chainID];
         if (existingBlockProof.stateRoot != _args.l2WorldStateRoot) {
@@ -546,7 +547,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
             abi.encodePacked(_args.storageSlot), _args.storageValue, _l2StorageProof, bytes32(storageRoot)
         );
 
-        return (_args.chainID, _args.contractAddr, _args.storageValue);
+        return (_args.chainID, _args.contractAddr, _args.storageSlot, _args.storageValue);
     }
 
     /**
@@ -570,7 +571,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l2AccountProof
-    ) external view returns (uint256 chainID, address storingContract, bytes32 storageValue) {
+    ) external view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
         // First prove the L1 view
         bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
 
@@ -580,7 +581,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
         // Now prove storage against the verified settled L2 state root
         _proveStorageInState(_args, _l2StorageProof, _rlpEncodedContractAccount, _l2AccountProof);
 
-        return (_args.chainID, _args.contractAddr, _args.storageValue);
+        return (_args.chainID, _args.contractAddr, _args.storageSlot, _args.storageValue);
     }
 
     function updateAndProve(
@@ -592,7 +593,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l2AccountProof
-    ) external returns (uint256 chainID, address storingContract, bytes32 storageValue) {
+    ) external returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
         // First prove the L1 view
         bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
 
@@ -614,7 +615,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
         // Now prove storage against the verified settled L2 state root using that L2 configuration
         _proveStorageInState(_proveArgs, _l2StorageProof, _rlpEncodedContractAccount, _l2AccountProof);
 
-        return (_proveArgs.chainID, _proveArgs.contractAddr, _proveArgs.storageValue);
+        return (_proveArgs.chainID, _proveArgs.contractAddr, _proveArgs.storageSlot, _proveArgs.storageValue);
     }
 
     function configureAndProve(
@@ -626,7 +627,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l2AccountProof
-    ) external view returns (uint256 chainID, address storingContract, bytes32 storageValue) {
+    ) external view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
         // First prove the L1 view
         bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
 
@@ -652,7 +653,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
         // Now prove storage against the verified settled L2 state root using the verified L2 configuration
         _proveStorageInState(_proveArgs, _l2StorageProof, _rlpEncodedContractAccount, _l2AccountProof);
 
-        return (_proveArgs.chainID, _proveArgs.contractAddr, _proveArgs.storageValue);
+        return (_proveArgs.chainID, _proveArgs.contractAddr, _proveArgs.storageSlot, _proveArgs.storageValue);
     }
 
     function proveL1(
@@ -661,7 +662,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
         bytes[] calldata _l1StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l1AccountProof
-    ) external view returns (uint256 chainID, address storingContract, bytes32 storageValue) {
+    ) external view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
         // First prove the L1 view
         bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
 
@@ -673,7 +674,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
         // Now prove storage against the L1 state root
         _proveL1StorageInState(_args, _l1StorageProof, _rlpEncodedContractAccount, _l1AccountProof);
 
-        return (L1_CHAIN_ID, _args.contractAddr, _args.storageValue);
+        return (L1_CHAIN_ID, _args.contractAddr, _args.storageSlot, _args.storageValue);
     }
 
     /**
