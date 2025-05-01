@@ -656,7 +656,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
         return (_proveArgs.chainID, _proveArgs.contractAddr, _proveArgs.storageSlot, _proveArgs.storageValue);
     }
 
-    function proveL1(
+    function proveL1Native(
         ProveL1ScalarArgs calldata _args,
         bytes calldata _rlpEncodedL1Header,
         bytes[] calldata _l1StorageProof,

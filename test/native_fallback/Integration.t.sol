@@ -351,8 +351,8 @@ contract IntegrationTest is Test {
         // are checked in sequence, validating the full prove flow
     }
 
-    // Test the new proveL1 method in an integration context
-    function testProveL1Flow(uint256 _blockNumber, bytes32 _storageValue) public {
+    // Test the new proveL1Native method in an integration context
+    function testProveL1NativeFlow(uint256 _blockNumber, bytes32 _storageValue) public {
         // Make sure block number is large enough to satisfy any settlement delay requirements
         vm.assume(_blockNumber >= 20 && _blockNumber < type(uint64).max);
 
@@ -369,7 +369,7 @@ contract IntegrationTest is Test {
         emit L1WorldStateProven(_blockNumber, mockL1StateRoot);
         mockProver.proveSettlementLayerState(rlpEncodedL1Header);
 
-        // 3. Setup parameters for proveL1
+        // 3. Setup parameters for proveL1Native
         address l1ContractAddr = address(0x9999);
         bytes32 storageSlot = bytes32(uint256(0x8888));
 
@@ -394,13 +394,13 @@ contract IntegrationTest is Test {
 
         // Try to prove the L1 state - should revert due to Merkle proof verification
         vm.expectRevert();
-        mockProver.proveL1(proveArgs, rlpEncodedL1Header, l1StorageProof, mockContractAccount, l1AccountProof);
+        mockProver.proveL1Native(proveArgs, rlpEncodedL1Header, l1StorageProof, mockContractAccount, l1AccountProof);
 
         // If we were able to properly mock the Merkle verification, we'd verify the return values:
-        // (uint256 chainId, address storingContract, bytes32 storageValue) = mockProver.proveL1(...)
+        // (uint256 chainId, address storingContract, bytes32 storageValue) = mockProver.proveL1Native(...)
     }
 
-    // Test proveL1 method with an invalid L1 state root
+    // Test proveL1Native method with an invalid L1 state root
     function testProveL1WithInvalidStateRoot(uint256 _blockNumber, bytes32 _storageValue) public {
         // Make sure block number is suitable
         vm.assume(_blockNumber >= 20 && _blockNumber < type(uint64).max);
@@ -444,7 +444,7 @@ contract IntegrationTest is Test {
             )
         );
 
-        mockProver.proveL1(proveArgs, rlpEncodedL1Header, l1StorageProof, mockContractAccount, l1AccountProof);
+        mockProver.proveL1Native(proveArgs, rlpEncodedL1Header, l1StorageProof, mockContractAccount, l1AccountProof);
     }
 
     // Helper function to create a mock L1 header
@@ -601,7 +601,7 @@ contract IntegrationTest is Test {
         );
     }
 
-    // Test the proveL1 method with semi-real proof data
+    // Test the proveL1Native method with semi-real proof data
     function testProveL1WithSemiRealProofData() public {
         // Use a specific block number
         uint256 blockNumber = 100;
@@ -634,7 +634,7 @@ contract IntegrationTest is Test {
         (bytes[] memory accountProof, bytes[] memory storageProof) =
             _generateSemiRealProofs(contractAddr, accountRLP, storageSlot, storageValue);
 
-        // Build arguments for proveL1
+        // Build arguments for proveL1Native
         ProveL1ScalarArgs memory proveArgs = ProveL1ScalarArgs({
             contractAddr: contractAddr,
             storageSlot: storageSlot,
@@ -648,8 +648,8 @@ contract IntegrationTest is Test {
         // We expect a revert due to the semi-real Merkle proofs
         vm.expectRevert();
 
-        // Call proveL1 with our data
-        mockProver.proveL1(proveArgs, rlpEncodedL1Header, storageProof, accountRLP, accountProof);
+        // Call proveL1Native with our data
+        mockProver.proveL1Native(proveArgs, rlpEncodedL1Header, storageProof, accountRLP, accountProof);
     }
 
     // Helper function to create semi-real Merkle proofs

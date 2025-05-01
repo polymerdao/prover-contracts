@@ -398,7 +398,7 @@ contract ProverTest is Test {
         );
     }
 
-    // Test the new proveL1 method for successful case
+    // Test the new proveL1Native method for successful case
     function testProveL1() public {
         // First prove L1 state
         prover.proveSettlementLayerState(rlpEncodedL1Header);
@@ -435,10 +435,10 @@ contract ProverTest is Test {
 
         // We expect any revert since we can't easily mock all the verifications
         vm.expectRevert();
-        prover.proveL1(proveArgs, rlpEncodedL1Header, l1StorageProof, rlpEncodedContractAccount, l1AccountProof);
+        prover.proveL1Native(proveArgs, rlpEncodedL1Header, l1StorageProof, rlpEncodedContractAccount, l1AccountProof);
     }
 
-    // Test proveL1 method with invalid L1 state root
+    // Test proveL1Native method with invalid L1 state root
     function testProveL1RequiresValidL1StateRoot() public {
         // First prove L1 state
         prover.proveSettlementLayerState(rlpEncodedL1Header);
@@ -480,10 +480,10 @@ contract ProverTest is Test {
                 NativeProver.SettlementChainStateRootNotProven.selector, l1StateRoot, invalidL1StateRoot
             )
         );
-        prover.proveL1(proveArgs, rlpEncodedL1Header, l1StorageProof, rlpEncodedContractAccount, l1AccountProof);
+        prover.proveL1Native(proveArgs, rlpEncodedL1Header, l1StorageProof, rlpEncodedContractAccount, l1AccountProof);
     }
 
-    // Test proveL1 method with invalid L1 block header
+    // Test proveL1Native method with invalid L1 block header
     function testProveL1RequiresValidL1BlockHeader() public {
         // First prove L1 state
         prover.proveSettlementLayerState(rlpEncodedL1Header);
@@ -535,7 +535,7 @@ contract ProverTest is Test {
         );
 
         // Use the original header which won't match our updated mockL1Block hash
-        prover.proveL1(proveArgs, rlpEncodedL1Header, l1StorageProof, rlpEncodedContractAccount, l1AccountProof);
+        prover.proveL1Native(proveArgs, rlpEncodedL1Header, l1StorageProof, rlpEncodedContractAccount, l1AccountProof);
 
         // Reset the mock block hash
         mockL1Block.setBlockHash(l1BlockHash);
