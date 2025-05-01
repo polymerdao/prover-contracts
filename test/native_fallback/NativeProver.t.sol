@@ -858,7 +858,7 @@ contract ProverTest is Test {
 
         // We expect any revert since we can't easily mock all the verification
         vm.expectRevert();
-        prover.prove(
+        prover.proveNative(
             ProveScalarArgs(l2ChainID, contractAddr, storageSlot, storageValue, l2StateRoot),
             validL1Header,
             validL2Header,
@@ -869,7 +869,7 @@ contract ProverTest is Test {
         );
 
         // In a fully mocked test, we'd verify all the return values match our expected values
-        // (uint256 chainID, address storingContract, bytes32 storageValue) = prover.prove(...)
+        // (uint256 chainID, address storingContract, bytes32 storageValue) = prover.proveNative(...)
     }
 
     function testUpdateAndProveFlow() public {

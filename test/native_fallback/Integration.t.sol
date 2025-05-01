@@ -311,7 +311,7 @@ contract IntegrationTest is Test {
                 NativeProver.InvalidSettledStateProof.selector, proveArgs.chainID, proveArgs.l2WorldStateRoot
             )
         );
-        mockProver.prove(
+        mockProver.proveNative(
             proveArgs,
             rlpEncodedL1Header,
             rlpEncodedL2Header,
@@ -337,7 +337,7 @@ contract IntegrationTest is Test {
 
         // We should now fail at the SecureMerkleTrie verification for storage proof
         vm.expectRevert();
-        mockProver.prove(
+        mockProver.proveNative(
             proveArgs,
             rlpEncodedL1Header,
             rlpEncodedL2Header,
@@ -596,7 +596,7 @@ contract IntegrationTest is Test {
         vm.expectRevert();
 
         // Call prove with our data
-        mockProver.prove(
+        mockProver.proveNative(
             proveArgs, rlpEncodedL1Header, rlpEncodedL2Header, settledStateProof, storageProof, accountRLP, accountProof
         );
     }

@@ -76,7 +76,7 @@ interface INativeProver {
         bytes[] calldata _l2AccountProof
     ) external view returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
 
-    function prove(
+    function proveNative(
         ProveScalarArgs calldata _proveArgs,
         bytes calldata _rlpEncodedL1Header,
         bytes memory _rlpEncodedL2Header,

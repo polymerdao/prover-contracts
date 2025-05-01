@@ -563,7 +563,7 @@ contract NativeProver is Ownable, INativeProver, IProverHelper {
      * @param _l2AccountProof proof of the _contractAddr account in the L2 world state
      *
      */
-    function prove(
+    function proveNative(
         ProveScalarArgs calldata _args,
         bytes calldata _rlpEncodedL1Header,
         bytes memory _rlpEncodedL2Header,
