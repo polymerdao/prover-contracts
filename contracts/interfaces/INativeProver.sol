@@ -67,14 +67,14 @@ interface INativeProver {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l2AccountProof
-    ) external returns (uint256 chainId, address storingContract, bytes32 storageValue);
+    ) external returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
 
     function proveStorageValue(
         ProveScalarArgs calldata _proveArgs,
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractState,
         bytes[] calldata _l2AccountProof
-    ) external view returns (uint256 chainId, address storingContract, bytes32 storageValue);
+    ) external view returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
 
     function prove(
         ProveScalarArgs calldata _proveArgs,
@@ -84,7 +84,7 @@ interface INativeProver {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l2AccountProof
-    ) external view returns (uint256 chainId, address storingContract, bytes32 storageValue);
+    ) external view returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
 
     function configureAndProve(
         UpdateL2ConfigArgs calldata _updateArgs,
@@ -95,7 +95,7 @@ interface INativeProver {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l2AccountProof
-    ) external view returns (uint256 chainId, address storingContract, bytes32 storageValue);
+    ) external view returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
 
     function proveL1(
         ProveL1ScalarArgs calldata _proveArgs,
@@ -103,5 +103,5 @@ interface INativeProver {
         bytes[] calldata _l1StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l1AccountProof
-    ) external view returns (uint256 chainId, address storingContract, bytes32 storageValue);
+    ) external view returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
 }
