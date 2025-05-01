@@ -56,7 +56,13 @@ contract ProverTest is Test {
         uint256 indexed _destinationChainID, uint256 indexed _blockNumber, bytes32 _L2WorldStateRoot
     );
 
+    // Create L1 configuration
+    L1Configuration l1Config;
+    NativeProver.InitialL2Configuration[] initialL2Configs;
+
     function setUp() public {
+        address owner = vm.addr(1233);
+
         // Create a mock L1 header
         l1StateRoot = bytes32(uint256(0x123456));
         rlpEncodedL1Header = _createMockL1Header(100, l1StateRoot);
@@ -72,8 +78,7 @@ contract ProverTest is Test {
         mockStateProver = new MockSettledStateProver();
         mockStateProver.setShouldSucceed(true);
 
-        // Create L1 configuration
-        L1Configuration memory l1Config = L1Configuration({
+        l1Config = L1Configuration({
             blockHashOracle: address(mockL1Block),
             settlementBlocksDelay: 10,
             settlementRegistry: address(0x1234),
@@ -99,11 +104,14 @@ contract ProverTest is Test {
             l2Type: Type.Nitro
         });
 
-        NativeProver.InitialL2Configuration[] memory initialL2Configs = new NativeProver.InitialL2Configuration[](1);
+        initialL2Configs = new NativeProver.InitialL2Configuration[](1);
         initialL2Configs[0] = NativeProver.InitialL2Configuration({chainID: l2ChainID, config: l2Config});
 
         // Create prover
-        prover = new NativeProver(l2ChainID, l1Config, initialL2Configs);
+        vm.startPrank(owner);
+        prover = new NativeProver(owner, l1ChainID, initialL2Configs);
+        prover.setInitialL1Config(l1Config);
+        vm.stopPrank();
 
         // Create mock L1 header
         l1StateRoot = bytes32(uint256(0x123456));
@@ -200,11 +208,15 @@ contract ProverTest is Test {
         });
 
         // Create a new prover instance with the modified config
-        NativeProver.InitialL2Configuration[] memory initialL2Configs = new NativeProver.InitialL2Configuration[](1);
+        initialL2Configs = new NativeProver.InitialL2Configuration[](1);
         initialL2Configs[0] = NativeProver.InitialL2Configuration({chainID: l2ChainID, config: l2Config});
 
         // Create new prover with 0 settlement delay
-        NativeProver newProver = new NativeProver(l2ChainID, config, initialL2Configs);
+        address owner = vm.addr(1233);
+        vm.startPrank(owner);
+        NativeProver newProver = new NativeProver(owner, l1ChainID, initialL2Configs);
+        newProver.setInitialL1Config(config);
+        vm.stopPrank();
 
         // Set the mock L1Block with the calculated hash for the new prover
         mockL1Block.setBlockHash(l1BlockHash);
@@ -216,8 +228,8 @@ contract ProverTest is Test {
         // Prove L1 state on new prover
         newProver.proveSettlementLayerState(rlpEncodedL1Header);
 
-        // Verify stored state - using l2ChainID since that's what was set as the CHAIN_ID when creating the newProver
-        (uint256 blockNumber, bytes32 blockHash, bytes32 stateRoot) = newProver.provenStates(l2ChainID);
+        // Verify stored state - using l1ChainID since that's what was set as the CHAIN_ID when creating the newProver
+        (uint256 blockNumber, bytes32 blockHash, bytes32 stateRoot) = newProver.provenStates(l1ChainID);
         assertEq(blockNumber, 100, "Block number mismatch");
         assertEq(stateRoot, l1StateRoot, "State root mismatch");
         assertEq(blockHash, keccak256(rlpEncodedL1Header), "Block hash mismatch");
@@ -338,11 +350,15 @@ contract ProverTest is Test {
         });
 
         // Create a new prover with a fresh state
+        address owner = vm.addr(1233);
+        vm.startPrank(owner);
         NativeProver testProver = new NativeProver(
+            owner,
             1, // Use chain ID 1 for the L1 chain
-            currentL1Config,
             initialConfigs
         );
+        testProver.setInitialL1Config(currentL1Config);
+        vm.stopPrank();
 
         // 4. Set up the mock state to match the original prover
         mockL1Block.setBlockHash(l1BlockHash);
@@ -748,7 +764,7 @@ contract ProverTest is Test {
         prover.proveSettlementLayerState(rlpEncodedL1Header);
 
         // Create a minimal L1 configuration
-        L1Configuration memory l1Config = L1Configuration({
+        l1Config = L1Configuration({
             blockHashOracle: address(mockL1Block),
             settlementBlocksDelay: 10,
             settlementRegistry: address(0x1234),
@@ -1098,5 +1114,52 @@ contract ProverTest is Test {
             rlpEncodedContractAccount,
             l2AccountProof
         );
+    }
+
+    // Test that only the owner can call the one-time ownership function and that the owner renounces ownership after it
+    // is set
+    function testOneTimeOwnership() public {
+        // Set the initial owner
+        address initialOwner = address(0x1234);
+        address notOwner = address(0x5678);
+
+        l1Config = L1Configuration({
+            blockHashOracle: address(mockL1Block),
+            settlementBlocksDelay: 10,
+            settlementRegistry: address(0x1234),
+            settlementRegistryL2ConfigMappingSlot: 5,
+            settlementRegistryL1ConfigMappingSlot: 6
+        });
+
+        NativeProver ownershipProver = new NativeProver(initialOwner, l1ChainID, initialL2Configs);
+        assertEq(ownershipProver.owner(), initialOwner);
+
+        // Should revert if a non-owner tries to set the l1 info
+        vm.startPrank(notOwner);
+        vm.expectRevert("Ownable: caller is not the owner");
+        ownershipProver.setInitialL1Config(l1Config);
+
+        vm.startPrank(initialOwner);
+        ownershipProver.setInitialL1Config(l1Config);
+        vm.stopPrank();
+
+        assertEq(ownershipProver.owner(), address(0));
+
+        (
+            address blockHashOracle,
+            uint256 settlementBlocksDelay,
+            address settlementRegistry,
+            uint256 settlementRegistryL2ConfigMappingSlot,
+            uint256 settlementRegistryL1ConfigMappingSlot
+        ) = ownershipProver.L1_CONFIGURATION();
+
+        L1Configuration memory actualL1Config = L1Configuration({
+            blockHashOracle: blockHashOracle,
+            settlementBlocksDelay: settlementBlocksDelay,
+            settlementRegistry: settlementRegistry,
+            settlementRegistryL2ConfigMappingSlot: settlementRegistryL2ConfigMappingSlot,
+            settlementRegistryL1ConfigMappingSlot: settlementRegistryL1ConfigMappingSlot
+        });
+        assertEq(abi.encode(actualL1Config), abi.encode(l1Config));
     }
 }

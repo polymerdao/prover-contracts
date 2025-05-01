@@ -81,7 +81,7 @@ type UpdateL2ConfigArgs struct {
 
 // NativeProverMetaData contains all meta data concerning the NativeProver contract.
 var NativeProverMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_l1ChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_l1Configuration\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"name\":\"_initialL2Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structNativeProver.InitialL2Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}]}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"L1_CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"L1_CONFIGURATION\",\"inputs\":[],\"outputs\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"configureAndProve\",\"inputs\":[{\"name\":\"_updateArgs\",\"type\":\"tuple\",\"internalType\":\"structUpdateL2ConfigArgs\",\"components\":[{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]},{\"name\":\"l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}]},{\"name\":\"_proveArgs\",\"type\":\"tuple\",\"internalType\":\"structProveScalarArgs\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_settledStateProof\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"packGameID\",\"inputs\":[{\"name\":\"_gameType\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"_timestamp\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"_gameProxy\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"gameId_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"prove\",\"inputs\":[{\"name\":\"_args\",\"type\":\"tuple\",\"internalType\":\"structProveScalarArgs\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_settledStateProof\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"proveL1\",\"inputs\":[{\"name\":\"_args\",\"type\":\"tuple\",\"internalType\":\"structProveL1ScalarArgs\",\"components\":[{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"proveSettledState\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"proveSettlementLayerState\",\"inputs\":[{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"proveStorage\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"proveStorageValue\",\"inputs\":[{\"name\":\"_args\",\"type\":\"tuple\",\"internalType\":\"structProveScalarArgs\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_l2StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractState\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"provenStates\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"blockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"blockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"stateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"rlpEncodeDataLibList\",\"inputs\":[{\"name\":\"_dataList\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"stateProvers\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractISettledStateProver\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"updateAndProve\",\"inputs\":[{\"name\":\"_updateArgs\",\"type\":\"tuple\",\"internalType\":\"structUpdateL2ConfigArgs\",\"components\":[{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]},{\"name\":\"l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}]},{\"name\":\"_proveArgs\",\"type\":\"tuple\",\"internalType\":\"structProveScalarArgs\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_settledStateProof\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL1ChainConfiguration\",\"inputs\":[{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"name\":\"_l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL2ChainConfiguration\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]},{\"name\":\"_l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"L1WorldStateProven\",\"inputs\":[{\"name\":\"_blockNumber\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_L1WorldStateRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"L2WorldStateProven\",\"inputs\":[{\"name\":\"_destinationChainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_blockNumber\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_L2WorldStateRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"DestinationChainStateRootNotProved\",\"inputs\":[{\"name\":\"_blockProofStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"IncorrectContractStorageRoot\",\"inputs\":[{\"name\":\"_contractStorageRoot\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"type\":\"error\",\"name\":\"InvalidAccountProof\",\"inputs\":[{\"name\":\"_address\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidL1ConfigurationProof\",\"inputs\":[{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]},{\"type\":\"error\",\"name\":\"InvalidL2ConfigurationProof\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}]},{\"type\":\"error\",\"name\":\"InvalidRLPEncodedBlock\",\"inputs\":[{\"name\":\"_expectedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_calculatedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidSettledStateProof\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"NeedLaterBlock\",\"inputs\":[{\"name\":\"_inputBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_nextProvableBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"OutdatedBlock\",\"inputs\":[{\"name\":\"_inputBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_latestBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"SettlementChainStateRootNotProven\",\"inputs\":[{\"name\":\"_blockProofStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_l1ChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_initialL2Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structNativeProver.InitialL2Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}]}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"L1_CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"L1_CONFIGURATION\",\"inputs\":[],\"outputs\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"configureAndProve\",\"inputs\":[{\"name\":\"_updateArgs\",\"type\":\"tuple\",\"internalType\":\"structUpdateL2ConfigArgs\",\"components\":[{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]},{\"name\":\"l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}]},{\"name\":\"_proveArgs\",\"type\":\"tuple\",\"internalType\":\"structProveScalarArgs\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_settledStateProof\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"packGameID\",\"inputs\":[{\"name\":\"_gameType\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"_timestamp\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"_gameProxy\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"gameId_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"prove\",\"inputs\":[{\"name\":\"_args\",\"type\":\"tuple\",\"internalType\":\"structProveScalarArgs\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_settledStateProof\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"proveL1\",\"inputs\":[{\"name\":\"_args\",\"type\":\"tuple\",\"internalType\":\"structProveL1ScalarArgs\",\"components\":[{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"proveSettledState\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"proveSettlementLayerState\",\"inputs\":[{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"proveStorage\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"proveStorageValue\",\"inputs\":[{\"name\":\"_args\",\"type\":\"tuple\",\"internalType\":\"structProveScalarArgs\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_l2StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractState\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"provenStates\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"blockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"blockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"stateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"rlpEncodeDataLibList\",\"inputs\":[{\"name\":\"_dataList\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"setInitialL1Config\",\"inputs\":[{\"name\":\"_l1Configuration\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"stateProvers\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractISettledStateProver\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateAndProve\",\"inputs\":[{\"name\":\"_updateArgs\",\"type\":\"tuple\",\"internalType\":\"structUpdateL2ConfigArgs\",\"components\":[{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]},{\"name\":\"l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}]},{\"name\":\"_proveArgs\",\"type\":\"tuple\",\"internalType\":\"structProveScalarArgs\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_settledStateProof\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL1ChainConfiguration\",\"inputs\":[{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"name\":\"_l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL2ChainConfiguration\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]},{\"name\":\"_l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"L1WorldStateProven\",\"inputs\":[{\"name\":\"_blockNumber\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_L1WorldStateRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"L2WorldStateProven\",\"inputs\":[{\"name\":\"_destinationChainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_blockNumber\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_L2WorldStateRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"DestinationChainStateRootNotProved\",\"inputs\":[{\"name\":\"_blockProofStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"IncorrectContractStorageRoot\",\"inputs\":[{\"name\":\"_contractStorageRoot\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"type\":\"error\",\"name\":\"InvalidAccountProof\",\"inputs\":[{\"name\":\"_address\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidL1ConfigurationProof\",\"inputs\":[{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementBlocksDelay\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]},{\"type\":\"error\",\"name\":\"InvalidL2ConfigurationProof\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}]},{\"type\":\"error\",\"name\":\"InvalidRLPEncodedBlock\",\"inputs\":[{\"name\":\"_expectedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_calculatedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidSettledStateProof\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"NeedLaterBlock\",\"inputs\":[{\"name\":\"_inputBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_nextProvableBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"OutdatedBlock\",\"inputs\":[{\"name\":\"_inputBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_latestBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"SettlementChainStateRootNotProven\",\"inputs\":[{\"name\":\"_blockProofStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]}]",
 }
 
 // NativeProverABI is the input ABI used to generate the binding from.
@@ -424,6 +424,37 @@ func (_NativeProver *NativeProverCallerSession) L2ChainConfigurations(arg0 *big.
 	L2Type               uint8
 }, error) {
 	return _NativeProver.Contract.L2ChainConfigurations(&_NativeProver.CallOpts, arg0)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() view returns(address)
+func (_NativeProver *NativeProverCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _NativeProver.contract.Call(opts, &out, "owner")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() view returns(address)
+func (_NativeProver *NativeProverSession) Owner() (common.Address, error) {
+	return _NativeProver.Contract.Owner(&_NativeProver.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() view returns(address)
+func (_NativeProver *NativeProverCallerSession) Owner() (common.Address, error) {
+	return _NativeProver.Contract.Owner(&_NativeProver.CallOpts)
 }
 
 // PackGameID is a free data retrieval call binding the contract method 0x90c12ec4.
@@ -790,6 +821,69 @@ func (_NativeProver *NativeProverTransactorSession) ProveSettlementLayerState(_r
 	return _NativeProver.Contract.ProveSettlementLayerState(&_NativeProver.TransactOpts, _rlpEncodedL1Header)
 }
 
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_NativeProver *NativeProverTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _NativeProver.contract.Transact(opts, "renounceOwnership")
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_NativeProver *NativeProverSession) RenounceOwnership() (*types.Transaction, error) {
+	return _NativeProver.Contract.RenounceOwnership(&_NativeProver.TransactOpts)
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_NativeProver *NativeProverTransactorSession) RenounceOwnership() (*types.Transaction, error) {
+	return _NativeProver.Contract.RenounceOwnership(&_NativeProver.TransactOpts)
+}
+
+// SetInitialL1Config is a paid mutator transaction binding the contract method 0xe820de97.
+//
+// Solidity: function setInitialL1Config((address,uint256,address,uint256,uint256) _l1Configuration) returns()
+func (_NativeProver *NativeProverTransactor) SetInitialL1Config(opts *bind.TransactOpts, _l1Configuration L1Configuration) (*types.Transaction, error) {
+	return _NativeProver.contract.Transact(opts, "setInitialL1Config", _l1Configuration)
+}
+
+// SetInitialL1Config is a paid mutator transaction binding the contract method 0xe820de97.
+//
+// Solidity: function setInitialL1Config((address,uint256,address,uint256,uint256) _l1Configuration) returns()
+func (_NativeProver *NativeProverSession) SetInitialL1Config(_l1Configuration L1Configuration) (*types.Transaction, error) {
+	return _NativeProver.Contract.SetInitialL1Config(&_NativeProver.TransactOpts, _l1Configuration)
+}
+
+// SetInitialL1Config is a paid mutator transaction binding the contract method 0xe820de97.
+//
+// Solidity: function setInitialL1Config((address,uint256,address,uint256,uint256) _l1Configuration) returns()
+func (_NativeProver *NativeProverTransactorSession) SetInitialL1Config(_l1Configuration L1Configuration) (*types.Transaction, error) {
+	return _NativeProver.Contract.SetInitialL1Config(&_NativeProver.TransactOpts, _l1Configuration)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(address newOwner) returns()
+func (_NativeProver *NativeProverTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
+	return _NativeProver.contract.Transact(opts, "transferOwnership", newOwner)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(address newOwner) returns()
+func (_NativeProver *NativeProverSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _NativeProver.Contract.TransferOwnership(&_NativeProver.TransactOpts, newOwner)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(address newOwner) returns()
+func (_NativeProver *NativeProverTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _NativeProver.Contract.TransferOwnership(&_NativeProver.TransactOpts, newOwner)
+}
+
 // UpdateAndProve is a paid mutator transaction binding the contract method 0xc1ed98af.
 //
 // Solidity: function updateAndProve(((address,address[],uint256[],uint256,uint256,uint8),bytes[],bytes,bytes[]) _updateArgs, (uint256,address,bytes32,bytes32,bytes32) _proveArgs, bytes _rlpEncodedL1Header, bytes _rlpEncodedL2Header, bytes _settledStateProof, bytes[] _l2StorageProof, bytes _rlpEncodedContractAccount, bytes[] _l2AccountProof) returns(uint256 chainID, address storingContract, bytes32 storageValue)
@@ -1146,6 +1240,159 @@ func (_NativeProver *NativeProverFilterer) WatchL2WorldStateProven(opts *bind.Wa
 func (_NativeProver *NativeProverFilterer) ParseL2WorldStateProven(log types.Log) (*NativeProverL2WorldStateProven, error) {
 	event := new(NativeProverL2WorldStateProven)
 	if err := _NativeProver.contract.UnpackLog(event, "L2WorldStateProven", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// NativeProverOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the NativeProver contract.
+type NativeProverOwnershipTransferredIterator struct {
+	Event *NativeProverOwnershipTransferred // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *NativeProverOwnershipTransferredIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(NativeProverOwnershipTransferred)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(NativeProverOwnershipTransferred)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *NativeProverOwnershipTransferredIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *NativeProverOwnershipTransferredIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// NativeProverOwnershipTransferred represents a OwnershipTransferred event raised by the NativeProver contract.
+type NativeProverOwnershipTransferred struct {
+	PreviousOwner common.Address
+	NewOwner      common.Address
+	Raw           types.Log // Blockchain specific contextual infos
+}
+
+// FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
+//
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+func (_NativeProver *NativeProverFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*NativeProverOwnershipTransferredIterator, error) {
+
+	var previousOwnerRule []interface{}
+	for _, previousOwnerItem := range previousOwner {
+		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
+	}
+	var newOwnerRule []interface{}
+	for _, newOwnerItem := range newOwner {
+		newOwnerRule = append(newOwnerRule, newOwnerItem)
+	}
+
+	logs, sub, err := _NativeProver.contract.FilterLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	if err != nil {
+		return nil, err
+	}
+	return &NativeProverOwnershipTransferredIterator{contract: _NativeProver.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
+}
+
+// WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
+//
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+func (_NativeProver *NativeProverFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *NativeProverOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
+
+	var previousOwnerRule []interface{}
+	for _, previousOwnerItem := range previousOwner {
+		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
+	}
+	var newOwnerRule []interface{}
+	for _, newOwnerItem := range newOwner {
+		newOwnerRule = append(newOwnerRule, newOwnerItem)
+	}
+
+	logs, sub, err := _NativeProver.contract.WatchLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(NativeProverOwnershipTransferred)
+				if err := _NativeProver.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseOwnershipTransferred is a log parse operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
+//
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+func (_NativeProver *NativeProverFilterer) ParseOwnershipTransferred(log types.Log) (*NativeProverOwnershipTransferred, error) {
+	event := new(NativeProverOwnershipTransferred)
+	if err := _NativeProver.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
