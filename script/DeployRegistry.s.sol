@@ -14,12 +14,12 @@ contract DeployRegistryScript is Script {
     // Get L1 configuration from environment variables
     address blockHashOracle = address(0x4200000000000000000000000000000000000015);
 
-    uint256 ethChainId = uint256(1);
+    uint256 ethChainId = uint256(11155111);
 
-    uint256 opChainId = uint256(10);
+    uint256 opChainId = uint256(11155420);
     address opProver = vm.envAddress("OP_PROVER");
 
-    uint256 baseChainId = uint256(8453);
+    uint256 baseChainId = uint256(84532);
     address baseProver = vm.envAddress("BASE_PROVER");
 
     uint256 blocksDelay = 0;
@@ -78,7 +78,7 @@ contract DeployRegistryScript is Script {
         settlementRegistry.updateL2ChainConfiguration(opChainId, opL2Config);
         vm.stopBroadcast();
 
-        console2.log("settlementRegistry: ", address(settlementRegistry));
+        console2.log("CONTRACT settlementRegistry: ", address(settlementRegistry));
         return address(settlementRegistry);
     }
 
@@ -88,7 +88,11 @@ contract DeployRegistryScript is Script {
         // 1. The first 32 bytes of the storage slot are used for the chain ID.
         // 2. The remaining bytes are used for other data.
         // This is a simple example and may need to be adjusted based on your contract's storage layout.
-        return uint256(keccak256(abi.encode(chainID, _STARTING_L2_MAPPING_SLOT)));
+        uint256 storageSlot = uint256(keccak256(abi.encode(chainID, _STARTING_L2_MAPPING_SLOT)));
+        console2.log("L2 CONTRACT storage slot for chain ID: ", chainID, storageSlot);
+        console2.logBytes32(keccak256(abi.encode(chainID, _STARTING_L2_MAPPING_SLOT)));
+
+        return storageSlot;
     }
 
     // Given a chain id, return the storage slot for the L1 configuration
@@ -97,13 +101,15 @@ contract DeployRegistryScript is Script {
         // 1. The first 32 bytes of the storage slot are used for the chain ID.
         // 2. The remaining bytes are used for other data.
         // This is a simple example and may need to be adjusted based on your contract's storage layout.
-        return uint256(keccak256(abi.encode(chainID, _STARTING_L1_MAPPING_SLOT)));
+        uint256 storageSlot = uint256(keccak256(abi.encode(chainID, _STARTING_L1_MAPPING_SLOT)));
+        console2.log("L1 CONTRACT storage slot for chain ID: ", chainID, storageSlot);
+        return storageSlot;
     }
 
     function addresses() public returns (address[] memory) {
         // Addresses and slots are the same for both op and base
         address[] memory _addresses = new address[](1);
-        _addresses[0] = 0xe5965Ab5962eDc7477C8520243A95517CD252fA9;
+        _addresses[0] = 0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1;
         return _addresses;
     }
 
