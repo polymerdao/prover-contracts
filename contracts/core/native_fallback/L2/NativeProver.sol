@@ -42,7 +42,7 @@ contract NativeProver is INativeProver, IProverHelper {
     mapping(uint256 => L2Configuration) public l2ChainConfigurations; // Mapping of counterparty chainIDs to their
         // configurations
 
-    mapping(uint256 => BlockProof) public provenStates;
+    mapping(uint256 => BlockProof) public provenStates; // Maps chain id to proven blocks
 
     mapping(uint256 => ISettledStateProver) public stateProvers;
 
@@ -228,13 +228,6 @@ contract NativeProver is INativeProver, IProverHelper {
         bytes[] calldata _l1RegistryProof,
         bytes32 _l1WorldStateRoot
     ) internal view returns (bool) {
-        BlockProof memory existingSettlementBlockProof = provenStates[L1_CHAIN_ID];
-
-        // Verify settlement chain state root
-        if (existingSettlementBlockProof.stateRoot != _l1WorldStateRoot) {
-            revert SettlementChainStateRootNotProven(existingSettlementBlockProof.stateRoot, _l1WorldStateRoot);
-        }
-
         // Verify proof of the registry contract account
         _proveAccount(
             abi.encodePacked(L1_CONFIGURATION.settlementRegistry),
@@ -583,7 +576,7 @@ contract NativeProver is INativeProver, IProverHelper {
         bytes[] calldata _l2AccountProof
     ) external returns (uint256 chainID, address storingContract, bytes32 storageValue) {
         // First prove the L1 view
-        bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
+        bytes32 _l1StateRoot = _storeL1BlockAndGetStateRoot(_rlpEncodedL1Header);
 
         // Use the L1 state root to prove and update the L2 configuration
         _updateL2ChainConfiguration(
@@ -663,6 +656,37 @@ contract NativeProver is INativeProver, IProverHelper {
         _proveL1StorageInState(_args, _l1StorageProof, _rlpEncodedContractAccount, _l1AccountProof);
 
         return (L1_CHAIN_ID, _args.contractAddr, _args.storageValue);
+    }
+
+    /**
+     * @notice Validates the L1 block data and extracts state root
+     * @param _rlpEncodedL1Header The encoded L1 header
+     * @return L1 state root from the header
+     */
+    function _storeL1BlockAndGetStateRoot(bytes calldata _rlpEncodedL1Header) internal returns (bytes32) {
+        bytes32 _calculatedBlockHash = keccak256(_rlpEncodedL1Header);
+        bytes32 _expectedBlockHash = IL1Block(L1_CONFIGURATION.blockHashOracle).hash();
+        if (_calculatedBlockHash != _expectedBlockHash) {
+            revert InvalidRLPEncodedBlock(_expectedBlockHash, _calculatedBlockHash);
+        }
+
+        BlockProof memory blockProof = BlockProof({
+            blockNumber: _bytesToUint(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL1Header)[8])),
+            blockHash: keccak256(_rlpEncodedL1Header),
+            stateRoot: bytes32(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL1Header)[3]))
+        });
+
+        // Verify block delay and update state
+        uint256 existingProofBlockNumber = provenStates[L1_CHAIN_ID].blockNumber;
+        if (existingProofBlockNumber + L1_CONFIGURATION.settlementBlocksDelay < blockProof.blockNumber) {
+            provenStates[L1_CHAIN_ID] = blockProof;
+            emit L1WorldStateProven(blockProof.blockNumber, blockProof.stateRoot);
+        } else {
+            revert NeedLaterBlock(
+                blockProof.blockNumber, existingProofBlockNumber + L1_CONFIGURATION.settlementBlocksDelay
+            );
+        }
+        return blockProof.stateRoot;
     }
 
     /**
