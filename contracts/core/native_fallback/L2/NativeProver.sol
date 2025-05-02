@@ -275,13 +275,6 @@ contract NativeProver is Ownable, INativeProver {
         bytes[] calldata _l1RegistryProof,
         bytes32 _l1WorldStateRoot
     ) internal view returns (bool) {
-        BlockProof memory existingSettlementBlockProof = provenStates[L1_CHAIN_ID];
-
-        // Verify settlement chain state root
-        if (existingSettlementBlockProof.stateRoot != _l1WorldStateRoot) {
-            revert SettlementChainStateRootNotProven(existingSettlementBlockProof.stateRoot, _l1WorldStateRoot);
-        }
-
         // Verify proof of the registry contract account
         _proveAccount(
             abi.encodePacked(L1_CONFIGURATION.settlementRegistry),
@@ -354,6 +347,37 @@ contract NativeProver is Ownable, INativeProver {
         );
 
         return true;
+    }
+
+    /**
+     * @notice Validates the L1 block data and extracts state root
+     * @param _rlpEncodedL1Header The encoded L1 header
+     * @return L1 state root from the header
+     */
+    function _storeL1BlockAndGetStateRoot(bytes calldata _rlpEncodedL1Header) internal returns (bytes32) {
+        bytes32 _calculatedBlockHash = keccak256(_rlpEncodedL1Header);
+        bytes32 _expectedBlockHash = IL1Block(L1_CONFIGURATION.blockHashOracle).hash();
+        if (_calculatedBlockHash != _expectedBlockHash) {
+            revert InvalidRLPEncodedBlock(_expectedBlockHash, _calculatedBlockHash);
+        }
+
+        BlockProof memory blockProof = BlockProof({
+            blockNumber: _bytesToUint(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL1Header)[8])),
+            blockHash: keccak256(_rlpEncodedL1Header),
+            stateRoot: bytes32(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL1Header)[3]))
+        });
+
+        // Verify block delay and update state
+        uint256 existingProofBlockNumber = provenStates[L1_CHAIN_ID].blockNumber;
+        if (existingProofBlockNumber + L1_CONFIGURATION.settlementBlocksDelay < blockProof.blockNumber) {
+            provenStates[L1_CHAIN_ID] = blockProof;
+            emit L1WorldStateProven(blockProof.blockNumber, blockProof.stateRoot);
+        } else {
+            revert NeedLaterBlock(
+                blockProof.blockNumber, existingProofBlockNumber + L1_CONFIGURATION.settlementBlocksDelay
+            );
+        }
+        return blockProof.stateRoot;
     }
 
     /**
