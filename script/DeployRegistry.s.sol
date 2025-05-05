@@ -78,7 +78,7 @@ contract DeployRegistryScript is Script {
         settlementRegistry.updateL2ChainConfiguration(opChainId, opL2Config);
         vm.stopBroadcast();
 
-        console2.log("settlementRegistry: ", address(settlementRegistry));
+        console2.log("CONTRACT settlementRegistry: ", address(settlementRegistry));
         return address(settlementRegistry);
     }
 
@@ -88,7 +88,11 @@ contract DeployRegistryScript is Script {
         // 1. The first 32 bytes of the storage slot are used for the chain ID.
         // 2. The remaining bytes are used for other data.
         // This is a simple example and may need to be adjusted based on your contract's storage layout.
-        return uint256(keccak256(abi.encode(chainID, _STARTING_L2_MAPPING_SLOT)));
+        uint256 storageSlot = uint256(keccak256(abi.encode(chainID, _STARTING_L2_MAPPING_SLOT)));
+        console2.log("L2 CONTRACT storage slot for chain ID: ", chainID, storageSlot);
+        console2.logBytes32(keccak256(abi.encode(chainID, _STARTING_L2_MAPPING_SLOT)));
+
+        return storageSlot;
     }
 
     // Given a chain id, return the storage slot for the L1 configuration
@@ -97,7 +101,9 @@ contract DeployRegistryScript is Script {
         // 1. The first 32 bytes of the storage slot are used for the chain ID.
         // 2. The remaining bytes are used for other data.
         // This is a simple example and may need to be adjusted based on your contract's storage layout.
-        return uint256(keccak256(abi.encode(chainID, _STARTING_L1_MAPPING_SLOT)));
+        uint256 storageSlot = uint256(keccak256(abi.encode(chainID, _STARTING_L1_MAPPING_SLOT)));
+        console2.log("L1 CONTRACT storage slot for chain ID: ", chainID, storageSlot);
+        return storageSlot;
     }
 
     function addresses() public returns (address[] memory) {

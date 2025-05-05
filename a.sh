@@ -41,7 +41,7 @@ echo deployed prover address to base @$BASE_PROVER
 echo DEPLOYING L1 Contracts: 
 # Deploy L1 contracts 
 forge script script/DeployRegistry.s.sol --private-key $PKEY --broadcast --rpc-url $ETH_RPC_URL -vv &> deploy-eth.txt 
-export SETTLEMENT_REGISTRY=$(cat deploy-eth.txt | grep "settlementRegistry: " | awk '{print $2}')
+export SETTLEMENT_REGISTRY=$(grep "^0:\saddress\s0x[0-9a-fA-F]\{40\}$" deploy-eth.txt | awk '{print $3}')
 echo L1Contracts Deployed: $SETTLEMENT_REGISTRY
 
 # Now that it's bee ndeployed, we can now deploy each l2 contracts. 
@@ -57,7 +57,8 @@ export BASE_NATIVE_PROVER=$(cat deploy-base.txt | grep "nativeProver: " | awk '{
 echo Base native prover Deployed: $BASE_NATIVE_PROVER
 
 cd $CLI_PATH && make build 
-export PROOF=$($CLI_PATH/bin/native-proof update-and-prove \
+OUTFILE=~/Code/prover-contracts/test/native_fallback/payload/native-proof.hex
+$CLI_PATH/bin/native-proof update-and-prove \
     --src-l2-chain-id 10 \
     --dst-l2-chain-id 8453 \
     --src-l2-http-path $OP_RPC_URL \
@@ -65,17 +66,15 @@ export PROOF=$($CLI_PATH/bin/native-proof update-and-prove \
     --src-contract-address 0x2E480B1096E5F705CC3e049685846ED3022aA226 \
     --src-storage-slot 0xc74f5e5058880b8779a44a8a762f001e42cef4d58647fb1d7d1548fb703c99f5 \
     --l1-http-path $ETH_RPC_URL \
-    --l1-registry-address $SETTLEMENT_REGISTRY)
+    --l1-registry-address $SETTLEMENT_REGISTRY &> $OUTFILE
+echo "Proof output written to $OUTFILE"
 
+export PROOF=$(tail -n 1 $OUTFILE)
 cd $CONTRACTS_DIR 
 
 TEST_OUTPUT=~/Code/prover-contracts/integration_test.txt
 forge test --match-test test_integration_proof -vvvv &> $TEST_OUTPUT 
 echo "Test output written to $TEST_OUTPUT"
-
-OUTFILE=~/Code/prover-contracts/test/native_fallback/payload/native-proof.hex
-echo $PROOF > $OUTFILE
-echo "Proof written to $OUTFILE"
 
 # cast code $OP_NATIVE_PROVER -r $OP_RPC_URL > ~/Code/prover-contracts/test/native_fallback/payload/op-prover-bytecode.hex 
 # cast code $BASE_NATIVE_PROVER -r $OP_RPC_URL > ~/Code/prover-contracts/test/native_fallback/payload/base-prover-bytecode.hex 
