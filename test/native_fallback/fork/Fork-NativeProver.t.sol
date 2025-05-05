@@ -10,7 +10,6 @@ import "../../../script/DeployRegistry.s.sol";
 contract DeployNativeProverScript is DeployRegistryScript, Test {
     NativeProver nativeProver;
 
-    
     function setUp() public {
         vm.createSelectFork(vm.envString("BASE_RPC_URL"));
         uint256 chainId = vm.envUint("CHAIN_ID");
@@ -20,7 +19,7 @@ contract DeployNativeProverScript is DeployRegistryScript, Test {
         L1Configuration memory l1Config = L1Configuration({
             blockHashOracle: blockHashOracle,
             settlementRegistry: settlementRegistry,
-            settlementRegistryL2ConfigMappingSlot: l2StorageSlot(chainId),
+            settlementRegistryL2ConfigMappingSlot: uint256(2),
             settlementRegistryL1ConfigMappingSlot: l1StorageSlot(chainId),
             settlementBlocksDelay: blocksDelay
         });
@@ -50,7 +49,8 @@ contract DeployNativeProverScript is DeployRegistryScript, Test {
         vm.startBroadcast(deployerPrivateKey);
 
         // // Deploy NativeProver contract
-        nativeProver = new NativeProver(ethChainId, l1Config, initialL2Configs);
+        nativeProver = new NativeProver(msg.sender, ethChainId, initialL2Configs);
+        nativeProver.setInitialL1Config(l1Config);
 
         vm.stopBroadcast();
         console2.log("nativeProver: ", address(nativeProver));
