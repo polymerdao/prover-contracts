@@ -31,62 +31,7 @@ import {
  * @notice A contract for implementing a L2<->L1<->L2 cross-L2 prover
  */
 interface INativeProver {
-    function updateL2ChainConfiguration(
-        uint256 _chainID,
-        L2Configuration calldata _config,
-        bytes[] calldata _l1StorageProof,
-        bytes calldata _rlpEncodedRegistryAccountData,
-        bytes[] calldata _l1RegistryProof,
-        bytes32 _l1WorldStateRoot
-    ) external;
-
-    function updateL1ChainConfiguration(
-        L1Configuration calldata _config,
-        bytes[] calldata _l1StorageProof,
-        bytes calldata _rlpEncodedRegistryAccountData,
-        bytes[] calldata _l1RegistryProof,
-        bytes32 _l1WorldStateRoot
-    ) external;
-
-    function proveSettlementLayerState(bytes calldata _rlpEncodedL1Header) external;
-
-    function proveSettledState(
-        uint256 _chainID,
-        bytes32 _l2WorldStateRoot,
-        bytes memory _rlpEncodedL2Header,
-        bytes32 _l1WorldStateRoot,
-        bytes calldata _proof
-    ) external;
-
-    function updateAndProve(
-        UpdateL2ConfigArgs calldata _updateArgs,
-        ProveScalarArgs calldata _proveArgs,
-        bytes calldata _rlpEncodedL1Header,
-        bytes memory _rlpEncodedL2Header,
-        bytes calldata _settledStateProof,
-        bytes[] calldata _l2StorageProof,
-        bytes calldata _rlpEncodedContractAccount,
-        bytes[] calldata _l2AccountProof
-    ) external returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
-
-    function proveStorageValue(
-        ProveScalarArgs calldata _proveArgs,
-        bytes[] calldata _l2StorageProof,
-        bytes calldata _rlpEncodedContractState,
-        bytes[] calldata _l2AccountProof
-    ) external view returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
-
     function proveNative(
-        ProveScalarArgs calldata _proveArgs,
-        bytes calldata _rlpEncodedL1Header,
-        bytes memory _rlpEncodedL2Header,
-        bytes calldata _settledStateProof,
-        bytes[] calldata _l2StorageProof,
-        bytes calldata _rlpEncodedContractAccount,
-        bytes[] calldata _l2AccountProof
-    ) external view returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
-
-    function configureAndProve(
         UpdateL2ConfigArgs calldata _updateArgs,
         ProveScalarArgs calldata _proveArgs,
         bytes calldata _rlpEncodedL1Header,
