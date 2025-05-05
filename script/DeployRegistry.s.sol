@@ -14,12 +14,12 @@ contract DeployRegistryScript is Script {
     // Get L1 configuration from environment variables
     address blockHashOracle = address(0x4200000000000000000000000000000000000015);
 
-    uint256 ethChainId = uint256(1);
+    uint256 ethChainId = uint256(11155111);
 
-    uint256 opChainId = uint256(10);
+    uint256 opChainId = uint256(11155420);
     address opProver = vm.envAddress("OP_PROVER");
 
-    uint256 baseChainId = uint256(8453);
+    uint256 baseChainId = uint256(84532);
     address baseProver = vm.envAddress("BASE_PROVER");
 
     uint256 blocksDelay = 0;
@@ -109,7 +109,7 @@ contract DeployRegistryScript is Script {
     function addresses() public returns (address[] memory) {
         // Addresses and slots are the same for both op and base
         address[] memory _addresses = new address[](1);
-        _addresses[0] = 0xe5965Ab5962eDc7477C8520243A95517CD252fA9;
+        _addresses[0] = 0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1;
         return _addresses;
     }
 
