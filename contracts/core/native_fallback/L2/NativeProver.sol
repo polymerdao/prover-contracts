@@ -90,7 +90,7 @@ contract NativeProver is Ownable, INativeProver {
     /**
      * @notice Failed account proof verification
      */
-    error InvalidAccountProof(bytes _address, bytes _data, bytes[] _proof, bytes32 _root);
+    error InvalidAccountProof(address _address, bytes _data, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice Settlement chain state not yet proven
@@ -222,10 +222,10 @@ contract NativeProver is Ownable, INativeProver {
 
     function _updateL2ChainConfiguration(
         uint256 _chainID,
-        L2Configuration calldata _config,
-        bytes[] calldata _l1StorageProof,
-        bytes calldata _rlpEncodedRegistryAccountData,
-        bytes[] calldata _l1RegistryProof,
+        L2Configuration memory _config,
+        bytes[] memory _l1StorageProof,
+        bytes memory _rlpEncodedRegistryAccountData,
+        bytes[] memory _l1RegistryProof,
         bytes32 _l1WorldStateRoot
     ) internal {
         if (
@@ -269,18 +269,14 @@ contract NativeProver is Ownable, INativeProver {
      */
     function _proveL2Configuration(
         uint256 _chainID,
-        L2Configuration calldata _config,
-        bytes[] calldata _l1StorageProof,
-        bytes calldata _rlpEncodedRegistryAccountData,
-        bytes[] calldata _l1RegistryProof,
+        L2Configuration memory _config,
+        bytes[] memory _l1StorageProof,
+        bytes memory _rlpEncodedRegistryAccountData,
+        bytes[] memory _l1RegistryProof,
         bytes32 _l1WorldStateRoot
     ) internal view returns (bool) {
-        // Verify proof of the registry contract account
         _proveAccount(
-            abi.encodePacked(L1_CONFIGURATION.settlementRegistry),
-            _rlpEncodedRegistryAccountData,
-            _l1RegistryProof,
-            _l1WorldStateRoot
+            L1_CONFIGURATION.settlementRegistry, _rlpEncodedRegistryAccountData, _l1RegistryProof, _l1WorldStateRoot
         );
 
         // Verify the L2 configuration against the registry contract's state
@@ -291,7 +287,7 @@ contract NativeProver is Ownable, INativeProver {
         }
         bytes32 configHash = keccak256(abi.encode(_config));
         bytes32 configHashStorageSlot =
-            bytes32((uint256(keccak256(abi.encode(_chainID))) + L1_CONFIGURATION.settlementRegistryL2ConfigMappingSlot));
+            keccak256(abi.encode(_chainID, L1_CONFIGURATION.settlementRegistryL2ConfigMappingSlot));
         ProverHelpers.proveStorageBytes32(
             abi.encodePacked(configHashStorageSlot), configHash, _l1StorageProof, bytes32(registryStorageRoot)
         );
@@ -310,10 +306,10 @@ contract NativeProver is Ownable, INativeProver {
      *
      */
     function _proveL1Configuration(
-        L1Configuration calldata _config,
-        bytes[] calldata _l1StorageProof,
-        bytes calldata _rlpEncodedRegistryAccountData,
-        bytes[] calldata _l1RegistryProof,
+        L1Configuration memory _config,
+        bytes[] memory _l1StorageProof,
+        bytes memory _rlpEncodedRegistryAccountData,
+        bytes[] memory _l1RegistryProof,
         bytes32 _l1WorldStateRoot
     ) internal view returns (bool) {
         uint256 _l1ChainID = L1_CHAIN_ID;
@@ -326,10 +322,7 @@ contract NativeProver is Ownable, INativeProver {
 
         // Verify proof of the registry contract account
         _proveAccount(
-            abi.encodePacked(L1_CONFIGURATION.settlementRegistry),
-            _rlpEncodedRegistryAccountData,
-            _l1RegistryProof,
-            _l1WorldStateRoot
+            L1_CONFIGURATION.settlementRegistry, _rlpEncodedRegistryAccountData, _l1RegistryProof, _l1WorldStateRoot
         );
 
         // Verify the L2 configuration against the registry contract's state
@@ -339,11 +332,14 @@ contract NativeProver is Ownable, INativeProver {
             revert IncorrectContractStorageRoot(registryStorageRoot);
         }
         bytes32 configHash = keccak256(abi.encode(_config));
-        bytes32 configHashStorageSlot = bytes32(
-            (uint256(keccak256(abi.encode(_l1ChainID))) + L1_CONFIGURATION.settlementRegistryL1ConfigMappingSlot)
-        );
+        // bytes32 configHashStorageSlot = bytes32(
+        //     (uint256(keccak256(abi.encode(_l1ChainID))) + L1_CONFIGURATION.settlementRegistryL1ConfigMappingSlot)
+        // );
         ProverHelpers.proveStorageBytes32(
-            abi.encodePacked(configHashStorageSlot), configHash, _l1StorageProof, bytes32(registryStorageRoot)
+            abi.encodePacked(L1_CONFIGURATION.settlementRegistryL1ConfigMappingSlot),
+            configHash,
+            _l1StorageProof,
+            bytes32(registryStorageRoot)
         );
 
         return true;
@@ -354,7 +350,7 @@ contract NativeProver is Ownable, INativeProver {
      * @param _rlpEncodedL1Header The encoded L1 header
      * @return L1 state root from the header
      */
-    function _storeL1BlockAndGetStateRoot(bytes calldata _rlpEncodedL1Header) internal returns (bytes32) {
+    function _storeL1BlockAndGetStateRoot(bytes memory _rlpEncodedL1Header) internal returns (bytes32) {
         bytes32 _calculatedBlockHash = keccak256(_rlpEncodedL1Header);
         bytes32 _expectedBlockHash = IL1Block(L1_CONFIGURATION.blockHashOracle).hash();
         if (_calculatedBlockHash != _expectedBlockHash) {
@@ -385,8 +381,9 @@ contract NativeProver is Ownable, INativeProver {
      * @param _rlpEncodedL1Header The encoded L1 header
      * @return L1 state root from the header
      */
-    function _validateL1BlockAndGetStateRoot(bytes calldata _rlpEncodedL1Header) internal view returns (bytes32) {
+    function _validateL1BlockAndGetStateRoot(bytes memory _rlpEncodedL1Header) internal view returns (bytes32) {
         bytes32 _calculatedBlockHash = keccak256(_rlpEncodedL1Header);
+
         bytes32 _expectedBlockHash = IL1Block(L1_CONFIGURATION.blockHashOracle).hash();
         if (_calculatedBlockHash != _expectedBlockHash) {
             revert InvalidRLPEncodedBlock(_expectedBlockHash, _calculatedBlockHash);
@@ -400,7 +397,7 @@ contract NativeProver is Ownable, INativeProver {
         bytes32 _l2WorldStateRoot,
         bytes32 _l1WorldStateRoot,
         bytes memory _rlpEncodedL2Header,
-        bytes calldata _settledStateProof
+        bytes memory _settledStateProof
     ) internal view {
         // Get the L2Configuration for this chainID
         L2Configuration memory conf = l2ChainConfigurations[_chainID];
@@ -421,7 +418,7 @@ contract NativeProver is Ownable, INativeProver {
         bytes32 _l2WorldStateRoot,
         bytes32 _l1WorldStateRoot,
         bytes memory _rlpEncodedL2Header,
-        bytes calldata _settledStateProof
+        bytes memory _settledStateProof
     ) internal view {
         // Call out to the configured prover to verify proof of the settled L2 state root
         if (
@@ -441,11 +438,11 @@ contract NativeProver is Ownable, INativeProver {
      * @param _proof Merkle proof
      * @param _root Expected root
      */
-    function _proveAccount(bytes memory _address, bytes memory _data, bytes[] memory _proof, bytes32 _root)
+    function _proveAccount(address _address, bytes memory _data, bytes[] memory _proof, bytes32 _root)
         internal
         pure
     {
-        if (!SecureMerkleTrie.verifyInclusionProof(_address, _data, _proof, _root)) {
+        if (!SecureMerkleTrie.verifyInclusionProof(abi.encodePacked(_address), _data, _proof, _root)) {
             revert InvalidAccountProof(_address, _data, _proof, _root);
         }
     }
@@ -483,10 +480,10 @@ contract NativeProver is Ownable, INativeProver {
     }
 
     function _proveStorageInState(
-        ProveScalarArgs calldata _args,
-        bytes[] calldata _l2StorageProof,
-        bytes calldata _rlpEncodedContractAccount,
-        bytes[] calldata _l2AccountProof
+        ProveScalarArgs memory _args,
+        bytes[] memory _l2StorageProof,
+        bytes memory _rlpEncodedContractAccount,
+        bytes[] memory _l2AccountProof
     ) internal pure {
         bytes memory storageRoot = RLPReader.readBytes(RLPReader.readList(_rlpEncodedContractAccount)[2]);
 
@@ -495,9 +492,7 @@ contract NativeProver is Ownable, INativeProver {
         }
 
         // Verify the account exists in the state tree
-        _proveAccount(
-            abi.encodePacked(_args.contractAddr), _rlpEncodedContractAccount, _l2AccountProof, _args.l2WorldStateRoot
-        );
+        _proveAccount(_args.contractAddr, _rlpEncodedContractAccount, _l2AccountProof, _args.l2WorldStateRoot);
 
         // Verify the storage value exists in the storage tree
         ProverHelpers.proveStorageBytes32(
@@ -506,10 +501,10 @@ contract NativeProver is Ownable, INativeProver {
     }
 
     function _proveL1StorageInState(
-        ProveL1ScalarArgs calldata _args,
-        bytes[] calldata _l2StorageProof,
-        bytes calldata _rlpEncodedContractAccount,
-        bytes[] calldata _l2AccountProof
+        ProveL1ScalarArgs memory _args,
+        bytes[] memory _l2StorageProof,
+        bytes memory _rlpEncodedContractAccount,
+        bytes[] memory _l2AccountProof
     ) internal pure {
         bytes memory storageRoot = RLPReader.readBytes(RLPReader.readList(_rlpEncodedContractAccount)[2]);
 
@@ -518,9 +513,7 @@ contract NativeProver is Ownable, INativeProver {
         }
 
         // Verify the account exists in the state tree
-        _proveAccount(
-            abi.encodePacked(_args.contractAddr), _rlpEncodedContractAccount, _l2AccountProof, _args.l1WorldStateRoot
-        );
+        _proveAccount(_args.contractAddr, _rlpEncodedContractAccount, _l2AccountProof, _args.l1WorldStateRoot);
 
         // Verify the storage value exists in the storage tree
         ProverHelpers.proveStorageBytes32(
