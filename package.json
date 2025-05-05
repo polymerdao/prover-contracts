@@ -43,7 +43,7 @@
     "globals": "^15.9.0",
     "solidity-coverage": "^0.8.12",
     "tslib": "^2.7.0",
-    "tsup": "^8.3.0",
+    "tsup": "^8.4.0",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.11.0"
   },
