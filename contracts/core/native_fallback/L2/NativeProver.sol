@@ -33,6 +33,7 @@ import {
     UpdateL2ConfigArgs
 } from "../../../libs/RegistryTypes.sol";
 import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
+import "forge-std/console2.sol";
 
 contract NativeProver is INativeProver, IProverHelper {
     uint256 public immutable L1_CHAIN_ID; // Chain ID of the settlement chain
@@ -229,6 +230,14 @@ contract NativeProver is INativeProver, IProverHelper {
         bytes32 _l1WorldStateRoot
     ) internal view returns (bool) {
         // Verify proof of the registry contract account
+        console2.log("Proving L2 configuration");
+        console2.log("L1_CONFIGURATION.settlementRegistry", L1_CONFIGURATION.settlementRegistry);
+        console2.log("rlpEncodedRegistryAccountData");
+        console2.logBytes(_rlpEncodedRegistryAccountData);
+        console2.log("l1RegistryProof");
+        console2.logBytes(abi.encode(_l1RegistryProof));
+        console2.log("l1WorldStateRoot");
+        console2.logBytes32(_l1WorldStateRoot);
         _proveAccount(
             abi.encodePacked(L1_CONFIGURATION.settlementRegistry),
             _rlpEncodedRegistryAccountData,

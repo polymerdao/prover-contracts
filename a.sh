@@ -1,13 +1,13 @@
 # Make sure to set required env vars to run:
 # - CONTRACTS_DIR (path to the prover contracts)
 # - CLI_PATH  (path to the prover cli)
-# - RPC URLS To fork: 
-#     - $BASE_MAINNET_RPC_URL   
-#     - $OP_MAINNET_RPC_URL   
-#     - $ETH_MAINNET_RPC_URL  
+# - RPC URLS To fork:
+#     - $BASE_MAINNET_RPC_URL
+#     - $OP_MAINNET_RPC_URL
+#     - $ETH_MAINNET_RPC_URL
 
-export CONTRACTS_DIR=~/Code/prover-contracts
-export CLI_PATH=~/Code/fallback-prover
+#export CONTRACTS_DIR=~/Code/prover-contracts
+#export CLI_PATH=~/Code/fallback-prover
 export FOUNDRY_DISABLE_NIGHTLY_WARNING=TRUE
 
 # Anvil private key. Public knowledge.
@@ -38,15 +38,15 @@ echo deployed prover address to op @$OP_PROVER
 export BASE_PROVER=$(forge create --private-key $PKEY ./contracts/core/native_fallback/L2/OPStackCannonProver.sol:OPStackCannonProver --chain-id 8453 --broadcast -r $BASE_RPC_URL | grep "Deployed to:" | awk '{print $3}')
 echo deployed prover address to base @$BASE_PROVER
 
-echo DEPLOYING L1 Contracts: 
-# Deploy L1 contracts 
-forge script script/DeployRegistry.s.sol --private-key $PKEY --broadcast --rpc-url $ETH_RPC_URL -vv &> deploy-eth.txt 
+echo DEPLOYING L1 Contracts:
+# Deploy L1 contracts
+forge script script/DeployRegistry.s.sol --private-key $PKEY --broadcast --rpc-url $ETH_RPC_URL -vv &> deploy-eth.txt
 export SETTLEMENT_REGISTRY=$(cat deploy-eth.txt | grep "settlementRegistry: " | awk '{print $2}')
 echo L1Contracts Deployed: $SETTLEMENT_REGISTRY
 
-# Now that it's bee ndeployed, we can now deploy each l2 contracts. 
+# Now that it's bee ndeployed, we can now deploy each l2 contracts.
 export CHAIN_ID=10
-forge script script/DeployNativeProver.s.sol:DeployNativeProverScript --private-key $PKEY --broadcast --rpc-url $OP_RPC_URL -vv &> deploy-op.txt 
+forge script script/DeployNativeProver.s.sol:DeployNativeProverScript --private-key $PKEY --broadcast --rpc-url $OP_RPC_URL -vv &> deploy-op.txt
 export OP_NATIVE_PROVER=$(cat deploy-op.txt | grep "nativeProver: " | awk '{print $2}')
 echo Op native prover Deployed: $OP_NATIVE_PROVER
 
@@ -56,7 +56,7 @@ export BASE_NATIVE_PROVER=$(cat deploy-base.txt | grep "nativeProver: " | awk '{
 
 echo Base native prover Deployed: $BASE_NATIVE_PROVER
 
-cd $CLI_PATH && make build 
+cd $CLI_PATH && make build
 export PROOF=$($CLI_PATH/bin/native-proof update-and-prove \
     --src-l2-chain-id 10 \
     --dst-l2-chain-id 8453 \
@@ -67,15 +67,14 @@ export PROOF=$($CLI_PATH/bin/native-proof update-and-prove \
     --l1-http-path $ETH_RPC_URL \
     --l1-registry-address $SETTLEMENT_REGISTRY)
 
-cd $CONTRACTS_DIR 
+cd $CONTRACTS_DIR
 
-TEST_OUTPUT=~/Code/prover-contracts/integration_test.txt
-forge test --match-test test_integration_proof -vvvv &> $TEST_OUTPUT 
+TEST_OUTPUT=${CONTRACTS_DIR}/integration_test.txt
+forge test --match-test test_integration_proof -vvvv &> $TEST_OUTPUT
 echo "Test output written to $TEST_OUTPUT"
 
-OUTFILE=~/Code/prover-contracts/test/native_fallback/payload/native-proof.hex
+OUTFILE=${CONTRACTS_DIR}/test/native_fallback/payload/native-proof.hex
 echo $PROOF > $OUTFILE
 echo "Proof written to $OUTFILE"
-
-# cast code $OP_NATIVE_PROVER -r $OP_RPC_URL > ~/Code/prover-contracts/test/native_fallback/payload/op-prover-bytecode.hex 
-# cast code $BASE_NATIVE_PROVER -r $OP_RPC_URL > ~/Code/prover-contracts/test/native_fallback/payload/base-prover-bytecode.hex 
+# cast code $OP_NATIVE_PROVER -r $OP_RPC_URL > ${CONTRACTS_DIR}/test/native_fallback/payload/op-prover-bytecode.hex
+# cast code $BASE_NATIVE_PROVER -r $OP_RPC_URL > ${CONTRACTS_DIR}/test/native_fallback/payload/base-prover-bytecode.hex
