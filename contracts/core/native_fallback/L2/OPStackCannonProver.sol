@@ -20,7 +20,6 @@ pragma solidity 0.8.15;
 import {L2Configuration} from "../../../libs/RegistryTypes.sol";
 import {SecureMerkleTrie} from "@eth-optimism/contracts-bedrock/src/libraries/trie/SecureMerkleTrie.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
-import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {ISettledStateProver} from "../../../interfaces/ISettledStateProver.sol";
 import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
