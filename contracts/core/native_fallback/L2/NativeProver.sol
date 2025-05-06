@@ -19,16 +19,13 @@ pragma solidity 0.8.15;
 
 import {SecureMerkleTrie} from "@eth-optimism/contracts-bedrock/src/libraries/trie/SecureMerkleTrie.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
-import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {IL1Block} from "../../../interfaces/IL1Block.sol";
 import {INativeProver} from "../../../interfaces/INativeProver.sol";
-import {IProverHelper} from "../../../interfaces/IProverHelper.sol";
 import {ISettledStateProver} from "../../../interfaces/ISettledStateProver.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {
     L2Configuration,
     L1Configuration,
-    Type,
     ProveScalarArgs,
     ProveL1ScalarArgs,
     UpdateL2ConfigArgs
@@ -36,17 +33,6 @@ import {
 import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
 contract NativeProver is Ownable, INativeProver {
-    uint256 public immutable L1_CHAIN_ID; // Chain ID of the settlement chain
-
-    L1Configuration public L1_CONFIGURATION; // Configuration for L1
-
-    mapping(uint256 => L2Configuration) public l2ChainConfigurations; // Mapping of counterparty chainIDs to their
-        // configurations
-
-    mapping(uint256 => BlockProof) public provenStates;
-
-    mapping(uint256 => ISettledStateProver) public stateProvers;
-
     struct InitialL2Configuration {
         uint256 chainID;
         L2Configuration config;
@@ -63,6 +49,17 @@ contract NativeProver is Ownable, INativeProver {
         bytes32 blockHash;
         bytes32 stateRoot;
     }
+
+    uint256 public immutable L1_CHAIN_ID; // Chain ID of the settlement chain
+
+    L1Configuration public L1_CONFIGURATION; // Configuration for L1
+
+    mapping(uint256 => L2Configuration) public l2ChainConfigurations; // Mapping of counterparty chainIDs to their
+        // configurations
+
+    mapping(uint256 => BlockProof) public provenStates;
+
+    mapping(uint256 => ISettledStateProver) public stateProvers;
 
     event L1WorldStateProven(uint256 indexed _blockNumber, bytes32 _L1WorldStateRoot);
 
@@ -142,13 +139,85 @@ contract NativeProver is Ownable, INativeProver {
         transferOwnership(_owner);
     }
 
-    function _setInitialChainConfiguration(uint256 _chainID, L2Configuration memory _config) internal {
-        l2ChainConfigurations[_chainID] = _config;
-    }
-
     function setInitialL1Config(L1Configuration memory _l1Configuration) external onlyOwner {
         L1_CONFIGURATION = _l1Configuration;
         renounceOwnership();
+    }
+
+    /**
+     * @notice Proves a storage value in a settled L2 state root
+     * @dev Single view function encapsulating all three steps of the proof process: L1 view; settled L2 state; L2
+     * storage
+     * @param _updateArgs holds the ProveScalarArgs
+     * @param _rlpEncodedL1Header L1 header to be verified against L1 block hash oracle to access L1 state root
+     * @param _rlpEncodedL2Header L2 header proven in the L1 settlement
+     * @param _settledStateProof proof of the L2 world state root in the L1 settlement
+     * @param _l2StorageProof proof of the storage value in the L2 _contractAddr
+     * @param _rlpEncodedContractAccount RLP encoded _contractAddr account
+     * @param _l2AccountProof proof of the _contractAddr account in the L2 world state
+     *
+     */
+    function proveNative(
+        UpdateL2ConfigArgs calldata _updateArgs,
+        ProveScalarArgs calldata _proveArgs,
+        bytes calldata _rlpEncodedL1Header,
+        bytes memory _rlpEncodedL2Header,
+        bytes calldata _settledStateProof,
+        bytes[] calldata _l2StorageProof,
+        bytes calldata _rlpEncodedContractAccount,
+        bytes[] calldata _l2AccountProof
+    ) external view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
+        // First prove the L1 view
+        bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
+
+        // Use the L1 state root to prove the L2 configuration, but don't store it
+        if (
+            !_proveL2Configuration(
+                _proveArgs.chainID,
+                _updateArgs.config,
+                _updateArgs.l1StorageProof,
+                _updateArgs.rlpEncodedRegistryAccountData,
+                _updateArgs.l1RegistryProof,
+                _l1StateRoot
+            )
+        ) {
+            revert InvalidL2ConfigurationProof(_proveArgs.chainID, _updateArgs.config);
+        }
+
+        // Then prove the settled state
+        _proveSettledState(
+            _proveArgs.chainID, _proveArgs.l2WorldStateRoot, _l1StateRoot, _rlpEncodedL2Header, _settledStateProof
+        );
+
+        // Now prove storage against the verified settled L2 state root using the verified L2 configuration
+        _proveStorageInState(_proveArgs, _l2StorageProof, _rlpEncodedContractAccount, _l2AccountProof);
+
+        return (_proveArgs.chainID, _proveArgs.contractAddr, _proveArgs.storageSlot, _proveArgs.storageValue);
+    }
+
+    function proveL1Native(
+        ProveL1ScalarArgs calldata _args,
+        bytes calldata _rlpEncodedL1Header,
+        bytes[] calldata _l1StorageProof,
+        bytes calldata _rlpEncodedContractAccount,
+        bytes[] calldata _l1AccountProof
+    ) external view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
+        // First prove the L1 view
+        bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
+
+        // Check that the expected L1 state root matches the verified one
+        if (_l1StateRoot != _args.l1WorldStateRoot) {
+            revert SettlementChainStateRootNotProven(_l1StateRoot, _args.l1WorldStateRoot);
+        }
+
+        // Now prove storage against the L1 state root
+        _proveL1StorageInState(_args, _l1StorageProof, _rlpEncodedContractAccount, _l1AccountProof);
+
+        return (L1_CHAIN_ID, _args.contractAddr, _args.storageSlot, _args.storageValue);
+    }
+
+    function _setInitialChainConfiguration(uint256 _chainID, L2Configuration memory _config) internal {
+        l2ChainConfigurations[_chainID] = _config;
     }
 
     function _updateL2ChainConfiguration(
@@ -167,6 +236,24 @@ contract NativeProver is Ownable, INativeProver {
             revert InvalidL2ConfigurationProof(_chainID, _config);
         }
         l2ChainConfigurations[_chainID] = _config;
+    }
+
+    /**
+     * @notice Updates the proven state if newer
+     * @param _chainID Chain ID to update
+     * @param blockProof Block proof data to update with
+     */
+    function _updateProvenState(uint256 _chainID, BlockProof memory blockProof) internal {
+        BlockProof memory existingBlockProof = provenStates[_chainID];
+
+        if (existingBlockProof.blockNumber < blockProof.blockNumber) {
+            provenStates[_chainID] = blockProof;
+            emit L2WorldStateProven(_chainID, blockProof.blockNumber, blockProof.stateRoot);
+        } else {
+            if (existingBlockProof.blockNumber > blockProof.blockNumber) {
+                revert OutdatedBlock(blockProof.blockNumber, existingBlockProof.blockNumber);
+            }
+        }
     }
 
     /**
@@ -270,188 +357,6 @@ contract NativeProver is Ownable, INativeProver {
     }
 
     /**
-     * @notice Validates an account proof against a root
-     * @dev Uses SecureMerkleTrie for verification
-     * @param _address Account address
-     * @param _data Expected account data
-     * @param _proof Merkle proof
-     * @param _root Expected root
-     */
-    function _proveAccount(bytes memory _address, bytes memory _data, bytes[] memory _proof, bytes32 _root)
-        internal
-        pure
-    {
-        if (!SecureMerkleTrie.verifyInclusionProof(_address, _data, _proof, _root)) {
-            revert InvalidAccountProof(_address, _data, _proof, _root);
-        }
-    }
-
-    /**
-     * @notice Converts bytes to uint256
-     * @dev Manual byte-by-byte conversion
-     * @param _b Bytes to convert
-     * @return Converted uint256 value
-     */
-    function _bytesToUint(bytes memory _b) internal pure returns (uint256) {
-        uint256 number;
-        for (uint256 i = 0; i < _b.length; i++) {
-            number = number + uint256(uint8(_b[i])) * (2 ** (8 * (_b.length - (i + 1))));
-        }
-        return number;
-    }
-
-    /**
-     * @notice Internal function to create and verify block proof
-     * @param _l2WorldStateRoot L2 state root to prove
-     * @param _rlpEncodedL2Header RLP encoded L2 block header
-     * @return blockProof Verified block proof data
-     */
-    function _createBlockProof(bytes32 _l2WorldStateRoot, bytes memory _rlpEncodedL2Header)
-        internal
-        pure
-        returns (BlockProof memory blockProof)
-    {
-        blockProof = BlockProof({
-            blockNumber: _bytesToUint(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL2Header)[8])),
-            blockHash: keccak256(_rlpEncodedL2Header),
-            stateRoot: _l2WorldStateRoot
-        });
-    }
-
-    /**
-     * @notice Updates the proven state if newer
-     * @param _chainID Chain ID to update
-     * @param blockProof Block proof data to update with
-     */
-    function _updateProvenState(uint256 _chainID, BlockProof memory blockProof) internal {
-        BlockProof memory existingBlockProof = provenStates[_chainID];
-
-        if (existingBlockProof.blockNumber < blockProof.blockNumber) {
-            provenStates[_chainID] = blockProof;
-            emit L2WorldStateProven(_chainID, blockProof.blockNumber, blockProof.stateRoot);
-        } else {
-            if (existingBlockProof.blockNumber > blockProof.blockNumber) {
-                revert OutdatedBlock(blockProof.blockNumber, existingBlockProof.blockNumber);
-            }
-        }
-    }
-
-    /**
-     * @notice Proves a storage value in a settled L2 state root
-     * @dev Verifies a storage value against a verified settle L2 state root
-     * @param _args holds the ProveScalarArgs
-     * @param _l2StorageProof Proof data for storage value verification
-     * @param _rlpEncodedContractState RLP encoded contract state
-     * @param _l2AccountProof Proof data for storing contract on the L2
-     * @return chainID Destination chain ID
-     * @return storingContract Address of storing contract
-     * @return storageSlot Slot used to verify
-     * @return storageValue Verified storage value
-     */
-    function proveStorageValue(
-        ProveScalarArgs calldata _args,
-        bytes[] calldata _l2StorageProof,
-        bytes calldata _rlpEncodedContractState,
-        bytes[] calldata _l2AccountProof
-    ) public view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
-        // Verify L2 state root is proven
-        BlockProof memory existingBlockProof = provenStates[_args.chainID];
-        if (existingBlockProof.stateRoot != _args.l2WorldStateRoot) {
-            revert DestinationChainStateRootNotProved(existingBlockProof.stateRoot, _args.l2WorldStateRoot);
-        }
-
-        bytes memory storageRoot = RLPReader.readBytes(RLPReader.readList(_rlpEncodedContractState)[2]);
-
-        if (storageRoot.length > 32) {
-            revert IncorrectContractStorageRoot(storageRoot);
-        }
-
-        // Verify the account exists in the state tree
-        _proveAccount(
-            abi.encodePacked(_args.contractAddr), _rlpEncodedContractState, _l2AccountProof, _args.l2WorldStateRoot
-        );
-
-        // Verify the storage value exists in the storage tree
-        ProverHelpers.proveStorageBytes32(
-            abi.encodePacked(_args.storageSlot), _args.storageValue, _l2StorageProof, bytes32(storageRoot)
-        );
-
-        return (_args.chainID, _args.contractAddr, _args.storageSlot, _args.storageValue);
-    }
-
-    /**
-     * @notice Proves a storage value in a settled L2 state root
-     * @dev Single view function encapsulating all three steps of the proof process: L1 view; settled L2 state; L2
-     * storage
-     * @param _updateArgs holds the ProveScalarArgs
-     * @param _rlpEncodedL1Header L1 header to be verified against L1 block hash oracle to access L1 state root
-     * @param _rlpEncodedL2Header L2 header proven in the L1 settlement
-     * @param _settledStateProof proof of the L2 world state root in the L1 settlement
-     * @param _l2StorageProof proof of the storage value in the L2 _contractAddr
-     * @param _rlpEncodedContractAccount RLP encoded _contractAddr account
-     * @param _l2AccountProof proof of the _contractAddr account in the L2 world state
-     *
-     */
-    function proveNative(
-        UpdateL2ConfigArgs calldata _updateArgs,
-        ProveScalarArgs calldata _proveArgs,
-        bytes calldata _rlpEncodedL1Header,
-        bytes memory _rlpEncodedL2Header,
-        bytes calldata _settledStateProof,
-        bytes[] calldata _l2StorageProof,
-        bytes calldata _rlpEncodedContractAccount,
-        bytes[] calldata _l2AccountProof
-    ) external view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
-        // First prove the L1 view
-        bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
-
-        // Use the L1 state root to prove the L2 configuration, but don't store it
-        if (
-            !_proveL2Configuration(
-                _proveArgs.chainID,
-                _updateArgs.config,
-                _updateArgs.l1StorageProof,
-                _updateArgs.rlpEncodedRegistryAccountData,
-                _updateArgs.l1RegistryProof,
-                _l1StateRoot
-            )
-        ) {
-            revert InvalidL2ConfigurationProof(_proveArgs.chainID, _updateArgs.config);
-        }
-
-        // Then prove the settled state
-        _proveSettledState(
-            _proveArgs.chainID, _proveArgs.l2WorldStateRoot, _l1StateRoot, _rlpEncodedL2Header, _settledStateProof
-        );
-
-        // Now prove storage against the verified settled L2 state root using the verified L2 configuration
-        _proveStorageInState(_proveArgs, _l2StorageProof, _rlpEncodedContractAccount, _l2AccountProof);
-
-        return (_proveArgs.chainID, _proveArgs.contractAddr, _proveArgs.storageSlot, _proveArgs.storageValue);
-    }
-
-    function proveL1Native(
-        ProveL1ScalarArgs calldata _args,
-        bytes calldata _rlpEncodedL1Header,
-        bytes[] calldata _l1StorageProof,
-        bytes calldata _rlpEncodedContractAccount,
-        bytes[] calldata _l1AccountProof
-    ) external view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
-        // First prove the L1 view
-        bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
-
-        // Check that the expected L1 state root matches the verified one
-        if (_l1StateRoot != _args.l1WorldStateRoot) {
-            revert SettlementChainStateRootNotProven(_l1StateRoot, _args.l1WorldStateRoot);
-        }
-
-        // Now prove storage against the L1 state root
-        _proveL1StorageInState(_args, _l1StorageProof, _rlpEncodedContractAccount, _l1AccountProof);
-
-        return (L1_CHAIN_ID, _args.contractAddr, _args.storageSlot, _args.storageValue);
-    }
-
-    /**
      * @notice Validates the L1 block data and extracts state root
      * @param _rlpEncodedL1Header The encoded L1 header
      * @return L1 state root from the header
@@ -502,6 +407,55 @@ contract NativeProver is Ownable, INativeProver {
         ) {
             revert InvalidSettledStateProof(_chainID, _l2WorldStateRoot);
         }
+    }
+
+    /**
+     * @notice Validates an account proof against a root
+     * @dev Uses SecureMerkleTrie for verification
+     * @param _address Account address
+     * @param _data Expected account data
+     * @param _proof Merkle proof
+     * @param _root Expected root
+     */
+    function _proveAccount(bytes memory _address, bytes memory _data, bytes[] memory _proof, bytes32 _root)
+        internal
+        pure
+    {
+        if (!SecureMerkleTrie.verifyInclusionProof(_address, _data, _proof, _root)) {
+            revert InvalidAccountProof(_address, _data, _proof, _root);
+        }
+    }
+
+    /**
+     * @notice Converts bytes to uint256
+     * @dev Manual byte-by-byte conversion
+     * @param _b Bytes to convert
+     * @return Converted uint256 value
+     */
+    function _bytesToUint(bytes memory _b) internal pure returns (uint256) {
+        uint256 number;
+        for (uint256 i = 0; i < _b.length; i++) {
+            number = number + uint256(uint8(_b[i])) * (2 ** (8 * (_b.length - (i + 1))));
+        }
+        return number;
+    }
+
+    /**
+     * @notice Internal function to create and verify block proof
+     * @param _l2WorldStateRoot L2 state root to prove
+     * @param _rlpEncodedL2Header RLP encoded L2 block header
+     * @return blockProof Verified block proof data
+     */
+    function _createBlockProof(bytes32 _l2WorldStateRoot, bytes memory _rlpEncodedL2Header)
+        internal
+        pure
+        returns (BlockProof memory blockProof)
+    {
+        blockProof = BlockProof({
+            blockNumber: _bytesToUint(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL2Header)[8])),
+            blockHash: keccak256(_rlpEncodedL2Header),
+            stateRoot: _l2WorldStateRoot
+        });
     }
 
     function _proveStorageInState(

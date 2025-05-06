@@ -20,11 +20,25 @@ pragma solidity 0.8.15;
 import {L2Configuration} from "../../../libs/RegistryTypes.sol";
 import {SecureMerkleTrie} from "@eth-optimism/contracts-bedrock/src/libraries/trie/SecureMerkleTrie.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
-import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 import {ISettledStateProver} from "../../../interfaces/ISettledStateProver.sol";
 import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
 contract OPStackBedrockProver is ISettledStateProver {
+    /**
+     * @notice Struct to hold all scalar parameters to _proveWorldStateBedrock
+     * @dev To prevent stack-too-deep
+     * @param _l2WorldStateRoot L2 state root
+     * @param _l2MessagePasserStateRoot L2 message passer state root
+     * @param _l2OutputIndex Storage slot index
+     * @param _l1WorldStateRoot Proven L1 world state root
+     */
+    struct BedrockScalarArgs {
+        bytes32 _l2WorldStateRoot;
+        bytes32 _l2MessagePasserStateRoot;
+        uint256 _l2OutputIndex;
+        bytes32 _l1WorldStateRoot; // trusted at this point
+    }
+
     /**
      * @notice Invalid output oracle storage root encoding
      */
@@ -88,21 +102,6 @@ contract OPStackBedrockProver is ISettledStateProver {
             revert InvalidBedrockProof(_l2WorldStateRoot, _l1WorldStateRoot);
         }
         return true;
-    }
-
-    /**
-     * @notice Struct to hold all scalar parameters to _proveWorldStateBedrock
-     * @dev To prevent stack-too-deep
-     * @param _l2WorldStateRoot L2 state root
-     * @param _l2MessagePasserStateRoot L2 message passer state root
-     * @param _l2OutputIndex Storage slot index
-     * @param _l1WorldStateRoot Proven L1 world state root
-     */
-    struct BedrockScalarArgs {
-        bytes32 _l2WorldStateRoot;
-        bytes32 _l2MessagePasserStateRoot;
-        uint256 _l2OutputIndex;
-        bytes32 _l1WorldStateRoot; // trusted at this point
     }
 
     /**

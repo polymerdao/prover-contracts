@@ -627,9 +627,10 @@ contract IntegrationTest is Test {
         vm.expectRevert();
 
         // Call prove with our data
-        //  TODO: Implement full test 
+        //  TODO: Implement full test
         // mockProver.proveNative(
-        //     updateArgs, proveArgs, rlpEncodedL1Header, rlpEncodedL2Header, settledStateProof, storageProof, accountRLP, accountProof
+        //     updateArgs, proveArgs, rlpEncodedL1Header, rlpEncodedL2Header, settledStateProof, storageProof,
+        // accountRLP, accountProof
         // );
     }
 
