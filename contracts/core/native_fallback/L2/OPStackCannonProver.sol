@@ -108,7 +108,7 @@ contract OPStackCannonProver is ISettledStateProver {
         bytes32 _l2WorldStateRoot,
         bytes memory _rlpEncodedL2Header,
         bytes32 _l1WorldStateRoot,
-        bytes calldata _proof
+        bytes memory _proof
     ) external pure returns (bool) {
         (
             DisputeGameFactoryProofData memory disputeGameFactoryProofData,
@@ -155,9 +155,7 @@ contract OPStackCannonProver is ISettledStateProver {
         // prove that the FaultDisputeGame was created by the Dispute Game Factory
 
         // Verify dispute game creation and resolution
-        bytes32 rootClaim;
-        address faultDisputeGameProxyAddress;
-        (faultDisputeGameProxyAddress, rootClaim) = _faultDisputeGameFromFactory(
+        (address faultDisputeGameProxyAddress, bytes32 rootClaim) = _faultDisputeGameFromFactory(
             _chainConfig.versionNumber,
             _chainConfig.addresses[0], // For OPStackCannon the factory address is stored in the first address slot
             _chainConfig.storageSlots[0], // For OPStackCannon the disputeGameFactoryListSlot is the 1st storage slot in
@@ -208,7 +206,7 @@ contract OPStackCannonProver is ISettledStateProver {
         // Prove that the FaultDispute game has been settled
         // storage proof for FaultDisputeGame rootClaim (means block is valid)
         ProverHelpers.proveStorageBytes32(
-            abi.encodePacked(uint256(_faultDisputeGameRootClaimSlot)),
+            abi.encodePacked(_faultDisputeGameRootClaimSlot),
             _rootClaim,
             _faultDisputeGameProofData.faultDisputeGameRootClaimStorageProof,
             bytes32(_faultDisputeGameProofData.faultDisputeGameStateRoot)
@@ -225,12 +223,10 @@ contract OPStackCannonProver is ISettledStateProver {
 
         // Verify game status storage proof
         ProverHelpers.proveStorageBytes32(
-            abi.encodePacked(uint256(_faultDisputeGameStatusSlot)),
+            abi.encodePacked(_faultDisputeGameStatusSlot),
             faultDisputeGameStatusStorage,
             _faultDisputeGameProofData.faultDisputeGameStatusStorageProof,
-            bytes32(
-                RLPReader.readBytes(RLPReader.readList(_faultDisputeGameProofData.rlpEncodedFaultDisputeGameData)[2])
-            )
+            bytes32(_faultDisputeGameProofData.faultDisputeGameStateRoot)
         );
 
         // Verify game contract account proof

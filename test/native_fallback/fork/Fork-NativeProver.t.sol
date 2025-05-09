@@ -26,7 +26,7 @@ contract DeployNativeProverScript is DeployRegistryScript, Test {
 
         L2Configuration memory baseL2Config = L2Configuration({
             prover: baseProver,
-            addresses: addresses(),
+            addresses: addresses(0xd6E6dBf4F7EA0ac412fD8b65ED297e64BB7a06E1),
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
@@ -35,7 +35,7 @@ contract DeployNativeProverScript is DeployRegistryScript, Test {
 
         L2Configuration memory opL2Config = L2Configuration({
             prover: opProver,
-            addresses: addresses(),
+            addresses: addresses(0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1),
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
@@ -49,7 +49,7 @@ contract DeployNativeProverScript is DeployRegistryScript, Test {
         vm.startBroadcast(deployerPrivateKey);
 
         // // Deploy NativeProver contract
-        nativeProver = new NativeProver(msg.sender, ethChainId, initialL2Configs);
+        nativeProver = new NativeProver(0x81b5c1c0343ff0087C04F543D0f36dC4745b999F, ethChainId, initialL2Configs);
         nativeProver.setInitialL1Config(l1Config);
 
         vm.stopBroadcast();

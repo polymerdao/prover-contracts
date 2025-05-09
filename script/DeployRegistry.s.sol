@@ -51,7 +51,7 @@ contract DeployRegistryScript is Script {
 
         L2Configuration memory baseL2Config = L2Configuration({
             prover: baseProver,
-            addresses: addresses(),
+            addresses: addresses(0xd6E6dBf4F7EA0ac412fD8b65ED297e64BB7a06E1),
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
@@ -60,7 +60,7 @@ contract DeployRegistryScript is Script {
 
         L2Configuration memory opL2Config = L2Configuration({
             prover: opProver,
-            addresses: addresses(),
+            addresses: addresses(0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1),
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
@@ -106,10 +106,10 @@ contract DeployRegistryScript is Script {
         return storageSlot;
     }
 
-    function addresses() public returns (address[] memory) {
+    function addresses(address dfgAddress) public returns (address[] memory) {
         // Addresses and slots are the same for both op and base
         address[] memory _addresses = new address[](1);
-        _addresses[0] = 0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1;
+        _addresses[0] = dfgAddress;
         return _addresses;
     }
 
