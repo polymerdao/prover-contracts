@@ -21,7 +21,7 @@ contract DeployNativeProverScript is DeployRegistryScript {
 
         L2Configuration memory baseL2Config = L2Configuration({
             prover: baseProver,
-            addresses: addresses(),
+            addresses: addresses(0xd6E6dBf4F7EA0ac412fD8b65ED297e64BB7a06E1),
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
@@ -30,7 +30,7 @@ contract DeployNativeProverScript is DeployRegistryScript {
 
         L2Configuration memory opL2Config = L2Configuration({
             prover: opProver,
-            addresses: addresses(),
+            addresses: addresses(0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1),
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,

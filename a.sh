@@ -37,7 +37,7 @@ export DEPLOYER=$(cast wallet address $PKEY)
 # echo deployed prover address to base @$BASE_PROVER
 
 # echo DEPLOYING L1 Contracts: 
-# # Deploy L1 contracts 
+# Deploy L1 contracts 
 # forge script script/DeployRegistry.s.sol --private-key $PKEY --broadcast --rpc-url $ETH_SEPOLIA_RPC_URL -vv &> deploy-eth.txt 
 # export SETTLEMENT_REGISTRY=$(grep "^0:\saddress\s0x[0-9a-fA-F]\{40\}$" deploy-eth.txt | awk '{print $3}')
 # echo L1Contracts Deployed: $SETTLEMENT_REGISTRY
@@ -54,16 +54,18 @@ export DEPLOYER=$(cast wallet address $PKEY)
 # export BASE_NATIVE_PROVER=$(cat deploy-base.txt | grep "nativeProver: " | awk '{print $2}')
 # echo Base native prover Deployed: $BASE_NATIVE_PROVER
 
+# --------------------------------------------------------------------------------------------------------------------
+
 export OP_PROVER=0x4Dba9439caE5B8fC4EC881d73738c13545E6ecc8
 export BASE_PROVER=0x4Dba9439caE5B8fC4EC881d73738c13545E6ecc8
-export SETTLEMENT_REGISTRY=0x284841DC0B7a83c5604D175c149227D5b31014FD
-export OP_NATIVE_PROVER=0x8d10031f5b7BFa65F956811246CD9238688e4EFf
-export BASE_NATIVE_PROVER=0x8d10031f5b7BFa65F956811246CD9238688e4EFf
+export SETTLEMENT_REGISTRY=0xa102b8A5F1a46C0C3D516a9b2237F0D886B21479
+export OP_NATIVE_PROVER=0xAf35b23F38fe8eE793AA6E03d7D54c93c8a6F4B3
+export BASE_NATIVE_PROVER=0x63C0d99458E2d2153cF95ad8b800e191633F0d69
 
 
 cd $CLI_PATH && make build 
 OUTFILE=~/Code/prover-contracts/test/native_fallback/payload/native-proof.hex
-$CLI_PATH/bin/native-proof update-and-prove \
+$CLI_PATH/bin/native-proof proveNative \
     --src-l2-chain-id $(cast chain-id -r $OP_RPC_URL) \
     --dst-l2-chain-id $(cast chain-id -r $BASE_RPC_URL) \
     --src-l2-http-path $OP_RPC_URL \
