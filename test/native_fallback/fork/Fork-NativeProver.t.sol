@@ -9,8 +9,13 @@ import "../../../script/DeployRegistry.s.sol";
 
 contract DeployNativeProverScript is DeployRegistryScript, Test {
     NativeProver nativeProver;
+    bool shouldRunTest;
 
     function setUp() public {
+        shouldRunTest = vm.envOr("FORK_TEST", false);
+        if (!shouldRunTest) {
+            return;
+        }
         vm.createSelectFork(vm.envString("BASE_RPC_URL"));
         uint256 chainId = vm.envUint("CHAIN_ID");
         address settlementRegistry = vm.envAddress("SETTLEMENT_REGISTRY");
@@ -57,6 +62,7 @@ contract DeployNativeProverScript is DeployRegistryScript, Test {
     }
 
     function test_integration_proof() public {
+        vm.skip(!shouldRunTest);
         bytes memory proof = vm.envBytes("PROOF");
 
         (bool success, bytes memory returnData) = address(nativeProver).call(proof);
