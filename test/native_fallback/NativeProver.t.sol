@@ -82,7 +82,6 @@ contract ProverTest is Test {
 
         l1Config = L1Configuration({
             blockHashOracle: address(mockL1Block),
-            settlementBlocksDelay: 10,
             settlementRegistry: address(0x1234),
             settlementRegistryL2ConfigMappingSlot: 5,
             settlementRegistryL1ConfigMappingSlot: 6
@@ -1142,7 +1141,6 @@ contract ProverTest is Test {
 
         l1Config = L1Configuration({
             blockHashOracle: address(mockL1Block),
-            settlementBlocksDelay: 10,
             settlementRegistry: address(0x1234),
             settlementRegistryL2ConfigMappingSlot: 5,
             settlementRegistryL1ConfigMappingSlot: 6
@@ -1164,7 +1162,6 @@ contract ProverTest is Test {
 
         (
             address blockHashOracle,
-            uint256 settlementBlocksDelay,
             address settlementRegistry,
             uint256 settlementRegistryL2ConfigMappingSlot,
             uint256 settlementRegistryL1ConfigMappingSlot
@@ -1172,7 +1169,6 @@ contract ProverTest is Test {
 
         L1Configuration memory actualL1Config = L1Configuration({
             blockHashOracle: blockHashOracle,
-            settlementBlocksDelay: settlementBlocksDelay,
             settlementRegistry: settlementRegistry,
             settlementRegistryL2ConfigMappingSlot: settlementRegistryL2ConfigMappingSlot,
             settlementRegistryL1ConfigMappingSlot: settlementRegistryL1ConfigMappingSlot

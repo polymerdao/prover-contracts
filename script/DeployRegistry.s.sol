@@ -22,8 +22,6 @@ contract DeployRegistryScript is Script {
     uint256 baseChainId = uint256(84_532);
     address baseProver;
 
-    uint256 blocksDelay = 0;
-
     function run() external virtual returns (address) {
         deployerPrivateKey = vm.envUint("PKEY");
         deployerAddr = vm.addr(deployerPrivateKey);
@@ -42,16 +40,14 @@ contract DeployRegistryScript is Script {
             blockHashOracle: blockHashOracle,
             settlementRegistry: address(settlementRegistry),
             settlementRegistryL2ConfigMappingSlot: l2StorageSlot(baseChainId),
-            settlementRegistryL1ConfigMappingSlot: l1StorageSlot(baseChainId),
-            settlementBlocksDelay: blocksDelay
+            settlementRegistryL1ConfigMappingSlot: l1StorageSlot(baseChainId)
         });
 
         L1Configuration memory opL1Config = L1Configuration({
             blockHashOracle: blockHashOracle,
             settlementRegistry: address(settlementRegistry),
             settlementRegistryL2ConfigMappingSlot: l2StorageSlot(opChainId),
-            settlementRegistryL1ConfigMappingSlot: l1StorageSlot(opChainId),
-            settlementBlocksDelay: blocksDelay
+            settlementRegistryL1ConfigMappingSlot: l1StorageSlot(opChainId)
         });
 
         L2Configuration memory baseL2Config = L2Configuration({

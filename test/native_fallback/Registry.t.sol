@@ -44,7 +44,6 @@ contract RegistryTest is Test {
 
         l1Config = L1Configuration({
             blockHashOracle: address(0x1234),
-            settlementBlocksDelay: 10,
             settlementRegistry: address(0x5678),
             settlementRegistryL2ConfigMappingSlot: 5,
             settlementRegistryL1ConfigMappingSlot: 6
@@ -338,7 +337,6 @@ contract RegistryTest is Test {
         // Create L1 config
         L1Configuration memory newL1Config = L1Configuration({
             blockHashOracle: address(0x1234),
-            settlementBlocksDelay: 10,
             settlementRegistry: address(0x5678),
             settlementRegistryL2ConfigMappingSlot: 5,
             settlementRegistryL1ConfigMappingSlot: 6
