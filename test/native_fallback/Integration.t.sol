@@ -339,7 +339,7 @@ contract IntegrationTest is Test {
             l1RegistryProof: l1RegistryProof
         });
 
-        mockProver.proveNative(
+        mockProver.proveL2Native(
             updateArgs,
             proveArgs,
             rlpEncodedL1Header,
@@ -366,7 +366,7 @@ contract IntegrationTest is Test {
 
         // We should now fail at the SecureMerkleTrie verification for storage proof
         vm.expectRevert();
-        mockProver.proveNative(
+        mockProver.proveL2Native(
             updateArgs,
             proveArgs,
             rlpEncodedL1Header,
@@ -628,7 +628,7 @@ contract IntegrationTest is Test {
 
         // Call prove with our data
         //  TODO: Implement full test
-        // mockProver.proveNative(
+        // mockProver.proveL2Native(
         //     updateArgs, proveArgs, rlpEncodedL1Header, rlpEncodedL2Header, settledStateProof, storageProof,
         // accountRLP, accountProof
         // );

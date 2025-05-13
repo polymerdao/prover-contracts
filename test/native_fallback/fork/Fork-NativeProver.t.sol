@@ -59,7 +59,15 @@ contract DeployNativeProverScript is DeployRegistryScript, Test {
     function test_integration_proof() public {
         bytes memory proof = vm.envBytes("PROOF");
 
-        address(nativeProver).call(proof);
+        (bool success, bytes memory returnData) = address(nativeProver).call(proof);
+        require(success, "Proof execution failed");
+
+        console2.log("returned data");
+        console2.logBytes(returnData);
+        // Log the returned data
+        if (returnData.length > 0) {
+            console2.log("Returned data length:", returnData.length);
+        }
     }
 
     function mock_l1_hash_oracle() internal {

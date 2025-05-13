@@ -25,7 +25,7 @@ import {ProveScalarArgs, ProveL1ScalarArgs, UpdateL2ConfigArgs} from "../libs/Re
  * @notice A contract for implementing a L2<->L1<->L2 cross-L2 prover
  */
 interface INativeProver {
-    function proveNative(
+    function proveL2Native(
         UpdateL2ConfigArgs calldata _updateArgs,
         ProveScalarArgs calldata _proveArgs,
         bytes calldata _rlpEncodedL1Header,
