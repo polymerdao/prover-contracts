@@ -90,7 +90,6 @@ contract IntegrationTest is Test {
         // Setup L1 configuration for Prover
         L1Configuration memory l1Config = L1Configuration({
             blockHashOracle: address(mockL1Block),
-            settlementBlocksDelay: 10,
             settlementRegistry: address(registry),
             settlementRegistryL2ConfigMappingSlot: 0, // l2ChainConfigurationHashMap slot
             settlementRegistryL1ConfigMappingSlot: 1 // l1ChainConfigurationHashMap slot

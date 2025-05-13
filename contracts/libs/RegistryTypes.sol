@@ -34,7 +34,6 @@ struct L2Configuration {
 
 struct L1Configuration {
     address blockHashOracle;
-    uint256 settlementBlocksDelay;
     address settlementRegistry;
     uint256 settlementRegistryL2ConfigMappingSlot;
     uint256 settlementRegistryL1ConfigMappingSlot;
