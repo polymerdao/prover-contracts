@@ -9,22 +9,27 @@ import "../contracts/libs/RegistryTypes.sol";
 contract DeployRegistryScript is Script {
     uint256 constant _STARTING_L2_MAPPING_SLOT = 2;
     uint256 constant _STARTING_L1_MAPPING_SLOT = 4;
-    uint256 deployerPrivateKey = vm.envUint("PKEY");
-    address deployerAddr = vm.addr(deployerPrivateKey);
+    uint256 deployerPrivateKey;
+    address deployerAddr;
     // Get L1 configuration from environment variables
     address blockHashOracle = address(0x4200000000000000000000000000000000000015);
 
-    uint256 ethChainId = uint256(11155111);
+    uint256 ethChainId = uint256(11_155_111);
 
-    uint256 opChainId = uint256(11155420);
-    address opProver = vm.envAddress("OP_PROVER");
+    uint256 opChainId = uint256(11_155_420);
+    address opProver;
 
-    uint256 baseChainId = uint256(84532);
-    address baseProver = vm.envAddress("BASE_PROVER");
+    uint256 baseChainId = uint256(84_532);
+    address baseProver;
 
     uint256 blocksDelay = 0;
 
     function run() external virtual returns (address) {
+        deployerPrivateKey = vm.envUint("PKEY");
+        deployerAddr = vm.addr(deployerPrivateKey);
+        opProver = vm.envAddress("OP_PROVER");
+        baseProver = vm.envAddress("BASE_PROVER");
+
         vm.startBroadcast(deployerPrivateKey);
 
         Registry.InitialL2Configuration[] memory emptyl2Configs = new Registry.InitialL2Configuration[](0);

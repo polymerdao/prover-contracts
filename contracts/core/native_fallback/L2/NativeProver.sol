@@ -157,7 +157,7 @@ contract NativeProver is Ownable, INativeProver {
      * @param _l2AccountProof proof of the _contractAddr account in the L2 world state
      *
      */
-    function proveNative(
+    function proveL2Native(
         UpdateL2ConfigArgs calldata _updateArgs,
         ProveScalarArgs calldata _proveArgs,
         bytes calldata _rlpEncodedL1Header,
@@ -438,10 +438,7 @@ contract NativeProver is Ownable, INativeProver {
      * @param _proof Merkle proof
      * @param _root Expected root
      */
-    function _proveAccount(address _address, bytes memory _data, bytes[] memory _proof, bytes32 _root)
-        internal
-        pure
-    {
+    function _proveAccount(address _address, bytes memory _data, bytes[] memory _proof, bytes32 _root) internal pure {
         if (!SecureMerkleTrie.verifyInclusionProof(abi.encodePacked(_address), _data, _proof, _root)) {
             revert InvalidAccountProof(_address, _data, _proof, _root);
         }
