@@ -216,44 +216,25 @@ contract NativeProver is Ownable, INativeProver {
         return (L1_CHAIN_ID, _args.contractAddr, _args.storageSlot, _args.storageValue);
     }
 
-    function _setInitialChainConfiguration(uint256 _chainID, L2Configuration memory _config) internal {
-        l2ChainConfigurations[_chainID] = _config;
-    }
-
-    function _updateL2ChainConfiguration(
-        uint256 _chainID,
-        L2Configuration memory _config,
+    function updateL1ChainConfiguration(
+        L1Configuration memory _config,
         bytes[] memory _l1StorageProof,
         bytes memory _rlpEncodedRegistryAccountData,
         bytes[] memory _l1RegistryProof,
         bytes32 _l1WorldStateRoot
-    ) internal {
+    ) external {
         if (
-            !_proveL2Configuration(
-                _chainID, _config, _l1StorageProof, _rlpEncodedRegistryAccountData, _l1RegistryProof, _l1WorldStateRoot
+            !_proveL1Configuration(
+                _config, _l1StorageProof, _rlpEncodedRegistryAccountData, _l1RegistryProof, _l1WorldStateRoot
             )
         ) {
-            revert InvalidL2ConfigurationProof(_chainID, _config);
+            revert InvalidL1ConfigurationProof(_config);
         }
-        l2ChainConfigurations[_chainID] = _config;
+        L1_CONFIGURATION = _config;
     }
 
-    /**
-     * @notice Updates the proven state if newer
-     * @param _chainID Chain ID to update
-     * @param blockProof Block proof data to update with
-     */
-    function _updateProvenState(uint256 _chainID, BlockProof memory blockProof) internal {
-        BlockProof memory existingBlockProof = provenStates[_chainID];
-
-        if (existingBlockProof.blockNumber < blockProof.blockNumber) {
-            provenStates[_chainID] = blockProof;
-            emit L2WorldStateProven(_chainID, blockProof.blockNumber, blockProof.stateRoot);
-        } else {
-            if (existingBlockProof.blockNumber > blockProof.blockNumber) {
-                revert OutdatedBlock(blockProof.blockNumber, existingBlockProof.blockNumber);
-            }
-        }
+    function _setInitialChainConfiguration(uint256 _chainID, L2Configuration memory _config) internal {
+        l2ChainConfigurations[_chainID] = _config;
     }
 
     /**
@@ -343,37 +324,6 @@ contract NativeProver is Ownable, INativeProver {
         );
 
         return true;
-    }
-
-    /**
-     * @notice Validates the L1 block data and extracts state root
-     * @param _rlpEncodedL1Header The encoded L1 header
-     * @return L1 state root from the header
-     */
-    function _storeL1BlockAndGetStateRoot(bytes memory _rlpEncodedL1Header) internal returns (bytes32) {
-        bytes32 _calculatedBlockHash = keccak256(_rlpEncodedL1Header);
-        bytes32 _expectedBlockHash = IL1Block(L1_CONFIGURATION.blockHashOracle).hash();
-        if (_calculatedBlockHash != _expectedBlockHash) {
-            revert InvalidRLPEncodedBlock(_expectedBlockHash, _calculatedBlockHash);
-        }
-
-        BlockProof memory blockProof = BlockProof({
-            blockNumber: _bytesToUint(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL1Header)[8])),
-            blockHash: keccak256(_rlpEncodedL1Header),
-            stateRoot: bytes32(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL1Header)[3]))
-        });
-
-        // Verify block delay and update state
-        uint256 existingProofBlockNumber = provenStates[L1_CHAIN_ID].blockNumber;
-        if (existingProofBlockNumber + L1_CONFIGURATION.settlementBlocksDelay < blockProof.blockNumber) {
-            provenStates[L1_CHAIN_ID] = blockProof;
-            emit L1WorldStateProven(blockProof.blockNumber, blockProof.stateRoot);
-        } else {
-            revert NeedLaterBlock(
-                blockProof.blockNumber, existingProofBlockNumber + L1_CONFIGURATION.settlementBlocksDelay
-            );
-        }
-        return blockProof.stateRoot;
     }
 
     /**
