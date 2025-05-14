@@ -214,11 +214,12 @@ contract NativeProver is Ownable, INativeProver {
         bytes[] memory _l1StorageProof,
         bytes memory _rlpEncodedRegistryAccountData,
         bytes[] memory _l1RegistryProof,
-        bytes32 _l1WorldStateRoot
+        bytes calldata _rlpEncodedL1Header
     ) external {
+        bytes32 l1WorldStateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
         if (
             !_proveL1Configuration(
-                _config, _l1StorageProof, _rlpEncodedRegistryAccountData, _l1RegistryProof, _l1WorldStateRoot
+                _config, _l1StorageProof, _rlpEncodedRegistryAccountData, _l1RegistryProof, l1WorldStateRoot
             )
         ) {
             revert InvalidL1ConfigurationProof(_config);
@@ -294,9 +295,6 @@ contract NativeProver is Ownable, INativeProver {
             revert IncorrectContractStorageRoot(registryStorageRoot);
         }
         bytes32 configHash = keccak256(abi.encode(_config));
-        // bytes32 configHashStorageSlot = bytes32(
-        //     (uint256(keccak256(abi.encode(_l1ChainID))) + L1_CONFIGURATION.settlementRegistryL1ConfigMappingSlot)
-        // );
         ProverHelpers.proveStorageBytes32(
             abi.encodePacked(L1_CONFIGURATION.settlementRegistryL1ConfigMappingSlot),
             configHash,
