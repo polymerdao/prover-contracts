@@ -21,14 +21,7 @@ import {ISettledStateProver} from "../../contracts/interfaces/ISettledStateProve
 
 // Create a helper contract that exposes the internal methods of Prover for testing
 contract MockProver is NativeProver {
-    constructor(address _owner, uint256 _chainID, InitialL2Configuration[] memory _initialL2Configurations)
-        NativeProver(_owner, _chainID, _initialL2Configurations)
-    {}
-
-    // Expose internal method for testing
-    function exposeSetInitialChainConfiguration(uint256 _chainID, L2Configuration memory _config) external {
-        _setInitialChainConfiguration(_chainID, _config);
-    }
+    constructor(address _owner, uint256 _chainID) NativeProver(_owner, _chainID) {}
 
     // Override the _proveL2Configuration to return true in tests
     function overrideProveL2Configuration(
@@ -42,10 +35,6 @@ contract MockProver is NativeProver {
         // Set L1 state root in the proven states map
         BlockProof memory blockProof =
             BlockProof({blockNumber: 100, blockHash: bytes32(uint256(0xabcdef)), stateRoot: _l1WorldStateRoot});
-        provenStates[L1_CHAIN_ID] = blockProof;
-
-        // Update the chain configuration directly
-        l2ChainConfigurations[_chainID] = _config;
     }
 }
 
@@ -139,7 +128,7 @@ contract IntegrationTest is Test {
         });
 
         // Create MockProver
-        mockProver = new MockProver(owner, l2ChainID, proverInitialConfigs);
+        mockProver = new MockProver(owner, l2ChainID);
         mockProver.setInitialL1Config(l1Config);
 
         // Calculate expected role hash for bedrock chain ID

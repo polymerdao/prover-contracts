@@ -54,13 +54,6 @@ contract NativeProver is Ownable, INativeProver {
 
     L1Configuration public L1_CONFIGURATION; // Configuration for L1
 
-    mapping(uint256 => L2Configuration) public l2ChainConfigurations; // Mapping of counterparty chainIDs to their
-        // configurations
-
-    mapping(uint256 => BlockProof) public provenStates;
-
-    mapping(uint256 => ISettledStateProver) public stateProvers;
-
     event L1WorldStateProven(uint256 indexed _blockNumber, bytes32 _L1WorldStateRoot);
 
     event L2WorldStateProven(
@@ -129,13 +122,8 @@ contract NativeProver is Ownable, INativeProver {
      * different l1 configs.
      *
      */
-    constructor(address _owner, uint256 _l1ChainID, InitialL2Configuration[] memory _initialL2Configurations)
-        Ownable()
-    {
+    constructor(address _owner, uint256 _l1ChainID) Ownable() {
         L1_CHAIN_ID = _l1ChainID;
-        for (uint256 i = 0; i < _initialL2Configurations.length; ++i) {
-            _setInitialChainConfiguration(_initialL2Configurations[i].chainID, _initialL2Configurations[i].config);
-        }
         transferOwnership(_owner);
     }
 
@@ -186,7 +174,12 @@ contract NativeProver is Ownable, INativeProver {
 
         // Then prove the settled state
         _proveSettledState(
-            _proveArgs.chainID, _proveArgs.l2WorldStateRoot, _l1StateRoot, _rlpEncodedL2Header, _settledStateProof
+            _updateArgs.config,
+            _proveArgs.chainID,
+            _proveArgs.l2WorldStateRoot,
+            _l1StateRoot,
+            _rlpEncodedL2Header,
+            _settledStateProof
         );
 
         // Now prove storage against the verified settled L2 state root using the verified L2 configuration
@@ -231,10 +224,6 @@ contract NativeProver is Ownable, INativeProver {
             revert InvalidL1ConfigurationProof(_config);
         }
         L1_CONFIGURATION = _config;
-    }
-
-    function _setInitialChainConfiguration(uint256 _chainID, L2Configuration memory _config) internal {
-        l2ChainConfigurations[_chainID] = _config;
     }
 
     /**
@@ -293,14 +282,6 @@ contract NativeProver is Ownable, INativeProver {
         bytes[] memory _l1RegistryProof,
         bytes32 _l1WorldStateRoot
     ) internal view returns (bool) {
-        uint256 _l1ChainID = L1_CHAIN_ID;
-        BlockProof memory existingSettlementBlockProof = provenStates[_l1ChainID];
-
-        // Verify settlement chain state root
-        if (existingSettlementBlockProof.stateRoot != _l1WorldStateRoot) {
-            revert SettlementChainStateRootNotProven(existingSettlementBlockProof.stateRoot, _l1WorldStateRoot);
-        }
-
         // Verify proof of the registry contract account
         _proveAccount(
             L1_CONFIGURATION.settlementRegistry, _rlpEncodedRegistryAccountData, _l1RegistryProof, _l1WorldStateRoot
@@ -343,15 +324,13 @@ contract NativeProver is Ownable, INativeProver {
     }
 
     function _proveSettledState(
+        L2Configuration memory conf,
         uint256 _chainID,
         bytes32 _l2WorldStateRoot,
         bytes32 _l1WorldStateRoot,
         bytes memory _rlpEncodedL2Header,
         bytes memory _settledStateProof
     ) internal view {
-        // Get the L2Configuration for this chainID
-        L2Configuration memory conf = l2ChainConfigurations[_chainID];
-
         // Call out to the configured prover to verify proof of the settled L2 state root
         if (
             !ISettledStateProver(conf.prover).proveSettledState(

@@ -110,7 +110,7 @@ contract ProverTest is Test {
 
         // Create prover
         vm.startPrank(owner);
-        prover = new NativeProver(owner, l1ChainID, initialL2Configs);
+        prover = new NativeProver(owner, l1ChainID);
         prover.setInitialL1Config(l1Config);
         vm.stopPrank();
 
@@ -1146,7 +1146,7 @@ contract ProverTest is Test {
             settlementRegistryL1ConfigMappingSlot: 6
         });
 
-        NativeProver ownershipProver = new NativeProver(initialOwner, l1ChainID, initialL2Configs);
+        NativeProver ownershipProver = new NativeProver(initialOwner, l1ChainID);
         assertEq(ownershipProver.owner(), initialOwner);
 
         // Should revert if a non-owner tries to set the l1 info
