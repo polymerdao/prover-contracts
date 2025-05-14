@@ -25,7 +25,7 @@ contract DeployNativeProverScript is DeployRegistryScript, Test {
             blockHashOracle: blockHashOracle,
             settlementRegistry: settlementRegistry,
             settlementRegistryL2ConfigMappingSlot: uint256(2),
-            settlementRegistryL1ConfigMappingSlot: l1StorageSlot(chainId)
+            settlementRegistryL1ConfigMappingSlot: _STARTING_L1_MAPPING_SLOT
         });
 
         L2Configuration memory baseL2Config = L2Configuration({

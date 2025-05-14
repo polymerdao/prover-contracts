@@ -40,14 +40,14 @@ contract DeployRegistryScript is Script {
             blockHashOracle: blockHashOracle,
             settlementRegistry: address(settlementRegistry),
             settlementRegistryL2ConfigMappingSlot: l2StorageSlot(baseChainId),
-            settlementRegistryL1ConfigMappingSlot: l1StorageSlot(baseChainId)
+            settlementRegistryL1ConfigMappingSlot: _STARTING_L1_MAPPING_SLOT
         });
 
         L1Configuration memory opL1Config = L1Configuration({
             blockHashOracle: blockHashOracle,
             settlementRegistry: address(settlementRegistry),
             settlementRegistryL2ConfigMappingSlot: l2StorageSlot(opChainId),
-            settlementRegistryL1ConfigMappingSlot: l1StorageSlot(opChainId)
+            settlementRegistryL1ConfigMappingSlot: _STARTING_L1_MAPPING_SLOT
         });
 
         L2Configuration memory baseL2Config = L2Configuration({
