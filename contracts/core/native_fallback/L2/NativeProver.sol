@@ -257,10 +257,12 @@ contract NativeProver is Ownable, INativeProver {
             revert IncorrectContractStorageRoot(registryStorageRoot);
         }
         bytes32 configHash = keccak256(abi.encode(_config));
-        bytes32 configHashStorageSlot =
-            keccak256(abi.encode(_chainID, L1_CONFIGURATION.settlementRegistryL2ConfigMappingSlot));
+
         ProverHelpers.proveStorageBytes32(
-            abi.encodePacked(configHashStorageSlot), configHash, _l1StorageProof, bytes32(registryStorageRoot)
+            _calculateStorageMappingSlot(_chainID, L1_CONFIGURATION.settlementRegistryL2ConfigMappingSlot),
+            configHash,
+            _l1StorageProof,
+            bytes32(registryStorageRoot)
         );
 
         return true;
@@ -296,7 +298,7 @@ contract NativeProver is Ownable, INativeProver {
         }
         bytes32 configHash = keccak256(abi.encode(_config));
         ProverHelpers.proveStorageBytes32(
-            abi.encodePacked(L1_CONFIGURATION.settlementRegistryL1ConfigMappingSlot),
+            _calculateStorageMappingSlot(block.chainid, L1_CONFIGURATION.settlementRegistryL1ConfigMappingSlot),
             configHash,
             _l1StorageProof,
             bytes32(registryStorageRoot)
@@ -443,5 +445,15 @@ contract NativeProver is Ownable, INativeProver {
         ProverHelpers.proveStorageBytes32(
             abi.encodePacked(_args.storageSlot), _args.storageValue, _l2StorageProof, bytes32(storageRoot)
         );
+    }
+
+    /**
+     * @notice Calculates the storage slot for a mapping given a chain ID and base slot
+     * @param _chainID The chain ID used as a key in the mapping
+     * @param _baseSlot The base storage slot of the mapping
+     * @return The calculated storage slot
+     */
+    function _calculateStorageMappingSlot(uint256 _chainID, uint256 _baseSlot) internal pure returns (bytes memory) {
+        return abi.encodePacked(keccak256(abi.encode(_chainID, _baseSlot)));
     }
 }
