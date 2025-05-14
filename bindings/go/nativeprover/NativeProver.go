@@ -47,12 +47,6 @@ type L2Configuration struct {
 	L2Type               uint8
 }
 
-// NativeProverInitialL2Configuration is an auto generated low-level Go binding around an user-defined struct.
-type NativeProverInitialL2Configuration struct {
-	ChainID *big.Int
-	Config  L2Configuration
-}
-
 // ProveL1ScalarArgs is an auto generated low-level Go binding around an user-defined struct.
 type ProveL1ScalarArgs struct {
 	ContractAddr     common.Address
@@ -80,7 +74,7 @@ type UpdateL2ConfigArgs struct {
 
 // NativeProverMetaData contains all meta data concerning the NativeProver contract.
 var NativeProverMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_l1ChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_initialL2Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structNativeProver.InitialL2Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}]}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"L1_CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"L1_CONFIGURATION\",\"inputs\":[],\"outputs\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"proveL1Native\",\"inputs\":[{\"name\":\"_args\",\"type\":\"tuple\",\"internalType\":\"structProveL1ScalarArgs\",\"components\":[{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"proveL2Native\",\"inputs\":[{\"name\":\"_updateArgs\",\"type\":\"tuple\",\"internalType\":\"structUpdateL2ConfigArgs\",\"components\":[{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]},{\"name\":\"l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}]},{\"name\":\"_proveArgs\",\"type\":\"tuple\",\"internalType\":\"structProveScalarArgs\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_settledStateProof\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"provenStates\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"blockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"blockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"stateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setInitialL1Config\",\"inputs\":[{\"name\":\"_l1Configuration\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"stateProvers\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractISettledStateProver\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL1ChainConfiguration\",\"inputs\":[{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"name\":\"_l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"L1WorldStateProven\",\"inputs\":[{\"name\":\"_blockNumber\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_L1WorldStateRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"L2WorldStateProven\",\"inputs\":[{\"name\":\"_destinationChainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_blockNumber\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_L2WorldStateRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"DestinationChainStateRootNotProved\",\"inputs\":[{\"name\":\"_blockProofStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"IncorrectContractStorageRoot\",\"inputs\":[{\"name\":\"_contractStorageRoot\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"type\":\"error\",\"name\":\"InvalidAccountProof\",\"inputs\":[{\"name\":\"_address\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidL1ConfigurationProof\",\"inputs\":[{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]},{\"type\":\"error\",\"name\":\"InvalidL2ConfigurationProof\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}]},{\"type\":\"error\",\"name\":\"InvalidRLPEncodedBlock\",\"inputs\":[{\"name\":\"_expectedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_calculatedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidSettledStateProof\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"NeedLaterBlock\",\"inputs\":[{\"name\":\"_inputBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_nextProvableBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"OutdatedBlock\",\"inputs\":[{\"name\":\"_inputBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_latestBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"SettlementChainStateRootNotProven\",\"inputs\":[{\"name\":\"_blockProofStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_l1ChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"L1_CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"L1_CONFIGURATION\",\"inputs\":[],\"outputs\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"proveL1Native\",\"inputs\":[{\"name\":\"_args\",\"type\":\"tuple\",\"internalType\":\"structProveL1ScalarArgs\",\"components\":[{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"proveL2Native\",\"inputs\":[{\"name\":\"_updateArgs\",\"type\":\"tuple\",\"internalType\":\"structUpdateL2ConfigArgs\",\"components\":[{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]},{\"name\":\"l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}]},{\"name\":\"_proveArgs\",\"type\":\"tuple\",\"internalType\":\"structProveScalarArgs\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"contractAddr\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"name\":\"_rlpEncodedL1Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_rlpEncodedL2Header\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_settledStateProof\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedContractAccount\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l2AccountProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"}],\"outputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"storingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"storageSlot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"storageValue\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setInitialL1Config\",\"inputs\":[{\"name\":\"_l1Configuration\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL1ChainConfiguration\",\"inputs\":[{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"name\":\"_l1StorageProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_rlpEncodedRegistryAccountData\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_l1RegistryProof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"L1WorldStateProven\",\"inputs\":[{\"name\":\"_blockNumber\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_L1WorldStateRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"L2WorldStateProven\",\"inputs\":[{\"name\":\"_destinationChainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_blockNumber\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"_L2WorldStateRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"DestinationChainStateRootNotProved\",\"inputs\":[{\"name\":\"_blockProofStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"IncorrectContractStorageRoot\",\"inputs\":[{\"name\":\"_contractStorageRoot\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"type\":\"error\",\"name\":\"InvalidAccountProof\",\"inputs\":[{\"name\":\"_address\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidL1ConfigurationProof\",\"inputs\":[{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]},{\"type\":\"error\",\"name\":\"InvalidL2ConfigurationProof\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}]},{\"type\":\"error\",\"name\":\"InvalidRLPEncodedBlock\",\"inputs\":[{\"name\":\"_expectedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_calculatedBlockHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidSettledStateProof\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_l2WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"InvalidStorageProof\",\"inputs\":[{\"name\":\"_key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_val\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"_proof\",\"type\":\"bytes[]\",\"internalType\":\"bytes[]\"},{\"name\":\"_root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"NeedLaterBlock\",\"inputs\":[{\"name\":\"_inputBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_nextProvableBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"OutdatedBlock\",\"inputs\":[{\"name\":\"_inputBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_latestBlockNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"SettlementChainStateRootNotProven\",\"inputs\":[{\"name\":\"_blockProofStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"_l1WorldStateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]}]",
 }
 
 // NativeProverABI is the input ABI used to generate the binding from.
@@ -315,61 +309,6 @@ func (_NativeProver *NativeProverCallerSession) L1CONFIGURATION() (struct {
 	return _NativeProver.Contract.L1CONFIGURATION(&_NativeProver.CallOpts)
 }
 
-// L2ChainConfigurations is a free data retrieval call binding the contract method 0x63281a15.
-//
-// Solidity: function l2ChainConfigurations(uint256 ) view returns(address prover, uint256 versionNumber, uint256 finalityDelaySeconds, uint8 l2Type)
-func (_NativeProver *NativeProverCaller) L2ChainConfigurations(opts *bind.CallOpts, arg0 *big.Int) (struct {
-	Prover               common.Address
-	VersionNumber        *big.Int
-	FinalityDelaySeconds *big.Int
-	L2Type               uint8
-}, error) {
-	var out []interface{}
-	err := _NativeProver.contract.Call(opts, &out, "l2ChainConfigurations", arg0)
-
-	outstruct := new(struct {
-		Prover               common.Address
-		VersionNumber        *big.Int
-		FinalityDelaySeconds *big.Int
-		L2Type               uint8
-	})
-	if err != nil {
-		return *outstruct, err
-	}
-
-	outstruct.Prover = *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-	outstruct.VersionNumber = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
-	outstruct.FinalityDelaySeconds = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
-	outstruct.L2Type = *abi.ConvertType(out[3], new(uint8)).(*uint8)
-
-	return *outstruct, err
-
-}
-
-// L2ChainConfigurations is a free data retrieval call binding the contract method 0x63281a15.
-//
-// Solidity: function l2ChainConfigurations(uint256 ) view returns(address prover, uint256 versionNumber, uint256 finalityDelaySeconds, uint8 l2Type)
-func (_NativeProver *NativeProverSession) L2ChainConfigurations(arg0 *big.Int) (struct {
-	Prover               common.Address
-	VersionNumber        *big.Int
-	FinalityDelaySeconds *big.Int
-	L2Type               uint8
-}, error) {
-	return _NativeProver.Contract.L2ChainConfigurations(&_NativeProver.CallOpts, arg0)
-}
-
-// L2ChainConfigurations is a free data retrieval call binding the contract method 0x63281a15.
-//
-// Solidity: function l2ChainConfigurations(uint256 ) view returns(address prover, uint256 versionNumber, uint256 finalityDelaySeconds, uint8 l2Type)
-func (_NativeProver *NativeProverCallerSession) L2ChainConfigurations(arg0 *big.Int) (struct {
-	Prover               common.Address
-	VersionNumber        *big.Int
-	FinalityDelaySeconds *big.Int
-	L2Type               uint8
-}, error) {
-	return _NativeProver.Contract.L2ChainConfigurations(&_NativeProver.CallOpts, arg0)
-}
-
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
@@ -509,87 +448,6 @@ func (_NativeProver *NativeProverCallerSession) ProveL2Native(_updateArgs Update
 	StorageValue    [32]byte
 }, error) {
 	return _NativeProver.Contract.ProveL2Native(&_NativeProver.CallOpts, _updateArgs, _proveArgs, _rlpEncodedL1Header, _rlpEncodedL2Header, _settledStateProof, _l2StorageProof, _rlpEncodedContractAccount, _l2AccountProof)
-}
-
-// ProvenStates is a free data retrieval call binding the contract method 0x3bb79618.
-//
-// Solidity: function provenStates(uint256 ) view returns(uint256 blockNumber, bytes32 blockHash, bytes32 stateRoot)
-func (_NativeProver *NativeProverCaller) ProvenStates(opts *bind.CallOpts, arg0 *big.Int) (struct {
-	BlockNumber *big.Int
-	BlockHash   [32]byte
-	StateRoot   [32]byte
-}, error) {
-	var out []interface{}
-	err := _NativeProver.contract.Call(opts, &out, "provenStates", arg0)
-
-	outstruct := new(struct {
-		BlockNumber *big.Int
-		BlockHash   [32]byte
-		StateRoot   [32]byte
-	})
-	if err != nil {
-		return *outstruct, err
-	}
-
-	outstruct.BlockNumber = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-	outstruct.BlockHash = *abi.ConvertType(out[1], new([32]byte)).(*[32]byte)
-	outstruct.StateRoot = *abi.ConvertType(out[2], new([32]byte)).(*[32]byte)
-
-	return *outstruct, err
-
-}
-
-// ProvenStates is a free data retrieval call binding the contract method 0x3bb79618.
-//
-// Solidity: function provenStates(uint256 ) view returns(uint256 blockNumber, bytes32 blockHash, bytes32 stateRoot)
-func (_NativeProver *NativeProverSession) ProvenStates(arg0 *big.Int) (struct {
-	BlockNumber *big.Int
-	BlockHash   [32]byte
-	StateRoot   [32]byte
-}, error) {
-	return _NativeProver.Contract.ProvenStates(&_NativeProver.CallOpts, arg0)
-}
-
-// ProvenStates is a free data retrieval call binding the contract method 0x3bb79618.
-//
-// Solidity: function provenStates(uint256 ) view returns(uint256 blockNumber, bytes32 blockHash, bytes32 stateRoot)
-func (_NativeProver *NativeProverCallerSession) ProvenStates(arg0 *big.Int) (struct {
-	BlockNumber *big.Int
-	BlockHash   [32]byte
-	StateRoot   [32]byte
-}, error) {
-	return _NativeProver.Contract.ProvenStates(&_NativeProver.CallOpts, arg0)
-}
-
-// StateProvers is a free data retrieval call binding the contract method 0x1b4d8105.
-//
-// Solidity: function stateProvers(uint256 ) view returns(address)
-func (_NativeProver *NativeProverCaller) StateProvers(opts *bind.CallOpts, arg0 *big.Int) (common.Address, error) {
-	var out []interface{}
-	err := _NativeProver.contract.Call(opts, &out, "stateProvers", arg0)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// StateProvers is a free data retrieval call binding the contract method 0x1b4d8105.
-//
-// Solidity: function stateProvers(uint256 ) view returns(address)
-func (_NativeProver *NativeProverSession) StateProvers(arg0 *big.Int) (common.Address, error) {
-	return _NativeProver.Contract.StateProvers(&_NativeProver.CallOpts, arg0)
-}
-
-// StateProvers is a free data retrieval call binding the contract method 0x1b4d8105.
-//
-// Solidity: function stateProvers(uint256 ) view returns(address)
-func (_NativeProver *NativeProverCallerSession) StateProvers(arg0 *big.Int) (common.Address, error) {
-	return _NativeProver.Contract.StateProvers(&_NativeProver.CallOpts, arg0)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.

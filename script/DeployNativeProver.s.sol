@@ -47,7 +47,7 @@ contract DeployNativeProverScript is DeployRegistryScript {
         vm.startBroadcast(deployerPrivateKey);
 
         // // Deploy NativeProver contract
-        NativeProver nativeProverContract = new NativeProver(msg.sender, ethChainId, initialL2Configs);
+        NativeProver nativeProverContract = new NativeProver(msg.sender, ethChainId);
         nativeProverContract.setInitialL1Config(l1Config);
 
         vm.stopBroadcast();
