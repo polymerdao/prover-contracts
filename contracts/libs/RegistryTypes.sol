@@ -17,19 +17,13 @@
 
 pragma solidity ^0.8.0;
 
-enum Type {
-    Nitro,
-    OPStackBedrock,
-    OPStackCannon
-}
-
 struct L2Configuration {
     address prover;
     address[] addresses;
     uint256[] storageSlots;
     uint256 versionNumber;
     uint256 finalityDelaySeconds;
-    Type l2Type;
+    uint8 l2Type;
 }
 
 struct L1Configuration {

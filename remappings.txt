@@ -7,3 +7,4 @@ forge-std/=lib/forge-std/src/
 optimism/=lib/optimism/packages/contracts-bedrock/src/
 base64/=lib/base64
 proto/=lib/proto
+block-hash-pusher/=lib/block-hash-pusher/

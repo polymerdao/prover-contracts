@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-pragma solidity 0.8.15;
+pragma solidity 0.8.28;
 
 import {SecureMerkleTrie} from "@eth-optimism/contracts-bedrock/src/libraries/trie/SecureMerkleTrie.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
