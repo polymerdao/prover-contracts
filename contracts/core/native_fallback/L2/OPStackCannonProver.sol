@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-pragma solidity 0.8.15;
+pragma solidity 0.8.28;
 
 import {L2Configuration} from "../../../libs/RegistryTypes.sol";
 import {SecureMerkleTrie} from "@eth-optimism/contracts-bedrock/src/libraries/trie/SecureMerkleTrie.sol";

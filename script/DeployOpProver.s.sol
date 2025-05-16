@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.28;
 
 import "forge-std/Script.sol";
 import "../contracts/core/native_fallback/L2/OPStackCannonProver.sol";

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.28;
 
 import {IL1Block} from "../../../contracts/interfaces/IL1Block.sol";
 

@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {NativeProver} from "../../contracts/core/native_fallback/L2/NativeProver.sol";
 import {
     L2Configuration,
     L1Configuration,
-    Type,
     ProveScalarArgs,
     ProveL1ScalarArgs,
     UpdateL2ConfigArgs
@@ -102,7 +101,7 @@ contract ProverTest is Test {
             storageSlots: storageSlots,
             versionNumber: 1,
             finalityDelaySeconds: 7200,
-            l2Type: Type.Nitro
+            l2Type: 3
         });
 
         initialL2Configs = new NativeProver.InitialL2Configuration[](1);
@@ -129,7 +128,7 @@ contract ProverTest is Test {
             storageSlots: storageSlots,
             versionNumber: 3, // Different version
             finalityDelaySeconds: 1800, // Different delay
-            l2Type: Type.OPStackBedrock // Different type
+            l2Type: 1 // Different type
         });
 
         // Create mock L1 registry proofs
@@ -238,7 +237,7 @@ contract ProverTest is Test {
     //         storageSlots: storageSlots,
     //         versionNumber: 1,
     //         finalityDelaySeconds: 7200,
-    //         l2Type: Type.Nitro
+    //         l2Type: 3
     //     });
 
     //     // Create a new prover instance with the modified config
@@ -370,7 +369,7 @@ contract ProverTest is Test {
     //         storageSlots: storageSlots,
     //         versionNumber: 1,
     //         finalityDelaySeconds: 7200,
-    //         l2Type: Type.Nitro
+    //         l2Type: 3
     //     });
 
     //     // 3. Create a new mock prover and initialize with our test chain
@@ -761,7 +760,7 @@ contract ProverTest is Test {
     //         storageSlots: storageSlots,
     //         versionNumber: 1,
     //         finalityDelaySeconds: 3600,
-    //         l2Type: Type.Nitro
+    //         l2Type: 3
     //     });
 
     //     // Create minimal proofs
@@ -979,7 +978,7 @@ contract ProverTest is Test {
     //         storageSlots: storageSlots,
     //         versionNumber: 2, // Incremented version
     //         finalityDelaySeconds: 3600,
-    //         l2Type: Type.Nitro
+    //         l2Type: 3
     //     });
 
     //     // Create RLP encoded registry account data

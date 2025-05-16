@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.28;
 
 import "forge-std/Script.sol";
 import "../contracts/core/native_fallback/L2/NativeProver.sol";
@@ -56,7 +56,7 @@ contract DeployRegistryScript is Script {
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
-            l2Type: Type.OPStackCannon
+            l2Type: 2
         });
 
         L2Configuration memory opL2Config = L2Configuration({
@@ -65,7 +65,7 @@ contract DeployRegistryScript is Script {
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
-            l2Type: Type.OPStackCannon
+            l2Type: 2
         });
 
         settlementRegistry.grantChainID(deployerAddr, baseChainId);
