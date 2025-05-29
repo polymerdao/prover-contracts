@@ -44,7 +44,7 @@ interface ICrossL2ProverV2 {
     function inspectLogIdentifier(bytes calldata proof)
         external
         pure
-        returns (uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint8 logIndex);
+        returns (uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint16 logIndex);
 
     /**
      * Return polymer state root, height , and signature over height and root which can be verified by
