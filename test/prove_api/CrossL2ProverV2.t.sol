@@ -6,6 +6,7 @@ import {SigningBase} from "./utils/Signing.base.t.sol";
 import {CrossL2Prover} from "../../contracts/core/prove_api/CrossL2Prover.sol";
 import {CrossL2ProverV2} from "../../contracts/core/prove_api/CrossL2ProverV2.sol";
 import {SequencerSignatureVerifier} from "../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
+import {SequencerSignatureVerifierV2} from "../../contracts/core/prove_api/SequencerSignatureVerifierV2.sol";
 import {ReceiptParser, Ics23Proof, OpIcs23Proof} from "../../contracts/libs/ReceiptParser.sol";
 import {ISignatureVerifier} from "../../contracts/interfaces/ISignatureVerifier.sol";
 import {ICrossL2Prover} from "../../contracts/interfaces/ICrossL2Prover.sol";
@@ -18,6 +19,7 @@ contract CrossL2ProverTest is SigningBase {
 
     CrossL2ProverV2 crossProverV2;
     bytes proof;
+    bytes signature;
 
     function setUp() public {
         crossProverV2 = new CrossL2ProverV2(
@@ -31,6 +33,26 @@ contract CrossL2ProverTest is SigningBase {
     // Test that a client update will fail if it doesn't have a valid sequencer signature
     function test_revert_invalidClentUpdateSignatureV2() public {
         vm.skip(true);
+    }
+
+    function test_verify_signature() public {
+        address addr = 0xa9f96a37d982A489c997a4aea1a6802278E20835;
+        bytes32 chainID = 0x0000000000000000000000000000000000000000000000000000000000000001;
+        SequencerSignatureVerifierV2 verifier = new SequencerSignatureVerifierV2(addr, chainID);
+
+        string memory smr = vm.readFile(string.concat(rootDir, "/test/prove_api/payload/signed_module_root.json"));
+
+        bytes32 app_hash = abi.decode(smr.parseRaw(".moduleRoot"), (bytes32));
+        uint64 height = abi.decode(smr.parseRaw(".height"), (uint64));
+        signature = abi.decode(smr.parseRaw(".signature"), (bytes));
+
+        // TODO how can we do index range access on signature? seems to only be supported for calldata
+
+        console2.logBytes32(app_hash);
+        console2.log(height);
+        console2.logBytes(signature);
+
+        verifier.verifySequencerSignature(app_hash, height, signature);
     }
 
     function test_validate_event_and_getters() public {
