@@ -17,7 +17,6 @@ contract CrossL2ProverTest is SigningBase {
     using stdJson for string;
 
     CrossL2ProverV2 crossProverV2;
-    bytes proof;
 
     function setUp() public {
         crossProverV2 = new CrossL2ProverV2(
@@ -25,7 +24,6 @@ contract CrossL2ProverTest is SigningBase {
             0x8D3921B96A3815F403Fb3a4c7fF525969d16f9E0,
             0x0000000000000000000000000000000000000000000000000000000000000385
         );
-        proof = load_proof("/test/prove_api/payload/op-proof-v2.hex");
     }
 
     // Test that a client update will fail if it doesn't have a valid sequencer signature
@@ -33,38 +31,15 @@ contract CrossL2ProverTest is SigningBase {
         vm.skip(true);
     }
 
-    function test_validate_event_and_getters() public {
-        console2.log("calldata length", proof.length);
-        string memory expected = vm.readFile(string.concat(rootDir, "/test/prove_api/payload/op-event-v2-1.json"));
+    function test_validate_event_and_getters() public view {
+        bytes memory proof = load_proof("/test/prove_api/payload/op-proof-v2.hex");
 
-        proof = load_proof("/test/prove_api/payload/op-proof-v2-1.hex");
-        (uint32 chainId, address addr, bytes memory topics, bytes memory data) = crossProverV2.validateEvent(proof);
-
-        uint32 expectedChainId = abi.decode(expected.parseRaw(".ChainID"), (uint32));
-        // address expectedAddress = abi.decode(expected.parseRaw(".Address"), (address));
-        assertEq(chainId, expectedChainId);
-        assertEq(addr, abi.decode(expected.parseRaw(".Event.address"), (address)));
-        bytes memory expectedTopics = abi.encodePacked(
-            abi.decode(expected.parseRaw(".Event.topics[0]"), (bytes32)),
-            abi.decode(expected.parseRaw(".Event.topics[1]"), (bytes32)),
-            abi.decode(expected.parseRaw(".Event.topics[2]"), (bytes32)),
-            abi.decode(expected.parseRaw(".Event.topics[3]"), (bytes32))
-        );
-
-        assertEq(topics, expectedTopics);
-        assertEq(data, abi.encodePacked(abi.decode(expected.parseRaw(".Event.data"), (bytes32))));
-
-        _checkInspectPolymerState(proof, expected);
-        _checkInspectLogIndentifier(proof, expected);
-    }
-
-    function test_validate_receipt_new_2() public view {
         console2.log("calldata length", proof.length);
         string memory expected = vm.readFile(string.concat(rootDir, "/test/prove_api/payload/op-event-v2.json"));
 
         (uint32 chainId, address addr, bytes memory topics, bytes memory data) = crossProverV2.validateEvent(proof);
 
-        assertEq(chainId, 84_532);
+        assertEq(chainId, 11_155_420);
         assertEq(addr, abi.decode(expected.parseRaw(".address"), (address)));
         bytes memory expectedTopics = abi.encodePacked(
             abi.decode(expected.parseRaw(".topics[0]"), (bytes32)),
@@ -74,6 +49,27 @@ contract CrossL2ProverTest is SigningBase {
         );
         assertEq(topics, expectedTopics);
         assertEq(data, abi.encodePacked(abi.decode(expected.parseRaw(".data"), (bytes32))));
+
+        // all these data come from the relayer log_test.go test
+
+        // inspect polymer state
+        (bytes32 stateRoot, uint64 height, bytes memory signature) = crossProverV2.inspectPolymerState(proof);
+        assertEq(stateRoot, hex"00354047cc8b969297de60e7bcbffe8e524749634e358b1a06b2296fb924659d");
+        assertEq(height, 3_130_134);
+        // Base 64 instead of other way since go defaults to encoding raw bytes in base64
+        assertEq(
+            Base64.encode(signature),
+            "Qfxc7kZXlD2c5A4wf5Q6sbtjcIYeLs1G3w1fbRt2kHdzaTz1PlckZ6vvynXF04uI6i2TpDruoJ3EN9AfxbM56xw="
+        );
+
+        // inspect log identifier
+        (uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint16 logIndex) =
+            crossProverV2.inspectLogIdentifier(proof);
+
+        assertEq(srcChain, 11_155_420);
+        assertEq(blockNumber, 23_562_439);
+        assertEq(receiptIndex, 1);
+        assertEq(logIndex, 0);
     }
 
     function test_solana_validate() public view {
@@ -81,10 +77,11 @@ contract CrossL2ProverTest is SigningBase {
         string memory expected = vm.readFile(string.concat(rootDir, "/test/prove_api/payload/solana-event.json"));
         console2.log("calldata length", solProof.length);
 
-        (uint32 chainId, bytes32 programID, string[] memory _logMsgs) = crossProverV2.validateSolLogs(solProof);
+        (uint32 chainId, bytes32 programID, string[] memory logMsgs) = crossProverV2.validateSolLogs(solProof);
 
         assertEq(chainId, 2);
         assertEq(programID, abi.decode(expected.parseRaw(".programID"), (bytes32)));
+        assertEq(0, logMsgs.length);
     }
 
     function test_solana_validate_with_program_log() public view {
@@ -147,26 +144,5 @@ contract CrossL2ProverTest is SigningBase {
         } else {
             return bytes1(byteValue + 87); // 'a' to 'f'
         }
-    }
-    // Annoyingly add internal methods needed to avoid stack too deep - why does foundry check for stack to deep in
-    // tester contracts ? 😱
-
-    function _checkInspectPolymerState(bytes memory proofParam, string memory expected) internal view {
-        (bytes32 stateRoot, uint64 height, bytes memory signature) = crossProverV2.inspectPolymerState(proofParam);
-        assertEq(stateRoot, abi.decode(expected.parseRaw(".StateRoot"), (bytes32)));
-        assertEq(height, abi.decode(expected.parseRaw(".PeptideHeight"), (uint64)));
-        // Base 64 instead of other way since go defaults to encoding raw bytes in base64
-        assertEq(Base64.encode(signature), expected.readString(".Signature"));
-    }
-
-    function _checkInspectLogIndentifier(bytes memory proofParam, string memory expected) internal view {
-        (uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint8 logIndex) =
-            crossProverV2.inspectLogIdentifier(proofParam);
-
-        assertEq(srcChain, abi.decode(expected.parseRaw(".ChainID"), (uint32)));
-        assertEq(blockNumber, abi.decode(expected.parseRaw(".BlockHeight"), (uint64)));
-        assertEq(receiptIndex, abi.decode(expected.parseRaw(".ReceiptIndex"), (uint16)));
-
-        assertEq(logIndex, expected.readUint(".Event.logIndex"));
     }
 }

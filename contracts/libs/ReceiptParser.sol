@@ -123,11 +123,13 @@ library ReceiptParser {
         );
     }
 
-    function eventRootKey(uint32 chainId, string memory clientType, uint256 height, uint16 receiptIndex, uint8 logIndex)
-        internal
-        pure
-        returns (bytes memory proofKey)
-    {
+    function eventRootKey(
+        uint32 chainId,
+        string memory clientType,
+        uint256 height,
+        uint16 receiptIndex,
+        uint16 logIndex
+    ) internal pure returns (bytes memory proofKey) {
         // TODO actually change this to the decided structure
         return abi.encodePacked(
             "chain/",
