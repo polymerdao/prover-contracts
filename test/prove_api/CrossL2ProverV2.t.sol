@@ -63,7 +63,7 @@ contract CrossL2ProverTest is SigningBase {
         );
 
         // inspect log identifier
-        (uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint16 logIndex) =
+        (uint32 srcChain, uint64 blockNumber, uint32 receiptIndex, uint32 logIndex) =
             crossProverV2.inspectLogIdentifier(proof);
 
         assertEq(srcChain, 11_155_420);

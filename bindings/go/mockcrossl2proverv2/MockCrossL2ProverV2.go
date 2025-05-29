@@ -31,7 +31,7 @@ var (
 
 // MockCrossL2ProverV2MetaData contains all meta data concerning the MockCrossL2ProverV2 contract.
 var MockCrossL2ProverV2MetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"clientType_\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"sequencer_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"chainId_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"LIGHT_CLIENT_TYPE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumLightClientType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SEQUENCER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"clientType\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"generateAndEmitProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"data\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"generateAndSendProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"validatorContract\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"generateMockProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"numTopics\",\"type\":\"uint8\",\"internalType\":\"uint8\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics_\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"unindexedData_\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"inspectLogIdentifier\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"srcChain\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"blockNumber\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"receiptIndex\",\"type\":\"uint16\",\"internalType\":\"uint16\"},{\"name\":\"logIndex\",\"type\":\"uint16\",\"internalType\":\"uint16\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"inspectPolymerState\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"stateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"height\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"signature\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"parseEvent\",\"inputs\":[{\"name\":\"rawEvent\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"numTopics\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"outputs\":[{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"validateEvent\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"validateSolLogs\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"programID\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"logMessages\",\"type\":\"string[]\",\"internalType\":\"string[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"verifyMembership\",\"inputs\":[{\"name\":\"root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"value\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"pure\"},{\"type\":\"event\",\"name\":\"ProofGenerated\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"indexed\":false,\"internalType\":\"bytes\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"InvalidProofKey\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofRoot\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofValue\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidSequencerSignature\",\"inputs\":[]}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"clientType_\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"sequencer_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"chainId_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"LIGHT_CLIENT_TYPE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumLightClientType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SEQUENCER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"clientType\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"generateAndEmitProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"data\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"generateAndSendProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"validatorContract\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"generateMockProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"numTopics\",\"type\":\"uint8\",\"internalType\":\"uint8\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics_\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"unindexedData_\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"inspectLogIdentifier\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"srcChain\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"blockNumber\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"receiptIndex\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"logIndex\",\"type\":\"uint32\",\"internalType\":\"uint32\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"inspectPolymerState\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"stateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"height\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"signature\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"parseEvent\",\"inputs\":[{\"name\":\"rawEvent\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"numTopics\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"outputs\":[{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"validateEvent\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"validateSolLogs\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"programID\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"logMessages\",\"type\":\"string[]\",\"internalType\":\"string[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"verifyMembership\",\"inputs\":[{\"name\":\"root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"value\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"pure\"},{\"type\":\"event\",\"name\":\"ProofGenerated\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"indexed\":false,\"internalType\":\"bytes\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"InvalidProofKey\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofRoot\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofValue\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidSequencerSignature\",\"inputs\":[]}]",
 }
 
 // MockCrossL2ProverV2ABI is the input ABI used to generate the binding from.
@@ -337,12 +337,12 @@ func (_MockCrossL2ProverV2 *MockCrossL2ProverV2CallerSession) GenerateMockProof(
 
 // InspectLogIdentifier is a free data retrieval call binding the contract method 0x9e79c3f0.
 //
-// Solidity: function inspectLogIdentifier(bytes proof) pure returns(uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint16 logIndex)
+// Solidity: function inspectLogIdentifier(bytes proof) pure returns(uint32 srcChain, uint64 blockNumber, uint32 receiptIndex, uint32 logIndex)
 func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Caller) InspectLogIdentifier(opts *bind.CallOpts, proof []byte) (struct {
 	SrcChain     uint32
 	BlockNumber  uint64
-	ReceiptIndex uint16
-	LogIndex     uint16
+	ReceiptIndex uint32
+	LogIndex     uint32
 }, error) {
 	var out []interface{}
 	err := _MockCrossL2ProverV2.contract.Call(opts, &out, "inspectLogIdentifier", proof)
@@ -350,8 +350,8 @@ func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Caller) InspectLogIdentifier(opts
 	outstruct := new(struct {
 		SrcChain     uint32
 		BlockNumber  uint64
-		ReceiptIndex uint16
-		LogIndex     uint16
+		ReceiptIndex uint32
+		LogIndex     uint32
 	})
 	if err != nil {
 		return *outstruct, err
@@ -359,8 +359,8 @@ func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Caller) InspectLogIdentifier(opts
 
 	outstruct.SrcChain = *abi.ConvertType(out[0], new(uint32)).(*uint32)
 	outstruct.BlockNumber = *abi.ConvertType(out[1], new(uint64)).(*uint64)
-	outstruct.ReceiptIndex = *abi.ConvertType(out[2], new(uint16)).(*uint16)
-	outstruct.LogIndex = *abi.ConvertType(out[3], new(uint16)).(*uint16)
+	outstruct.ReceiptIndex = *abi.ConvertType(out[2], new(uint32)).(*uint32)
+	outstruct.LogIndex = *abi.ConvertType(out[3], new(uint32)).(*uint32)
 
 	return *outstruct, err
 
@@ -368,24 +368,24 @@ func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Caller) InspectLogIdentifier(opts
 
 // InspectLogIdentifier is a free data retrieval call binding the contract method 0x9e79c3f0.
 //
-// Solidity: function inspectLogIdentifier(bytes proof) pure returns(uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint16 logIndex)
+// Solidity: function inspectLogIdentifier(bytes proof) pure returns(uint32 srcChain, uint64 blockNumber, uint32 receiptIndex, uint32 logIndex)
 func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Session) InspectLogIdentifier(proof []byte) (struct {
 	SrcChain     uint32
 	BlockNumber  uint64
-	ReceiptIndex uint16
-	LogIndex     uint16
+	ReceiptIndex uint32
+	LogIndex     uint32
 }, error) {
 	return _MockCrossL2ProverV2.Contract.InspectLogIdentifier(&_MockCrossL2ProverV2.CallOpts, proof)
 }
 
 // InspectLogIdentifier is a free data retrieval call binding the contract method 0x9e79c3f0.
 //
-// Solidity: function inspectLogIdentifier(bytes proof) pure returns(uint32 srcChain, uint64 blockNumber, uint16 receiptIndex, uint16 logIndex)
+// Solidity: function inspectLogIdentifier(bytes proof) pure returns(uint32 srcChain, uint64 blockNumber, uint32 receiptIndex, uint32 logIndex)
 func (_MockCrossL2ProverV2 *MockCrossL2ProverV2CallerSession) InspectLogIdentifier(proof []byte) (struct {
 	SrcChain     uint32
 	BlockNumber  uint64
-	ReceiptIndex uint16
-	LogIndex     uint16
+	ReceiptIndex uint32
+	LogIndex     uint32
 }, error) {
 	return _MockCrossL2ProverV2.Contract.InspectLogIdentifier(&_MockCrossL2ProverV2.CallOpts, proof)
 }
