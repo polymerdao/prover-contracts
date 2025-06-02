@@ -405,6 +405,16 @@ contract NativeProver is Ownable, INativeProver {
         });
     }
 
+    /**
+     * @notice Verifies that a storage value is included in the state merkle trie.
+     * @dev This function verifies both the account proof and the storage proof.
+     * First it ensures the account exists in the state tree by calling _proveAccount,
+     * then it verifies the storage value exists in the storage tree.
+     * @param _args Arguments containing contract address, storage slot, storage value, and L2 world state root
+     * @param _l2StorageProof Merkle proof for the storage slot
+     * @param _rlpEncodedContractAccount RLP encoded contract account from which storage root is extracted
+     * @param _l2AccountProof Merkle proof for the account in the state tree
+     */
     function _proveStorageInState(
         ProveScalarArgs memory _args,
         bytes[] memory _l2StorageProof,
@@ -426,6 +436,15 @@ contract NativeProver is Ownable, INativeProver {
         );
     }
 
+    /**
+     * @dev Internal function to prove that a specific L1 storage value is included in a contract.
+     * This is useful for proving the world state of rollups that settle onto the l1.
+     * @param _args Structure containing scalar proof arguments including the contract address, storage slot, and
+     * expected value
+     * @param _l2StorageProof Merkle-Patricia proof for the storage value within the contract
+     * @param _rlpEncodedContractAccount RLP encoded contract account data
+     * @param _l2AccountProof Merkle-Patricia proof for the contract account in the state trie
+     */
     function _proveL1StorageInState(
         ProveL1ScalarArgs memory _args,
         bytes[] memory _l2StorageProof,

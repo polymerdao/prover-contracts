@@ -25,6 +25,9 @@ import {Ics23Proof} from "../../libs/ReceiptParser.sol";
 import {ISignatureVerifier} from "../../interfaces/ISignatureVerifier.sol";
 import {LightClientType} from "../../interfaces/IClientUpdates.sol";
 
+/**
+ * @notice This function is deprecated. Please use CrossL2ProverV2 instead.
+ */
 contract CrossL2Prover is AppStateVerifier, ICrossL2Prover {
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
         // for cheap on-chain use
