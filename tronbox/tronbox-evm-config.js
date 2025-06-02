@@ -30,7 +30,7 @@ Then, run the migration with:
   },
   compilers: {
     solc: {
-      version: '0.8.7',
+      version: '0.8.15',
       settings: {
         // optimizer: {
         //   enabled: true,
