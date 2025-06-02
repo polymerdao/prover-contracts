@@ -23,7 +23,7 @@ import {SequencerSignatureVerifier} from "../../contracts/core/prove_api/Sequenc
 contract ContractDebugReproTest is Test {
     bytes clientUpdate; // the contract client update which will update the peptide hash that the verify receipt proof
         // can use
-    bytes receiptProof; // Used to test any reciept proof. The hex encoded version of what is returned from a completed
+    bytes receiptProof; // Used to test any receipt proof. The hex encoded version of what is returned from a completed
         // proof api job.
 
     // Values currently deployed for devnet
