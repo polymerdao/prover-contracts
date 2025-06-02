@@ -24,6 +24,13 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
+/**
+ * @title Registry
+ * @dev Manages L1 and L2 chain configurations with role-based access control.
+ * @notice This contract allows authorized entities to update chain configurations for L1 and L2.
+ * @notice L2s which rollup to the L1 where this contract is deployed can permissionlessly prove state in this registry
+ * using l1 block info through the NativeProver contract.
+ */
 contract Registry is IRegistry, Ownable, Pausable, AccessControl {
     struct InitialL2Configuration {
         uint256 chainID;
@@ -55,11 +62,21 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
 
     error InvalidRange(uint256 startChainID, uint256 stopChainID);
 
+    /**
+     * @dev Modifier to ensure a chain ID is not irrevocable
+     * @param _chainID The chain ID to check
+     */
     modifier isRevocable(uint256 _chainID) {
         require(BitMaps.get(_irrevocableChainIDBitmap, _chainID) == false, "ChainID is irrevocable");
         _;
     }
 
+    /**
+     * @dev Constructor to initialize the Registry contract.
+     * @param _initialOwner The address that will be granted ownership
+     * @param _initialL2Configurations Array of initial L2 chain configurations
+     * @param _initialL1Configurations Array of initial L1 chain configurations
+     */
     constructor(
         address _initialOwner,
         InitialL2Configuration[] memory _initialL2Configurations,
@@ -82,24 +99,55 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
         }
     }
 
+    /**
+     * @notice Updates the L1 chain configuration for a specific chain ID
+     * @dev Only authorized grantees for the chain ID can call this function
+     * @param _chainID The chain ID to update the configuration for
+     * @param _config The new L1 configuration to set
+     */
     function updateL1ChainConfiguration(uint256 _chainID, L1Configuration calldata _config) external {
         require(_isGrantee(msg.sender, _chainID), "Not authorized");
         _setL1ChainConfiguration(_chainID, _config);
     }
 
+    /**
+     * @notice Updates the L2 chain configuration for a specific chain ID
+     * @dev Only authorized grantees for the chain ID can call this function
+     * @param _chainID The chain ID to update the configuration for
+     * @param _config The new L2 configuration to set
+     */
     function updateL2ChainConfiguration(uint256 _chainID, L2Configuration calldata _config) external {
         require(_isGrantee(msg.sender, _chainID), "Not authorized");
         _setL2ChainConfiguration(_chainID, _config);
     }
 
+    /**
+     * @notice Grants a grantee permission to manage a specific chain ID
+     * @dev Can only be called by the contract owner, and only for revocable chain IDs
+     * @param _grantee The address to grant permissions to
+     * @param _chainID The chain ID to grant permissions for
+     */
     function grantChainID(address _grantee, uint256 _chainID) external onlyOwner isRevocable(_chainID) {
         return _grantChainID(_grantee, _chainID);
     }
 
+    /**
+     * @notice Grants a grantee irrevocable permission to manage a specific chain ID
+     * @dev Can only be called by the contract owner, and only for currently revocable chain IDs
+     * @param _grantee The address to grant permissions to
+     * @param _chainID The chain ID to grant irrevocable permissions for
+     */
     function grantChainIDIrrevocable(address _grantee, uint256 _chainID) external onlyOwner isRevocable(_chainID) {
         return _grantChainIDIrrevocable(_grantee, _chainID);
     }
 
+    /**
+     * @notice Grants a grantee permission to manage a range of chain IDs
+     * @dev Can only be called by the contract owner
+     * @param _grantee The address to grant permissions to
+     * @param _startChainID The starting chain ID of the range (inclusive)
+     * @param _stopChainID The ending chain ID of the range (inclusive)
+     */
     function grantChainIDRange(address _grantee, uint256 _startChainID, uint256 _stopChainID) external onlyOwner {
         if (_startChainID > _stopChainID) {
             revert InvalidRange(_startChainID, _stopChainID);
@@ -109,6 +157,13 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
         }
     }
 
+    /**
+     * @notice Grants a grantee irrevocable permission to manage a range of chain IDs
+     * @dev Can only be called by the contract owner
+     * @param _grantee The address to grant irrevocable permissions to
+     * @param _startChainID The starting chain ID of the range (inclusive)
+     * @param _stopChainID The ending chain ID of the range (inclusive)
+     */
     function grantChainIDRangeIrrevocable(address _grantee, uint256 _startChainID, uint256 _stopChainID)
         external
         onlyOwner
@@ -121,26 +176,57 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
         }
     }
 
+    /**
+     * @notice Checks if an address is a grantee for a specific chain ID
+     * @param _grantee The address to check
+     * @param _chainID The chain ID to check for
+     * @return bool True if the address is a grantee for the chain ID, false otherwise
+     */
     function isGrantee(address _grantee, uint256 _chainID) external view returns (bool) {
         return _isGrantee(_grantee, _chainID);
     }
 
+    /**
+     * @notice Gets the addresses from an L2 chain configuration
+     * @param _chainID The chain ID to get configuration for
+     * @return address[] Array of addresses from the L2 configuration
+     */
     function getL2ConfigAddresses(uint256 _chainID) external view returns (address[] memory) {
         return l2ChainConfigurations[_chainID].addresses;
     }
 
+    /**
+     * @notice Gets the storage slots from an L2 chain configuration
+     * @param _chainID The chain ID to get configuration for
+     * @return uint256[] Array of storage slots from the L2 configuration
+     */
     function getL2ConfigStorageSlots(uint256 _chainID) external view returns (uint256[] memory) {
         return l2ChainConfigurations[_chainID].storageSlots;
     }
 
+    /**
+     * @notice Gets the L2 type from an L2 chain configuration
+     * @param _chainID The chain ID to get configuration for
+     * @return Type The L2 type from the configuration
+     */
     function getL2ConfigType(uint256 _chainID) external view returns (Type) {
         return l2ChainConfigurations[_chainID].l2Type;
     }
 
+    /**
+     * @notice Gets the block hash oracle address from an L1 chain configuration
+     * @param _chainID The chain ID to get configuration for
+     * @return address The block hash oracle address from the L1 configuration
+     */
     function getL1BlockHashOracle(uint256 _chainID) external view returns (address) {
         return l1ChainConfigurations[_chainID].blockHashOracle;
     }
 
+    /**
+     * @dev Internal function to set an L1 chain configuration
+     * @param _chainID The chain ID to set configuration for
+     * @param _config The L1 configuration to set
+     */
     function _setL1ChainConfiguration(uint256 _chainID, L1Configuration memory _config) internal {
         bytes32 _hash = keccak256(abi.encode(_config));
         l1ChainConfigurationHashMap[_chainID] = _hash;
@@ -148,6 +234,11 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
         emit L1ChainConfigurationUpdated(_chainID, _hash);
     }
 
+    /**
+     * @dev Internal function to set an L2 chain configuration
+     * @param _chainID The chain ID to set configuration for
+     * @param _config The L2 configuration to set
+     */
     function _setL2ChainConfiguration(uint256 _chainID, L2Configuration memory _config) internal {
         bytes32 _hash = keccak256(abi.encode(_config));
         l2ChainConfigurationHashMap[_chainID] = _hash;
@@ -155,11 +246,21 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
         emit L2ChainConfigurationUpdated(_chainID, _hash);
     }
 
+    /**
+     * @dev Internal function to grant a grantee permission to manage a specific chain ID
+     * @param _grantee The address to grant permissions to
+     * @param _chainID The chain ID to grant permissions for
+     */
     function _grantChainID(address _grantee, uint256 _chainID) internal isRevocable(_chainID) {
         bytes32 role = _getChainRole(_chainID);
         _grantRole(role, _grantee);
     }
 
+    /**
+     * @dev Internal function to grant a grantee irrevocable permission to manage a specific chain ID
+     * @param _grantee The address to grant irrevocable permissions to
+     * @param _chainID The chain ID to grant irrevocable permissions for
+     */
     function _grantChainIDIrrevocable(address _grantee, uint256 _chainID) internal isRevocable(_chainID) {
         BitMaps.set(_irrevocableChainIDBitmap, _chainID);
         bytes32 role = _getChainRole(_chainID);
@@ -167,6 +268,12 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
         emit NewIrrevocableGrantee(_chainID, _grantee);
     }
 
+    /**
+     * @dev Internal function to check if an address is a grantee for a specific chain ID
+     * @param _grantee The address to check
+     * @param _chainID The chain ID to check for
+     * @return bool True if the address is a grantee for the chain ID, false otherwise
+     */
     function _isGrantee(address _grantee, uint256 _chainID) internal view returns (bool) {
         bytes32 role = _getChainRole(_chainID);
         return hasRole(role, _grantee);
@@ -174,6 +281,8 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
 
     /**
      * @dev Get chain-specific role identifier based on chain ID
+     * @param _chainID The chain ID to get the role for
+     * @return bytes32 The role identifier for the chain ID
      */
     function _getChainRole(uint256 _chainID) internal pure returns (bytes32) {
         return keccak256(abi.encode(_CHAIN_ROLE_PREFIX, _chainID));
