@@ -1,6 +1,6 @@
 {
   "name": "@polymerdao/prover-contracts",
-  "version": "1.0.2",
+  "version": "1.1.0-docs",
   "main": "dist/index.js",
   "bin": {
     "verify-prover-contracts": "./dist/scripts/verify-contract-script.js",
