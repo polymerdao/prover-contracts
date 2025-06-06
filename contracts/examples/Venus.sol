@@ -133,7 +133,7 @@ contract Venus {
             revert invalidCounterpartyEvent();
         }
 
-        // Now that we have verified the event type and the sender is correct, we can trust the log itself occured from
+        // Now that we have verified the event type and the sender is correct, we can trust the log itself occurred from
         // a smart contract we are familiar with. All that is left to do is to unpack the args and use them.
 
         // The abi encoded string is the only indexed arg, it will be the second arg in the topics, we can store it in
