@@ -21,35 +21,6 @@ import {RLPReader} from "optimism/libraries/rlp/RLPReader.sol";
 import {Bytes} from "optimism/libraries/Bytes.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-// OpIcs23ProofPath represents a commitment path in an ICS23 proof, which consists of a commitment prefix and a suffix.
-struct OpIcs23ProofPath {
-    bytes prefix;
-    bytes suffix;
-}
-
-// OpIcs23Proof represents an ICS23 proof
-struct OpIcs23Proof {
-    OpIcs23ProofPath[] path;
-    bytes key;
-    bytes value;
-    bytes prefix;
-}
-
-// the Ics23 proof related structs are used to do membership verification. These are not the actual Ics23
-// format but a "solidity friendly" version of it - data is the same just packaged differently
-struct Ics23Proof {
-    OpIcs23Proof[] proof;
-    uint256 height;
-}
-
-// This is the proof we use to verify the apphash (state) updates.
-struct OpL2StateProof {
-    bytes[] accountProof;
-    bytes[] outputRootProof;
-    bytes32 l2OutputProposalKey;
-    bytes32 l2BlockHash;
-}
-
 /**
  * A library for helpers for proving peptide state
  */
