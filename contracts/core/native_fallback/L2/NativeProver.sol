@@ -33,11 +33,6 @@ import {
 import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
 contract NativeProver is Ownable, INativeProver {
-    struct InitialL2Configuration {
-        uint256 chainID;
-        L2Configuration config;
-    }
-
     /**
      * @notice Stores proven block data for a chain
      * @param blockNumber Number of the proven block
