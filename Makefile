@@ -1,11 +1,9 @@
 .SILENT:
 
 # Hardcoded for simplicity
-CONTRACT_NAMES = CrossL2Prover \
-				 CrossL2ProverV2 \
+CONTRACT_NAMES = CrossL2ProverV2 \
 				 MockCrossL2ProverV2 \
 				 ReceiptParser \
-				 Venus \
 				 SequencerSignatureVerifier \
 				 NativeProver \
 				 Registry \
