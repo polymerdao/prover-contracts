@@ -3,7 +3,6 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import {stdStorage, StdStorage} from "forge-std/Test.sol";
-import {Ics23Proof} from "../../../contracts/libs/ReceiptParser.sol";
 import {MockCrossL2ProverV2} from "../../../contracts/mocks/MockCrossL2ProverV2.sol";
 
 contract TestMockCrossL2ProverV2 is Test {
