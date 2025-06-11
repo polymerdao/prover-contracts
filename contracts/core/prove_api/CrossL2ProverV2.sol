@@ -234,17 +234,33 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         return (bytes32(proof[:32]), uint64(bytes8(proof[101:109])), proof[32:97]);
     }
 
-    /*
-    header: key start (abs) (2B), key end (abs) (2B), value start (abs) (2B), value end (abs) (2B), num paths (1B),
-    layer-0: prefix, varint(key.length), key, varint(hash(value).length), hash(value)
-    path-n: [header: suffix start (rel) (1B), suffix end (rel) (1B)],  path[n].prefix, path[n].suffix
-    */
+    /**
+     * @notice Verifies polymer state through an iavl proof. Useful for proving wether a given value exists in an iavl
+     * tree of the given root
+     * @param root The root of the iavl tree
+     * @param key The key to verify in the iavl tree - in the case of this crossl2Prover, generated using
+     * ReceiptParser.eventRootKey.
+     * @param value The value to verify in the iavl tree - in the case of this crossl2Prover, the keccak256 hash of the
+     * log data.
+     * @notice this function will revert if the key, value, and root are not consistent with a valid iavl tree.
+     * @notice The proof should be encoded in this following format:
+     *     //           +----------------------------------------------------------------------------------------------------+
+     *     // header:   |  number of paths (1B) | path-0 start (1B) |  prefix...  |  varint(len(key))                        |
+     *     //           +----------------------------------------------------------------------------------------------------+
+     *     // path-0:   |  path-0 suffix start (1B)  |  path-0 suffix end (1B)  |  path-0 prefix... |  path-0 suffix...      |
+     *     //           +----------------------------------------------------------------------------------------------------+
+     *     // ...       |                                        ...                                                         |
+     *     //           +----------------------------------------------------------------------------------------------------+
+     *     // path-n:   |  path-n suffix start (1B)  |  path-n suffix end (1B)  |  path-n prefix... |  path-n suffix...      |
+     *     //           +----------------------------------------------------------------------------------------------------+
+     */
     function verifyMembership(bytes32 root, bytes memory key, bytes32 value, bytes calldata proof)
         public
         pure
         virtual
     {
         uint256 path0start = uint256(uint8(proof[1]));
+        // Note: proof[2:path0start] includes both proof leaf prefix and the key length encoded as a protobuf varint
         bytes32 prehash = sha256(abi.encodePacked(proof[2:path0start], key, hex"20", sha256(abi.encodePacked(value))));
         uint256 offset = path0start;
 
