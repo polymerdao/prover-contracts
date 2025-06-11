@@ -33,7 +33,6 @@ import {
 import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
 contract NativeProver is Ownable, INativeProver {
-
     /**
      * @notice Stores proven block data for a chain
      * @param blockNumber Number of the proven block
