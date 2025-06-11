@@ -60,7 +60,6 @@ contract ProverTest is Test {
 
     // Create L1 configuration
     L1Configuration l1Config;
-    NativeProver.InitialL2Configuration[] initialL2Configs;
 
     function setUp() public {
         address owner = vm.addr(1233);
@@ -104,9 +103,6 @@ contract ProverTest is Test {
             finalityDelaySeconds: 7200,
             l2Type: Type.Nitro
         });
-
-        initialL2Configs = new NativeProver.InitialL2Configuration[](1);
-        initialL2Configs[0] = NativeProver.InitialL2Configuration({chainID: l2ChainID, config: l2Config});
 
         // Create prover
         vm.startPrank(owner);
@@ -242,13 +238,10 @@ contract ProverTest is Test {
     //     });
 
     //     // Create a new prover instance with the modified config
-    //     initialL2Configs = new NativeProver.InitialL2Configuration[](1);
-    //     initialL2Configs[0] = NativeProver.InitialL2Configuration({chainID: l2ChainID, config: l2Config});
-
     //     // Create new prover with 0 settlement delay
     //     address owner = vm.addr(1233);
     //     vm.startPrank(owner);
-    //     NativeProver newProver = new NativeProver(owner, l1ChainID, initialL2Configs);
+    //     NativeProver newProver = new NativeProver(owner, l1ChainID);
     //     newProver.setInitialL1Config(config);
     //     vm.stopPrank();
 
