@@ -5,7 +5,14 @@ import "forge-std/Test.sol";
 import {Base} from "./Base.t.sol";
 import "../../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
 import {RLPWriter} from "optimism/libraries/rlp/RLPWriter.sol";
-import {L1Header} from "../../../contracts/interfaces/IAppStateVerifier.sol";
+
+// The `header` field is a list of RLP encoded L1 header fields. Both stateRoot and number are not
+// encoded for easy usage. They must match with their RLP encoded counterparty versions.
+struct L1Header {
+    bytes[] header;
+    bytes32 stateRoot;
+    uint64 number;
+}
 
 contract SigningBase is Base {
     using stdJson for string;
