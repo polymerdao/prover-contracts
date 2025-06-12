@@ -17,6 +17,7 @@
 
 pragma solidity 0.8.15;
 
+import {console2} from "forge-std/Test.sol";
 import {ReceiptParser} from "../libs/ReceiptParser.sol";
 import {ICrossL2ProverV2} from "../interfaces/ICrossL2ProverV2.sol";
 import {LightClientType} from "../interfaces/IClientUpdates.sol";
@@ -124,9 +125,21 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         bytes32 prehash = sha256(abi.encodePacked(proof[2:path0start], key, hex"20", sha256(abi.encodePacked(value))));
         uint256 offset = path0start;
 
+        console2.log("numPaths", uint8(proof[0]));
+        console2.log("path0 start", path0start); 
+
+        uint256 maxSuffixStart;
+        uint256 maxSuffixEnd;
         for (uint256 i = 0; i < uint256(uint8(proof[0])); i++) {
             uint256 suffixstart = uint256(uint8(proof[offset]));
             uint256 suffixend = uint256(uint8(proof[offset + 1]));
+
+            if (suffixstart > maxSuffixStart) {
+                maxSuffixStart = suffixstart;
+            }
+            if (suffixend > maxSuffixEnd) {
+                maxSuffixEnd = suffixend;
+            }
 
             // add +2 to account for path header
             prehash = sha256(
@@ -137,6 +150,8 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
 
             offset = offset + suffixend;
         }
+
+            console2.log("max suffix start-end", maxSuffixStart, maxSuffixEnd);
 
         if (prehash != root) revert InvalidProofRoot();
     }

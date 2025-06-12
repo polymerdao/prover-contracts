@@ -3,8 +3,7 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import {console2} from "forge-std/Test.sol";
-import {CrossL2Prover} from "../contracts/core/CrossL2Prover.sol";
-import {SequencerSignatureVerifier} from "../contracts/core/SequencerSignatureVerifier.sol";
+import {CrossL2ProverV2} from "../contracts/core/CrossL2ProverV2.sol";
 
 // This suite can be used to reproduce any contract-related issues from our live devnet or testnet versions.
 // This is useful for debugging because it enables things like being able to directly modify contracts easily and
@@ -21,46 +20,32 @@ import {SequencerSignatureVerifier} from "../contracts/core/SequencerSignatureVe
 // forge test --match-test test_testnet_repro -vvvv
 
 contract ContractDebugReproTest is Test {
-    bytes clientUpdate; // the contract client update which will update the peptide hash that the verify receipt proof
-        // can use
-    bytes receiptProof; // Used to test any reciept proof. The hex encoded version of what is returned from a completed
-        // proof api job.
+    bytes proof = vm.envBytes("PROOF_BYTES"); // Used to test any event proof.
 
     // Values currently deployed for devnet
     address devnetSigner = 0x11a72195e668328fEe607a309EfA2C42B2893E1d;
     bytes32 devnetPeptideClientId = bytes32(0x0000000000000000000000000000000000000000000000000000000000000385);
 
     // Values currently deployed for testnet
-    address testnetSigner = 0xf029563823C84983AdC20fEA201889b566cAa005;
+    address testnetSigner = 0xBbba797f031f630Ba321F042a9c89F077BCb9703;
     bytes32 testnetPeptideClientId = bytes32(0x0000000000000000000000000000000000000000000000000000000001bc1bc1);
-
-    function setUp() public {
-        // FILL VALUES OUT HERE
-        clientUpdate = hex"";
-        receiptProof = hex"";
-    }
 
     function test_devnet_repro() public {
         vm.skip(true); // Comment this out when running tests!
-        SequencerSignatureVerifier sigVerifier = new SequencerSignatureVerifier(devnetSigner, devnetPeptideClientId);
-
-        CrossL2Prover crossProver = new CrossL2Prover(sigVerifier, "proof_api", 100);
-        // Do contract client update
-        (bool success, bytes memory returnData) = address(crossProver).call(clientUpdate);
-        // Do receipt call using proof
-        crossProver.validateReceipt(receiptProof);
+        CrossL2ProverV2 crossProver = new CrossL2ProverV2("proof_api", devnetSigner, devnetPeptideClientId);
+        // Do event call using proof
+        crossProver.validateEvent(proof);
     }
 
     function test_testnet_repro() public {
-        vm.skip(true); // Comment this out when running tests!
+        // vm.skip(true); // Comment this out when running tests!
 
-        // Comment below out
-        SequencerSignatureVerifier sigVerifier = new SequencerSignatureVerifier(testnetSigner, testnetPeptideClientId);
-
-        CrossL2Prover crossProver = new CrossL2Prover(sigVerifier, "proof_api", 100);
-        // Do contract client update
-        (bool success, bytes memory returnData) = address(crossProver).call(clientUpdate);
-        // Do receipt call using proof
-        crossProver.validateReceipt(receiptProof);
+        CrossL2ProverV2 crossProver = new CrossL2ProverV2(
+            "proof_api",
+            0xBbba797f031f630Ba321F042a9c89F077BCb9703,
+            0x0000000000000000000000000000000000000000000000000000000001bc1bc1
+        );
+        // Do event call using proof
+        crossProver.validateEvent(proof);
     }
 }
