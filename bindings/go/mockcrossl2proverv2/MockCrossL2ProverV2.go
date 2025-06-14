@@ -31,7 +31,7 @@ var (
 
 // MockCrossL2ProverV2MetaData contains all meta data concerning the MockCrossL2ProverV2 contract.
 var MockCrossL2ProverV2MetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"clientType_\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"sequencer_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"chainId_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"LIGHT_CLIENT_TYPE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumLightClientType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SEQUENCER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"clientType\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"generateAndEmitProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"data\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"generateAndSendProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"validatorContract\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"generateMockProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"numTopics\",\"type\":\"uint8\",\"internalType\":\"uint8\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics_\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"unindexedData_\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"inspectLogIdentifier\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"srcChain\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"blockNumber\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"receiptIndex\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"logIndex\",\"type\":\"uint32\",\"internalType\":\"uint32\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"inspectPolymerState\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"stateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"height\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"signature\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"parseEvent\",\"inputs\":[{\"name\":\"rawEvent\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"numTopics\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"outputs\":[{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"validateEvent\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"validateSolLogs\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"programID\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"logMessages\",\"type\":\"string[]\",\"internalType\":\"string[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"verifyMembership\",\"inputs\":[{\"name\":\"root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"value\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"pure\"},{\"type\":\"event\",\"name\":\"ProofGenerated\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"indexed\":false,\"internalType\":\"bytes\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"InvalidProofKey\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofRoot\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofValue\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidSequencerSignature\",\"inputs\":[]}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"clientType_\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"sequencer_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"chainId_\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"LIGHT_CLIENT_TYPE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumLightClientType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SEQUENCER\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"clientType\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"generateAndEmitProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"data\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"generateAndSendProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"data\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"validatorContract\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"generateMockProof\",\"inputs\":[{\"name\":\"chainId_\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"numTopics\",\"type\":\"uint8\",\"internalType\":\"uint8\"},{\"name\":\"emitter\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics_\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"unindexedData_\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"inspectLogIdentifier\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"srcChain\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"blockNumber\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"receiptIndex\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"logIndex\",\"type\":\"uint32\",\"internalType\":\"uint32\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"inspectPolymerState\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"stateRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"height\",\"type\":\"uint64\",\"internalType\":\"uint64\"},{\"name\":\"signature\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"parseEvent\",\"inputs\":[{\"name\":\"rawEvent\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"numTopics\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"outputs\":[{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"pure\"},{\"type\":\"function\",\"name\":\"ping\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"validateEvent\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"emittingContract\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"topics\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"unindexedData\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"validateSolLogs\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[{\"name\":\"chainId\",\"type\":\"uint32\",\"internalType\":\"uint32\"},{\"name\":\"programID\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"logMessages\",\"type\":\"string[]\",\"internalType\":\"string[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"verifyMembership\",\"inputs\":[{\"name\":\"root\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"key\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"value\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"proof\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"pure\"},{\"type\":\"event\",\"name\":\"Ping\",\"inputs\":[],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ProofGenerated\",\"inputs\":[{\"name\":\"proof\",\"type\":\"bytes\",\"indexed\":false,\"internalType\":\"bytes\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"InvalidProofKey\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofRoot\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProofValue\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidSequencerSignature\",\"inputs\":[]}]",
 }
 
 // MockCrossL2ProverV2ABI is the input ABI used to generate the binding from.
@@ -664,6 +664,160 @@ func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Session) GenerateAndSendProof(cha
 // Solidity: function generateAndSendProof(uint32 chainId_, address emitter, bytes32[] topics, bytes data, address validatorContract) returns(bytes)
 func (_MockCrossL2ProverV2 *MockCrossL2ProverV2TransactorSession) GenerateAndSendProof(chainId_ uint32, emitter common.Address, topics [][32]byte, data []byte, validatorContract common.Address) (*types.Transaction, error) {
 	return _MockCrossL2ProverV2.Contract.GenerateAndSendProof(&_MockCrossL2ProverV2.TransactOpts, chainId_, emitter, topics, data, validatorContract)
+}
+
+// Ping is a paid mutator transaction binding the contract method 0x5c36b186.
+//
+// Solidity: function ping() returns()
+func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Transactor) Ping(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _MockCrossL2ProverV2.contract.Transact(opts, "ping")
+}
+
+// Ping is a paid mutator transaction binding the contract method 0x5c36b186.
+//
+// Solidity: function ping() returns()
+func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Session) Ping() (*types.Transaction, error) {
+	return _MockCrossL2ProverV2.Contract.Ping(&_MockCrossL2ProverV2.TransactOpts)
+}
+
+// Ping is a paid mutator transaction binding the contract method 0x5c36b186.
+//
+// Solidity: function ping() returns()
+func (_MockCrossL2ProverV2 *MockCrossL2ProverV2TransactorSession) Ping() (*types.Transaction, error) {
+	return _MockCrossL2ProverV2.Contract.Ping(&_MockCrossL2ProverV2.TransactOpts)
+}
+
+// MockCrossL2ProverV2PingIterator is returned from FilterPing and is used to iterate over the raw logs and unpacked data for Ping events raised by the MockCrossL2ProverV2 contract.
+type MockCrossL2ProverV2PingIterator struct {
+	Event *MockCrossL2ProverV2Ping // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *MockCrossL2ProverV2PingIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(MockCrossL2ProverV2Ping)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(MockCrossL2ProverV2Ping)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *MockCrossL2ProverV2PingIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *MockCrossL2ProverV2PingIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// MockCrossL2ProverV2Ping represents a Ping event raised by the MockCrossL2ProverV2 contract.
+type MockCrossL2ProverV2Ping struct {
+	Raw types.Log // Blockchain specific contextual infos
+}
+
+// FilterPing is a free log retrieval operation binding the contract event 0xca6e822df923f741dfe968d15d80a18abd25bd1e748bcb9ad81fea5bbb7386af.
+//
+// Solidity: event Ping()
+func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Filterer) FilterPing(opts *bind.FilterOpts) (*MockCrossL2ProverV2PingIterator, error) {
+
+	logs, sub, err := _MockCrossL2ProverV2.contract.FilterLogs(opts, "Ping")
+	if err != nil {
+		return nil, err
+	}
+	return &MockCrossL2ProverV2PingIterator{contract: _MockCrossL2ProverV2.contract, event: "Ping", logs: logs, sub: sub}, nil
+}
+
+// WatchPing is a free log subscription operation binding the contract event 0xca6e822df923f741dfe968d15d80a18abd25bd1e748bcb9ad81fea5bbb7386af.
+//
+// Solidity: event Ping()
+func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Filterer) WatchPing(opts *bind.WatchOpts, sink chan<- *MockCrossL2ProverV2Ping) (event.Subscription, error) {
+
+	logs, sub, err := _MockCrossL2ProverV2.contract.WatchLogs(opts, "Ping")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(MockCrossL2ProverV2Ping)
+				if err := _MockCrossL2ProverV2.contract.UnpackLog(event, "Ping", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParsePing is a log parse operation binding the contract event 0xca6e822df923f741dfe968d15d80a18abd25bd1e748bcb9ad81fea5bbb7386af.
+//
+// Solidity: event Ping()
+func (_MockCrossL2ProverV2 *MockCrossL2ProverV2Filterer) ParsePing(log types.Log) (*MockCrossL2ProverV2Ping, error) {
+	event := new(MockCrossL2ProverV2Ping)
+	if err := _MockCrossL2ProverV2.contract.UnpackLog(event, "Ping", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
 }
 
 // MockCrossL2ProverV2ProofGeneratedIterator is returned from FilterProofGenerated and is used to iterate over the raw logs and unpacked data for ProofGenerated events raised by the MockCrossL2ProverV2 contract.
