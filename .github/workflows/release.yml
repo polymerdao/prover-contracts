@@ -95,31 +95,8 @@ jobs:
       - name: Setup Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22.3.0'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2
-
       # Ensure /v4 is updated as the major version changes
       - name: Update Go Registry
         run: |
           GOPROXY=proxy.golang.org go list \
           -m github.com/polymerdao/prover-contracts@${{ steps.version.outputs.release }}
-
-      - name: Update NPM Registry & Bump Version
-        run: |
-          bun install
-          bun run build
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b version-bump-${{ steps.version.outputs.release }}
-          npm version ${{ steps.version.outputs.release }} --no-git-tag-version
-          npm publish
-          git add package.json package-lock.json
-          git commit -m "bump version to ${{ steps.version.outputs.release }}"
-          git push origin version-bump-${{ steps.version.outputs.release }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
