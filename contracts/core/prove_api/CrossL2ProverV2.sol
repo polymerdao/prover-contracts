@@ -35,8 +35,6 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
 
     string public clientType;
 
-    error InvalidProofKey();
-    error InvalidProofValue();
     error InvalidProofRoot();
 
     constructor(string memory clientType_, address sequencer_, bytes32 chainId_)
