@@ -28,6 +28,8 @@ import {SequencerSignatureVerifierV2} from "./SequencerSignatureVerifierV2.sol";
  * @notice Use NativeProver as a fallback.
  */
 contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
+    event Ping(); // Event to signal the initialization of the chain
+
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
         // for cheap on-chain use
 
@@ -41,6 +43,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         SequencerSignatureVerifierV2(sequencer_, chainId_)
     {
         clientType = clientType_;
+        emit Ping(); // Emit an event that can be proven on polymer as a health check
     }
 
     /**
@@ -282,5 +285,15 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     {
         uint256 topicsEnd = 32 * numTopics + 20;
         return (address(bytes20(rawEvent[:20])), rawEvent[20:topicsEnd], rawEvent[topicsEnd:]);
+    }
+
+    /**
+     * @notice Emit an event that can be proven on peptide
+     * @dev This is useful for generating an event on chains with sparse events, e.g. for a health check to test that
+     * polymer infra is working correctly
+     * @dev Anyone can call this method!
+     */
+    function ping() external {
+        emit Ping();
     }
 }
