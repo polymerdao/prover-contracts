@@ -101,7 +101,6 @@ library ReceiptParser {
         uint32 receiptIndex,
         uint32 logIndex
     ) internal pure returns (bytes memory proofKey) {
-        // TODO actually change this to the decided structure
         return abi.encodePacked(
             "chain/",
             Strings.toString(uint256(chainId)),
