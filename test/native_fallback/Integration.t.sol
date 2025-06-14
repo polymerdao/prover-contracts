@@ -84,28 +84,12 @@ contract IntegrationTest is Test {
             settlementRegistryL1ConfigMappingSlot: 1 // l1ChainConfigurationHashMap slot
         });
 
-        // Setup initial L2 configurations - one for Bedrock, one for Cannon
-        NativeProver.InitialL2Configuration[] memory proverInitialConfigs = new NativeProver.InitialL2Configuration[](2);
-
         // Bedrock config
         address[] memory bedrockAddrs = new address[](1);
         bedrockAddrs[0] = address(0x1234); // Mock L2OutputOracle address
 
         uint256[] memory bedrockSlots = new uint256[](1);
         bedrockSlots[0] = 5; // Mock output root storage slot
-
-        proverInitialConfigs[0] = NativeProver.InitialL2Configuration({
-            chainID: bedrockChainID,
-            config: L2Configuration({
-                prover: address(bedrockProver),
-                addresses: bedrockAddrs,
-                storageSlots: bedrockSlots,
-                versionNumber: 0,
-                finalityDelaySeconds: 7200,
-                l2Type: Type.OPStackBedrock
-            })
-        });
-
         // Cannon config
         address[] memory cannonAddrs = new address[](1);
         cannonAddrs[0] = address(0x5678); // Mock DisputeGameFactory address
@@ -114,18 +98,6 @@ contract IntegrationTest is Test {
         cannonSlots[0] = 10; // Mock disputeGameFactoryListSlot
         cannonSlots[1] = 11; // Mock faultDisputeGameRootClaimSlot
         cannonSlots[2] = 12; // Mock faultDisputeGameStatusSlot
-
-        proverInitialConfigs[1] = NativeProver.InitialL2Configuration({
-            chainID: cannonChainID,
-            config: L2Configuration({
-                prover: address(cannonProver),
-                addresses: cannonAddrs,
-                storageSlots: cannonSlots,
-                versionNumber: 0,
-                finalityDelaySeconds: 0, // Not used in Cannon
-                l2Type: Type.OPStackCannon
-            })
-        });
 
         // Create MockProver
         mockProver = new MockProver(owner, l2ChainID);

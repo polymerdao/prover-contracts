@@ -46,10 +46,6 @@ contract DeployNativeProverScript is DeployRegistryScript, Test {
             l2Type: Type.OPStackCannon
         });
 
-        NativeProver.InitialL2Configuration[] memory initialL2Configs = new NativeProver.InitialL2Configuration[](2);
-        initialL2Configs[0] = NativeProver.InitialL2Configuration({chainID: baseChainId, config: baseL2Config});
-        initialL2Configs[1] = NativeProver.InitialL2Configuration({chainID: opChainId, config: opL2Config});
-
         vm.startBroadcast(deployerPrivateKey);
 
         // // Deploy NativeProver contract
