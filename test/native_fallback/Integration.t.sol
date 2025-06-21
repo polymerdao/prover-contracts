@@ -31,11 +31,7 @@ contract MockProver is NativeProver {
         bytes calldata,
         bytes[] calldata,
         bytes32 _l1WorldStateRoot
-    ) external {
-        // Set L1 state root in the proven states map
-        BlockProof memory blockProof =
-            BlockProof({blockNumber: 100, blockHash: bytes32(uint256(0xabcdef)), stateRoot: _l1WorldStateRoot});
-    }
+    ) external {}
 }
 
 contract IntegrationTest is Test {
