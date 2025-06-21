@@ -61,7 +61,7 @@ type RegistryInitialL2Configuration struct {
 
 // RegistryMetaData contains all meta data concerning the Registry contract.
 var RegistryMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_initialOwner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_initialL2Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structRegistry.InitialL2Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}]},{\"name\":\"_initialL1Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structRegistry.InitialL1Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"DEFAULT_ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL1BlockHashOracle\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL2ConfigAddresses\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[]\",\"internalType\":\"address[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL2ConfigStorageSlots\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL2ConfigType\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getRoleAdmin\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"grantChainID\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDIrrevocable\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDRange\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_startChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_stopChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDRangeIrrevocable\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_startChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_stopChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"hasRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"isGrantee\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l1ChainConfigurationHashMap\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l1ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurationHashMap\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"paused\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"renounceRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"revokeRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"supportsInterface\",\"inputs\":[{\"name\":\"interfaceId\",\"type\":\"bytes4\",\"internalType\":\"bytes4\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL1ChainConfiguration\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL2ChainConfiguration\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"L1ChainConfigurationUpdated\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"configHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"L2ChainConfigurationUpdated\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"configHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"NewIrrevocableGrantee\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"grantee\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Paused\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleAdminChanged\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"previousAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"newAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleGranted\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleRevoked\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Unpaused\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"InvalidRange\",\"inputs\":[{\"name\":\"startChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"stopChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_initialOwner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_initialL2Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structRegistry.InitialL2Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}]},{\"name\":\"_initialL1Configurations\",\"type\":\"tuple[]\",\"internalType\":\"structRegistry.InitialL1Configuration[]\",\"components\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"DEFAULT_ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL1BlockHashOracle\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL2ConfigAddresses\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address[]\",\"internalType\":\"address[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL2ConfigStorageSlots\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getL2ConfigType\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"enumType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getRoleAdmin\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"grantChainID\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDIrrevocable\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDRange\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_startChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_stopChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantChainIDRangeIrrevocable\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_startChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_stopChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"grantRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"hasRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"isIrrevocableGrantee\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"isRevocableGrantee\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l1ChainConfigurationHashMap\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l1ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurationHashMap\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"l2ChainConfigurations\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"paused\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"renounceRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"revokeChainID\",\"inputs\":[{\"name\":\"_grantee\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"revokeRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"supportsInterface\",\"inputs\":[{\"name\":\"interfaceId\",\"type\":\"bytes4\",\"internalType\":\"bytes4\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL1ChainConfiguration\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL1Configuration\",\"components\":[{\"name\":\"blockHashOracle\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistry\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"settlementRegistryL2ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"settlementRegistryL1ConfigMappingSlot\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateL2ChainConfiguration\",\"inputs\":[{\"name\":\"_chainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_config\",\"type\":\"tuple\",\"internalType\":\"structL2Configuration\",\"components\":[{\"name\":\"prover\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"addresses\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"storageSlots\",\"type\":\"uint256[]\",\"internalType\":\"uint256[]\"},{\"name\":\"versionNumber\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"finalityDelaySeconds\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"l2Type\",\"type\":\"uint8\",\"internalType\":\"enumType\"}]}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"L1ChainConfigurationUpdated\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"configHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"L2ChainConfigurationUpdated\",\"inputs\":[{\"name\":\"chainID\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"configHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Paused\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleAdminChanged\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"previousAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"newAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleGranted\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleRevoked\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Unpaused\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"InvalidRange\",\"inputs\":[{\"name\":\"startChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"stopChainID\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}]",
 }
 
 // RegistryABI is the input ABI used to generate the binding from.
@@ -427,12 +427,12 @@ func (_Registry *RegistryCallerSession) HasRole(role [32]byte, account common.Ad
 	return _Registry.Contract.HasRole(&_Registry.CallOpts, role, account)
 }
 
-// IsGrantee is a free data retrieval call binding the contract method 0xe465a320.
+// IsIrrevocableGrantee is a free data retrieval call binding the contract method 0xbc839f07.
 //
-// Solidity: function isGrantee(address _grantee, uint256 _chainID) view returns(bool)
-func (_Registry *RegistryCaller) IsGrantee(opts *bind.CallOpts, _grantee common.Address, _chainID *big.Int) (bool, error) {
+// Solidity: function isIrrevocableGrantee(address _grantee, uint256 _chainID) view returns(bool)
+func (_Registry *RegistryCaller) IsIrrevocableGrantee(opts *bind.CallOpts, _grantee common.Address, _chainID *big.Int) (bool, error) {
 	var out []interface{}
-	err := _Registry.contract.Call(opts, &out, "isGrantee", _grantee, _chainID)
+	err := _Registry.contract.Call(opts, &out, "isIrrevocableGrantee", _grantee, _chainID)
 
 	if err != nil {
 		return *new(bool), err
@@ -444,18 +444,49 @@ func (_Registry *RegistryCaller) IsGrantee(opts *bind.CallOpts, _grantee common.
 
 }
 
-// IsGrantee is a free data retrieval call binding the contract method 0xe465a320.
+// IsIrrevocableGrantee is a free data retrieval call binding the contract method 0xbc839f07.
 //
-// Solidity: function isGrantee(address _grantee, uint256 _chainID) view returns(bool)
-func (_Registry *RegistrySession) IsGrantee(_grantee common.Address, _chainID *big.Int) (bool, error) {
-	return _Registry.Contract.IsGrantee(&_Registry.CallOpts, _grantee, _chainID)
+// Solidity: function isIrrevocableGrantee(address _grantee, uint256 _chainID) view returns(bool)
+func (_Registry *RegistrySession) IsIrrevocableGrantee(_grantee common.Address, _chainID *big.Int) (bool, error) {
+	return _Registry.Contract.IsIrrevocableGrantee(&_Registry.CallOpts, _grantee, _chainID)
 }
 
-// IsGrantee is a free data retrieval call binding the contract method 0xe465a320.
+// IsIrrevocableGrantee is a free data retrieval call binding the contract method 0xbc839f07.
 //
-// Solidity: function isGrantee(address _grantee, uint256 _chainID) view returns(bool)
-func (_Registry *RegistryCallerSession) IsGrantee(_grantee common.Address, _chainID *big.Int) (bool, error) {
-	return _Registry.Contract.IsGrantee(&_Registry.CallOpts, _grantee, _chainID)
+// Solidity: function isIrrevocableGrantee(address _grantee, uint256 _chainID) view returns(bool)
+func (_Registry *RegistryCallerSession) IsIrrevocableGrantee(_grantee common.Address, _chainID *big.Int) (bool, error) {
+	return _Registry.Contract.IsIrrevocableGrantee(&_Registry.CallOpts, _grantee, _chainID)
+}
+
+// IsRevocableGrantee is a free data retrieval call binding the contract method 0xadfb4594.
+//
+// Solidity: function isRevocableGrantee(address _grantee, uint256 _chainID) view returns(bool)
+func (_Registry *RegistryCaller) IsRevocableGrantee(opts *bind.CallOpts, _grantee common.Address, _chainID *big.Int) (bool, error) {
+	var out []interface{}
+	err := _Registry.contract.Call(opts, &out, "isRevocableGrantee", _grantee, _chainID)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// IsRevocableGrantee is a free data retrieval call binding the contract method 0xadfb4594.
+//
+// Solidity: function isRevocableGrantee(address _grantee, uint256 _chainID) view returns(bool)
+func (_Registry *RegistrySession) IsRevocableGrantee(_grantee common.Address, _chainID *big.Int) (bool, error) {
+	return _Registry.Contract.IsRevocableGrantee(&_Registry.CallOpts, _grantee, _chainID)
+}
+
+// IsRevocableGrantee is a free data retrieval call binding the contract method 0xadfb4594.
+//
+// Solidity: function isRevocableGrantee(address _grantee, uint256 _chainID) view returns(bool)
+func (_Registry *RegistryCallerSession) IsRevocableGrantee(_grantee common.Address, _chainID *big.Int) (bool, error) {
+	return _Registry.Contract.IsRevocableGrantee(&_Registry.CallOpts, _grantee, _chainID)
 }
 
 // L1ChainConfigurationHashMap is a free data retrieval call binding the contract method 0xd2eca660.
@@ -870,6 +901,27 @@ func (_Registry *RegistryTransactorSession) RenounceRole(role [32]byte, account 
 	return _Registry.Contract.RenounceRole(&_Registry.TransactOpts, role, account)
 }
 
+// RevokeChainID is a paid mutator transaction binding the contract method 0x012ce089.
+//
+// Solidity: function revokeChainID(address _grantee, uint256 _chainID) returns()
+func (_Registry *RegistryTransactor) RevokeChainID(opts *bind.TransactOpts, _grantee common.Address, _chainID *big.Int) (*types.Transaction, error) {
+	return _Registry.contract.Transact(opts, "revokeChainID", _grantee, _chainID)
+}
+
+// RevokeChainID is a paid mutator transaction binding the contract method 0x012ce089.
+//
+// Solidity: function revokeChainID(address _grantee, uint256 _chainID) returns()
+func (_Registry *RegistrySession) RevokeChainID(_grantee common.Address, _chainID *big.Int) (*types.Transaction, error) {
+	return _Registry.Contract.RevokeChainID(&_Registry.TransactOpts, _grantee, _chainID)
+}
+
+// RevokeChainID is a paid mutator transaction binding the contract method 0x012ce089.
+//
+// Solidity: function revokeChainID(address _grantee, uint256 _chainID) returns()
+func (_Registry *RegistryTransactorSession) RevokeChainID(_grantee common.Address, _chainID *big.Int) (*types.Transaction, error) {
+	return _Registry.Contract.RevokeChainID(&_Registry.TransactOpts, _grantee, _chainID)
+}
+
 // RevokeRole is a paid mutator transaction binding the contract method 0xd547741f.
 //
 // Solidity: function revokeRole(bytes32 role, address account) returns()
@@ -1254,159 +1306,6 @@ func (_Registry *RegistryFilterer) WatchL2ChainConfigurationUpdated(opts *bind.W
 func (_Registry *RegistryFilterer) ParseL2ChainConfigurationUpdated(log types.Log) (*RegistryL2ChainConfigurationUpdated, error) {
 	event := new(RegistryL2ChainConfigurationUpdated)
 	if err := _Registry.contract.UnpackLog(event, "L2ChainConfigurationUpdated", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// RegistryNewIrrevocableGranteeIterator is returned from FilterNewIrrevocableGrantee and is used to iterate over the raw logs and unpacked data for NewIrrevocableGrantee events raised by the Registry contract.
-type RegistryNewIrrevocableGranteeIterator struct {
-	Event *RegistryNewIrrevocableGrantee // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *RegistryNewIrrevocableGranteeIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(RegistryNewIrrevocableGrantee)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(RegistryNewIrrevocableGrantee)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *RegistryNewIrrevocableGranteeIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *RegistryNewIrrevocableGranteeIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// RegistryNewIrrevocableGrantee represents a NewIrrevocableGrantee event raised by the Registry contract.
-type RegistryNewIrrevocableGrantee struct {
-	ChainID *big.Int
-	Grantee common.Address
-	Raw     types.Log // Blockchain specific contextual infos
-}
-
-// FilterNewIrrevocableGrantee is a free log retrieval operation binding the contract event 0xa4285119a5eeb9e389ae4510c20caae9fea8065eb4ea177201f20bfba3713b03.
-//
-// Solidity: event NewIrrevocableGrantee(uint256 indexed chainID, address indexed grantee)
-func (_Registry *RegistryFilterer) FilterNewIrrevocableGrantee(opts *bind.FilterOpts, chainID []*big.Int, grantee []common.Address) (*RegistryNewIrrevocableGranteeIterator, error) {
-
-	var chainIDRule []interface{}
-	for _, chainIDItem := range chainID {
-		chainIDRule = append(chainIDRule, chainIDItem)
-	}
-	var granteeRule []interface{}
-	for _, granteeItem := range grantee {
-		granteeRule = append(granteeRule, granteeItem)
-	}
-
-	logs, sub, err := _Registry.contract.FilterLogs(opts, "NewIrrevocableGrantee", chainIDRule, granteeRule)
-	if err != nil {
-		return nil, err
-	}
-	return &RegistryNewIrrevocableGranteeIterator{contract: _Registry.contract, event: "NewIrrevocableGrantee", logs: logs, sub: sub}, nil
-}
-
-// WatchNewIrrevocableGrantee is a free log subscription operation binding the contract event 0xa4285119a5eeb9e389ae4510c20caae9fea8065eb4ea177201f20bfba3713b03.
-//
-// Solidity: event NewIrrevocableGrantee(uint256 indexed chainID, address indexed grantee)
-func (_Registry *RegistryFilterer) WatchNewIrrevocableGrantee(opts *bind.WatchOpts, sink chan<- *RegistryNewIrrevocableGrantee, chainID []*big.Int, grantee []common.Address) (event.Subscription, error) {
-
-	var chainIDRule []interface{}
-	for _, chainIDItem := range chainID {
-		chainIDRule = append(chainIDRule, chainIDItem)
-	}
-	var granteeRule []interface{}
-	for _, granteeItem := range grantee {
-		granteeRule = append(granteeRule, granteeItem)
-	}
-
-	logs, sub, err := _Registry.contract.WatchLogs(opts, "NewIrrevocableGrantee", chainIDRule, granteeRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(RegistryNewIrrevocableGrantee)
-				if err := _Registry.contract.UnpackLog(event, "NewIrrevocableGrantee", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseNewIrrevocableGrantee is a log parse operation binding the contract event 0xa4285119a5eeb9e389ae4510c20caae9fea8065eb4ea177201f20bfba3713b03.
-//
-// Solidity: event NewIrrevocableGrantee(uint256 indexed chainID, address indexed grantee)
-func (_Registry *RegistryFilterer) ParseNewIrrevocableGrantee(log types.Log) (*RegistryNewIrrevocableGrantee, error) {
-	event := new(RegistryNewIrrevocableGrantee)
-	if err := _Registry.contract.UnpackLog(event, "NewIrrevocableGrantee", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

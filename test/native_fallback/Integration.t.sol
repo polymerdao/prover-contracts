@@ -100,7 +100,7 @@ contract IntegrationTest is Test {
         mockProver.setInitialL1Config(l1Config);
 
         // Calculate expected role hash for bedrock chain ID
-        bytes32 bedrockRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), bedrockChainID));
+        bytes32 bedrockRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), bedrockChainID, false));
 
         // Expect the RoleGranted event for bedrock chain
         vm.expectEmit(true, true, true, true);
@@ -110,7 +110,7 @@ contract IntegrationTest is Test {
         registry.grantChainID(address(mockProver), bedrockChainID);
 
         // Calculate expected role hash for cannon chain ID
-        bytes32 cannonRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), cannonChainID));
+        bytes32 cannonRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), cannonChainID, false));
 
         // Expect the RoleGranted event for cannon chain
         vm.expectEmit(true, true, true, true);
@@ -143,7 +143,7 @@ contract IntegrationTest is Test {
         });
 
         // Calculate expected role hash for bedrock chain ID
-        bytes32 bedrockRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), bedrockChainID));
+        bytes32 bedrockRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), bedrockChainID, false));
 
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
