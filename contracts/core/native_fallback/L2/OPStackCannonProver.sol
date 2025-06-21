@@ -43,7 +43,6 @@ contract OPStackCannonProver is ISettledStateProver {
     }
 
     struct FaultDisputeGameProofData {
-        bytes32 faultDisputeGameStateRoot;
         bytes[] faultDisputeGameRootClaimStorageProof;
         FaultDisputeGameStatusSlotData faultDisputeGameStatusSlotData;
         bytes[] faultDisputeGameStatusStorageProof;
@@ -197,6 +196,9 @@ contract OPStackCannonProver is ISettledStateProver {
             revert FaultDisputeGameUnresolved(_faultDisputeGameProofData.faultDisputeGameStatusSlotData.gameStatus);
         }
 
+        bytes memory disputeGameStateRoot =
+            RLPReader.readBytes(RLPReader.readList(_faultDisputeGameProofData.rlpEncodedFaultDisputeGameData)[2]);
+
         // ensure faultDisputeGame is resolved
         // Prove that the FaultDispute game has been settled
         // storage proof for FaultDisputeGame rootClaim (means block is valid)
@@ -204,7 +206,7 @@ contract OPStackCannonProver is ISettledStateProver {
             abi.encodePacked(_faultDisputeGameRootClaimSlot),
             _rootClaim,
             _faultDisputeGameProofData.faultDisputeGameRootClaimStorageProof,
-            bytes32(_faultDisputeGameProofData.faultDisputeGameStateRoot)
+            bytes32(disputeGameStateRoot)
         );
 
         // Assemble and verify game status
@@ -221,7 +223,7 @@ contract OPStackCannonProver is ISettledStateProver {
             abi.encodePacked(_faultDisputeGameStatusSlot),
             faultDisputeGameStatusStorage,
             _faultDisputeGameProofData.faultDisputeGameStatusStorageProof,
-            bytes32(_faultDisputeGameProofData.faultDisputeGameStateRoot)
+            bytes32(disputeGameStateRoot)
         );
 
         // Verify game contract account proof
