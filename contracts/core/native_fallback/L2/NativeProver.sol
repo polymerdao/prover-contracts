@@ -37,12 +37,6 @@ contract NativeProver is Ownable, INativeProver {
 
     L1Configuration public L1_CONFIGURATION; // Configuration for L1
 
-    event L1WorldStateProven(uint256 indexed _blockNumber, bytes32 _L1WorldStateRoot);
-
-    event L2WorldStateProven(
-        uint256 indexed _destinationChainID, uint256 indexed _blockNumber, bytes32 _L2WorldStateRoot
-    );
-
     /**
      * @notice RLP encoded block data hash mismatch
      */
