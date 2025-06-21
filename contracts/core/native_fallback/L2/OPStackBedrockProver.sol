@@ -134,7 +134,7 @@ contract OPStackBedrockProver is ISettledStateProver {
             // Generate and verify output root
             bytes32 blockHash = keccak256(_rlpEncodedL2Header);
             outputRoot = _generateOutputRoot(
-                _chainConfig.versionNumber, _args._l1WorldStateRoot, _args._l2MessagePasserStateRoot, blockHash
+                _chainConfig.versionNumber, _args._l2WorldStateRoot, _args._l2MessagePasserStateRoot, blockHash
             );
         }
 
