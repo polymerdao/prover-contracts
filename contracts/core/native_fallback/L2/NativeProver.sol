@@ -56,24 +56,9 @@ contract NativeProver is Ownable, INativeProver {
     );
 
     /**
-     * @notice Block number is too recent to prove
-     */
-    error NeedLaterBlock(uint256 _inputBlockNumber, uint256 _nextProvableBlockNumber);
-
-    /**
-     * @notice Block number is older than currently proven block
-     */
-    error OutdatedBlock(uint256 _inputBlockNumber, uint256 _latestBlockNumber);
-
-    /**
      * @notice RLP encoded block data hash mismatch
      */
     error InvalidRLPEncodedBlock(bytes32 _expectedBlockHash, bytes32 _calculatedBlockHash);
-
-    /**
-     * @notice Failed storage proof verification
-     */
-    error InvalidStorageProof(bytes _key, bytes _val, bytes[] _proof, bytes32 _root);
 
     /**
      * @notice Failed account proof verification
@@ -84,11 +69,6 @@ contract NativeProver is Ownable, INativeProver {
      * @notice Settlement chain state not yet proven
      */
     error SettlementChainStateRootNotProven(bytes32 _blockProofStateRoot, bytes32 _l1WorldStateRoot);
-
-    /**
-     * @notice Destination chain state not yet proven
-     */
-    error DestinationChainStateRootNotProved(bytes32 _blockProofStateRoot, bytes32 _l2WorldStateRoot);
 
     /**
      * @notice Invalid storage root found in contract
