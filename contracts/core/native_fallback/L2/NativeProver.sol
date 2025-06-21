@@ -115,7 +115,7 @@ contract NativeProver is Ownable, INativeProver {
         // First prove the L1 view
         bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
 
-        // Use the L1 state root to prove the L2 configuration, but don't store it
+        // Use the L1 state root to prove the L2 configuration
         if (
             !_proveL2Configuration(
                 _proveArgs.chainID,
