@@ -258,6 +258,21 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
     }
 
     /**
+     * @dev Empty implementation to override OZ's access control method to ensure that admins can't revoke roles.
+     */
+    function revokeRole(bytes32 role, address account) public override {
+        revert("Registry: Cannot revoke roles directly");
+    }
+
+    /**
+     * @dev Empty implementation to override OZ's access control method to ensure that admins can't add more than a
+     * single irrevocable grantee per chain ID.
+     */
+    function grantRole(bytes32 role, address account) public virtual override {
+        revert("Registry: Cannot grant roles directly");
+    }
+
+    /**
      * @dev Internal function to set an L1 chain configuration
      * @param _chainID The chain ID to set configuration for
      * @param _config The L1 configuration to set
