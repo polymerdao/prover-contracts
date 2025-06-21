@@ -73,10 +73,10 @@ contract RegistryTest is Test {
         uint256 testChainID = 456;
 
         // Verify user doesn't have access before grant
-        assertFalse(registry.isGrantee(user, testChainID));
+        assertFalse(registry.isRevocableGrantee(user, testChainID));
 
         // Calculate expected role hash
-        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), testChainID));
+        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), testChainID, false));
 
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
@@ -87,10 +87,10 @@ contract RegistryTest is Test {
         registry.grantChainID(user, testChainID);
 
         // Verify user has access after grant
-        assertTrue(registry.isGrantee(user, testChainID));
+        assertTrue(registry.isRevocableGrantee(user, testChainID));
 
         // Verify other users don't have access
-        assertFalse(registry.isGrantee(user2, testChainID));
+        assertFalse(registry.isRevocableGrantee(user2, testChainID));
     }
 
     function testGrantChainIDRange() public {
@@ -99,11 +99,11 @@ contract RegistryTest is Test {
 
         // Verify user doesn't have access before grant
         for (uint256 i = startChainID; i <= stopChainID; i++) {
-            assertFalse(registry.isGrantee(user, i));
+            assertFalse(registry.isRevocableGrantee(user, i));
         }
 
         // For chainID range we'll test just the first and last role grants
-        bytes32 firstRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), startChainID));
+        bytes32 firstRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), startChainID, false));
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(firstRole, user, owner);
 
@@ -113,12 +113,14 @@ contract RegistryTest is Test {
 
         // Verify user has access after grant
         for (uint256 i = startChainID; i <= stopChainID; i++) {
-            assertTrue(registry.isGrantee(user, i));
+            assertTrue(registry.isRevocableGrantee(user, i));
         }
 
         // Verify user doesn't have access to chains outside the range
-        assertFalse(registry.isGrantee(user, startChainID - 1));
-        assertFalse(registry.isGrantee(user, stopChainID + 1));
+        assertFalse(registry.isRevocableGrantee(user, startChainID - 1));
+        assertFalse(registry.isRevocableGrantee(user, stopChainID + 1));
+        assertFalse(registry.isIrrevocableGrantee(user, startChainID - 1));
+        assertFalse(registry.isIrrevocableGrantee(user, stopChainID + 1));
     }
 
     function testUpdateChainConfiguration() public {
@@ -141,7 +143,7 @@ contract RegistryTest is Test {
         });
 
         // Calculate expected role hash
-        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID));
+        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID, false));
 
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
@@ -202,7 +204,7 @@ contract RegistryTest is Test {
         });
 
         // Calculate expected role hash
-        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID));
+        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID, false));
 
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
@@ -213,7 +215,7 @@ contract RegistryTest is Test {
         registry.grantChainID(user, newChainID);
 
         // Verify user is granted access
-        assertTrue(registry.isGrantee(user, newChainID));
+        assertTrue(registry.isRevocableGrantee(user, newChainID));
 
         // Create initial configuration
         bytes32 initialConfigHash = keccak256(abi.encode(initialConfig));
@@ -239,12 +241,12 @@ contract RegistryTest is Test {
 
         // Verify user2 cannot update the config (non-grantee)
         vm.prank(user2);
-        vm.expectRevert("Not authorized");
+        vm.expectRevert("Registry: Not authorized");
         registry.updateL2ChainConfiguration(newChainID, initialConfig);
 
         // Now we'll test that someone with a fresh granted permission can update properly
         // Calculate expected role hash for user2
-        expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID));
+        expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), newChainID, false));
 
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
@@ -254,7 +256,7 @@ contract RegistryTest is Test {
         registry.grantChainID(user2, newChainID);
 
         // Verify user2 has access
-        assertTrue(registry.isGrantee(user2, newChainID));
+        assertTrue(registry.isRevocableGrantee(user2, newChainID));
 
         // Update with user2
         L2Configuration memory finalConfig = L2Configuration({
@@ -298,7 +300,7 @@ contract RegistryTest is Test {
 
         // Try to update without permission
         vm.prank(user);
-        vm.expectRevert("Not authorized");
+        vm.expectRevert("Registry: Not authorized");
         registry.updateL2ChainConfiguration(newChainID, newConfig);
     }
 
@@ -343,7 +345,7 @@ contract RegistryTest is Test {
         });
 
         // Calculate expected role hash
-        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), l1ChainID));
+        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), l1ChainID, false));
 
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
@@ -367,7 +369,7 @@ contract RegistryTest is Test {
 
         // Try to update without permission
         vm.prank(user2);
-        vm.expectRevert("Not authorized");
+        vm.expectRevert("Registry: Not authorized");
         registry.updateL1ChainConfiguration(l1ChainID, newL1Config);
     }
 
@@ -375,27 +377,18 @@ contract RegistryTest is Test {
         uint256 testChainID = 777;
 
         // Calculate expected role hash
-        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), testChainID));
+        bytes32 expectedRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), testChainID, true));
 
         // Expect the RoleGranted event
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(expectedRole, user, owner);
-
-        // Expect the NewIrrevocableGrantee event
-        vm.expectEmit(true, true, true, true);
-        emit NewIrrevocableGrantee(testChainID, user);
 
         // Grant irrevocable access to user
         vm.prank(owner);
         registry.grantChainIDIrrevocable(user, testChainID);
 
         // Verify user has access
-        assertTrue(registry.isGrantee(user, testChainID));
-
-        // Attempt to grant the same chain ID to another user should fail
-        vm.prank(owner);
-        vm.expectRevert("ChainID is irrevocable");
-        registry.grantChainID(user2, testChainID);
+        assertTrue(registry.isIrrevocableGrantee(user, testChainID));
 
         // Attempt to grant irrevocable access to the same chain ID should fail
         vm.prank(owner);
@@ -408,13 +401,9 @@ contract RegistryTest is Test {
         uint256 stopChainID = 2010;
 
         // For chainID range we'll test just the first role grant
-        bytes32 firstRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), startChainID));
+        bytes32 firstRole = keccak256(abi.encode(keccak256("CHAIN_ROLE"), startChainID, true));
         vm.expectEmit(true, true, true, true);
         emit RoleGranted(firstRole, user, owner);
-
-        // Expect the first NewIrrevocableGrantee event
-        vm.expectEmit(true, true, true, true);
-        emit NewIrrevocableGrantee(startChainID, user);
 
         // Grant irrevocable access to range
         vm.prank(owner);
@@ -422,14 +411,15 @@ contract RegistryTest is Test {
 
         // Verify user has access to all chain IDs in the range
         for (uint256 i = startChainID; i <= stopChainID; i++) {
-            assertTrue(registry.isGrantee(user, i));
+            assertTrue(registry.isIrrevocableGrantee(user, i));
+            assertFalse(registry.isRevocableGrantee(user, i));
         }
 
         // Attempt to grant any chain ID in the range should fail
         for (uint256 i = startChainID; i <= stopChainID; i++) {
             vm.prank(owner);
             vm.expectRevert("ChainID is irrevocable");
-            registry.grantChainID(user2, i);
+            registry.grantChainIDIrrevocable(user2, i);
         }
 
         // Verify invalid range handling
@@ -458,5 +448,40 @@ contract RegistryTest is Test {
         for (uint256 i = 0; i < slots.length; i++) {
             assertEq(slots[i], l2Config.storageSlots[i]);
         }
+    }
+
+    function testAccessControl() public {
+        // Normal grant & revoke role should revert to disallow circumventing irrevocable roles
+        vm.startPrank(owner);
+        vm.expectRevert("Registry: Cannot grant roles directly");
+        registry.grantRole(keccak256(abi.encode("a")), user);
+
+        vm.expectRevert("Registry: Cannot revoke roles directly");
+        registry.revokeRole(keccak256(abi.encode("a")), user);
+
+        address alice = address(0xA);
+        address bob = address(0xB);
+        address clara = address(0xC);
+
+        // Can allow for granting chain ids
+        uint256 testChainID1 = 888;
+        uint256 testChainID2 = 999;
+        registry.grantChainID(alice, testChainID1);
+        assertTrue(registry.isRevocableGrantee(alice, testChainID1));
+
+        registry.grantChainID(bob, testChainID1);
+        assertTrue(registry.isRevocableGrantee(alice, testChainID1));
+
+        // Can only grant one irrevocable grantee per chain ID
+        registry.grantChainIDIrrevocable(clara, testChainID1);
+        assertTrue(registry.isIrrevocableGrantee(clara, testChainID1));
+
+        registry.grantChainIDIrrevocable(clara, testChainID2);
+        assertTrue(registry.isIrrevocableGrantee(clara, testChainID1));
+
+        vm.expectRevert("ChainID is irrevocable");
+        registry.grantChainIDIrrevocable(bob, testChainID1);
+
+        vm.stopPrank();
     }
 }
