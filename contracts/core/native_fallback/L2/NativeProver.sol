@@ -33,18 +33,6 @@ import {
 import {ProverHelpers} from "../../../libs/ProverHelpers.sol";
 
 contract NativeProver is Ownable, INativeProver {
-    /**
-     * @notice Stores proven block data for a chain
-     * @param blockNumber Number of the proven block
-     * @param blockHash Hash of the proven block
-     * @param stateRoot State root of the proven block
-     */
-    struct BlockProof {
-        uint256 blockNumber;
-        bytes32 blockHash;
-        bytes32 stateRoot;
-    }
-
     uint256 public immutable L1_CHAIN_ID; // Chain ID of the settlement chain
 
     L1Configuration public L1_CONFIGURATION; // Configuration for L1
@@ -360,24 +348,6 @@ contract NativeProver is Ownable, INativeProver {
             number = number + uint256(uint8(_b[i])) * (2 ** (8 * (_b.length - (i + 1))));
         }
         return number;
-    }
-
-    /**
-     * @notice Internal function to create and verify block proof
-     * @param _l2WorldStateRoot L2 state root to prove
-     * @param _rlpEncodedL2Header RLP encoded L2 block header
-     * @return blockProof Verified block proof data
-     */
-    function _createBlockProof(bytes32 _l2WorldStateRoot, bytes memory _rlpEncodedL2Header)
-        internal
-        pure
-        returns (BlockProof memory blockProof)
-    {
-        blockProof = BlockProof({
-            blockNumber: _bytesToUint(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL2Header)[8])),
-            blockHash: keccak256(_rlpEncodedL2Header),
-            stateRoot: _l2WorldStateRoot
-        });
     }
 
     /**
