@@ -34,7 +34,16 @@ interface INativeProver {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l2AccountProof
-    ) external view returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
+    )
+        external
+        view
+        returns (
+            uint256 chainId,
+            address storingContract,
+            uint256 srcBlockNumber,
+            bytes32 storageSlot,
+            bytes32 storageValue
+        );
 
     function proveL1Native(
         ProveL1ScalarArgs calldata _proveArgs,
@@ -42,5 +51,5 @@ interface INativeProver {
         bytes[] calldata _l1StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l1AccountProof
-    ) external view returns (uint256 chainId, address storingContract, bytes32 storageSlot, bytes32 storageValue);
+    ) external view returns (uint256 chainId, address storingContract, uint256 srcBlockNumber, bytes32 storageSlot, bytes32 storageValue);
 }
