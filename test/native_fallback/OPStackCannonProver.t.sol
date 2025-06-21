@@ -92,8 +92,6 @@ contract OPStackCannonProverTest is Test {
         // Create mock fault dispute game proof data
         OPStackCannonProver.FaultDisputeGameProofData memory data;
 
-        data.faultDisputeGameStateRoot = bytes32(uint256(0x222222));
-
         // Mock root claim storage proof
         data.faultDisputeGameRootClaimStorageProof = new bytes[](1);
         data.faultDisputeGameRootClaimStorageProof[0] = hex"fedcba";
@@ -112,10 +110,9 @@ contract OPStackCannonProverTest is Test {
         data.faultDisputeGameStatusStorageProof[0] = hex"987654";
 
         // Mock RLP encoded game data with state root at index 2
-        bytes[] memory gameData = new bytes[](3);
+        bytes[] memory gameData = new bytes[](2);
         gameData[0] = hex"3333";
         gameData[1] = hex"4444";
-        gameData[2] = abi.encodePacked(data.faultDisputeGameStateRoot); // State root
         data.rlpEncodedFaultDisputeGameData = RLPWriter.writeList(gameData);
 
         // Mock account proof
