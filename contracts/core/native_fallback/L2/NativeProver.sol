@@ -90,7 +90,10 @@ contract NativeProver is Ownable, INativeProver {
     }
 
     /**
-     * @notice Proves a storage value in a settled L2 state root
+     * @notice Proves a storage value in a settled L2 state root.
+     * @notice NB: Any historical state can be proven, so it's recommended to only rely on proving state which can be
+     * relied on to be monotonically or irrevocably changed, and to locally store any past proven states to prevent
+     * against stale replays.
      * @dev Single view function encapsulating all three steps of the proof process: L1 view; settled L2 state; L2
      * storage
      * @param _updateArgs holds the ProveScalarArgs
@@ -100,6 +103,13 @@ contract NativeProver is Ownable, INativeProver {
      * @param _l2StorageProof proof of the storage value in the L2 _contractAddr
      * @param _rlpEncodedContractAccount RLP encoded _contractAddr account
      * @param _l2AccountProof proof of the _contractAddr account in the L2 world state
+     *
+     * @return chainID The chain ID of the proven counterparty chain
+     * @return storingContract The address of the contract that stores the storage value
+     * @return l2BlockNumber The L2 block number at which storage was read
+     * @return storageSlot The storage slot of the storage value
+     * @return storageValue The storage value that was proven
+     *
      *
      */
     function proveL2Native(
@@ -111,7 +121,17 @@ contract NativeProver is Ownable, INativeProver {
         bytes[] calldata _l2StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l2AccountProof
-    ) external view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
+    )
+        external
+        view
+        returns (
+            uint256 chainID,
+            address storingContract,
+            uint256 l2BlockNumber,
+            bytes32 storageSlot,
+            bytes32 storageValue
+        )
+    {
         // First prove the L1 view
         bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
 
@@ -142,16 +162,53 @@ contract NativeProver is Ownable, INativeProver {
         // Now prove storage against the verified settled L2 state root using the verified L2 configuration
         _proveStorageInState(_proveArgs, _l2StorageProof, _rlpEncodedContractAccount, _l2AccountProof);
 
-        return (_proveArgs.chainID, _proveArgs.contractAddr, _proveArgs.storageSlot, _proveArgs.storageValue);
+        return (
+            _proveArgs.chainID,
+            _proveArgs.contractAddr,
+            _bytesToUint(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL2Header)[8])),
+            _proveArgs.storageSlot,
+            _proveArgs.storageValue
+        );
     }
 
+    /**
+     * @notice Proves a storage value on the L1 chain that the L2 chain this contract is deployed on settles onto.
+     * @notice NB: Any historical state can be proven, so it's recommended to only rely on proving state which can be
+     * relied on to be monotonically or irrevocably changed, and to locally store any past proven states to prevent
+     * against stale replays.
+     * @dev Single view function encapsulating all three steps of the proof process: L1 view; settled L2 state; L2
+     * storage
+     * @param _args holds the ProveL1ScalarArgs
+     * @param _rlpEncodedL1Header L1 header to be verified against L1 block hash oracle to access L1 state root
+     * @param _l1StorageProof merkle proof of the storage value in the L1 _contractAddr
+     * @param _rlpEncodedContractAccount RLP encoded _contractAddr account
+     * @param _l1AccountProof proof of the _contractAddr account in the L1 world state
+     *
+     * @return chainID The chain ID of the proven counterparty chain - should be the l1 which this local chain settles
+     * onto.
+     * @return storingContract The address of the contract that stores the storage value
+     * @return blockNumber The L1 block number at which storage was read
+     * @return storageSlot The storage slot of the storage value
+     *
+     *
+     */
     function proveL1Native(
         ProveL1ScalarArgs calldata _args,
         bytes calldata _rlpEncodedL1Header,
         bytes[] calldata _l1StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l1AccountProof
-    ) external view returns (uint256 chainID, address storingContract, bytes32 storageSlot, bytes32 storageValue) {
+    )
+        external
+        view
+        returns (
+            uint256 chainID,
+            address storingContract,
+            uint256 blockNumber,
+            bytes32 storageSlot,
+            bytes32 storageValue
+        )
+    {
         // First prove the L1 view
         bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
 
@@ -163,7 +220,13 @@ contract NativeProver is Ownable, INativeProver {
         // Now prove storage against the L1 state root
         _proveL1StorageInState(_args, _l1StorageProof, _rlpEncodedContractAccount, _l1AccountProof);
 
-        return (L1_CHAIN_ID, _args.contractAddr, _args.storageSlot, _args.storageValue);
+        return (
+            L1_CHAIN_ID,
+            _args.contractAddr,
+            _bytesToUint(RLPReader.readBytes(RLPReader.readList(_rlpEncodedL1Header)[8])),
+            _args.storageSlot,
+            _args.storageValue
+        );
     }
 
     function updateL1ChainConfiguration(
