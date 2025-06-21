@@ -50,11 +50,10 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
 
     mapping(uint256 => L1Configuration) public l1ChainConfigurations;
 
+    // Bitmap from keccak256("CHAIN_ROLE_PREFIX" + owner + bool(true)) to track hashes which are irrevocable
     BitMaps.BitMap internal _irrevocableChainIDBitmap;
 
     bytes32 private constant _CHAIN_ROLE_PREFIX = keccak256("CHAIN_ROLE");
-
-    event NewIrrevocableGrantee(uint256 indexed chainID, address indexed grantee);
 
     event L2ChainConfigurationUpdated(uint256 indexed chainID, bytes32 indexed configHash);
 
@@ -67,7 +66,24 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
      * @param _chainID The chain ID to check
      */
     modifier isRevocable(uint256 _chainID) {
-        require(BitMaps.get(_irrevocableChainIDBitmap, _chainID) == false, "ChainID is irrevocable");
+        require(
+            BitMaps.get(_irrevocableChainIDBitmap, uint256(_getChainRole(_chainID, true))) == false,
+            "ChainID is irrevocable"
+        );
+
+        _;
+    }
+
+    /**
+     * @dev Modifier to ensure the caller is a grantee for a specific chain ID
+     * @param _chainID The chain ID to check
+     * @notice This modifier checks if the caller is a grantee or an irrevocable grantee for the specified chain ID.
+     * If the caller is not authorized, it reverts with "Not authorized".
+     */
+    modifier canConfigChain(uint256 _chainID) {
+        require(
+            _isGrantee(msg.sender, _chainID) || _isIrrevocableGrantee(msg.sender, _chainID), "Registry: Not authorized"
+        );
         _;
     }
 
@@ -105,8 +121,10 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
      * @param _chainID The chain ID to update the configuration for
      * @param _config The new L1 configuration to set
      */
-    function updateL1ChainConfiguration(uint256 _chainID, L1Configuration calldata _config) external {
-        require(_isGrantee(msg.sender, _chainID), "Not authorized");
+    function updateL1ChainConfiguration(uint256 _chainID, L1Configuration calldata _config)
+        external
+        canConfigChain(_chainID)
+    {
         _setL1ChainConfiguration(_chainID, _config);
     }
 
@@ -116,8 +134,10 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
      * @param _chainID The chain ID to update the configuration for
      * @param _config The new L2 configuration to set
      */
-    function updateL2ChainConfiguration(uint256 _chainID, L2Configuration calldata _config) external {
-        require(_isGrantee(msg.sender, _chainID), "Not authorized");
+    function updateL2ChainConfiguration(uint256 _chainID, L2Configuration calldata _config)
+        external
+        canConfigChain(_chainID)
+    {
         _setL2ChainConfiguration(_chainID, _config);
     }
 
@@ -139,6 +159,11 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
      */
     function grantChainIDIrrevocable(address _grantee, uint256 _chainID) external onlyOwner isRevocable(_chainID) {
         return _grantChainIDIrrevocable(_grantee, _chainID);
+    }
+
+    function revokeChainID(address _grantee, uint256 _chainID) external onlyOwner isRevocable(_chainID) {
+        // Revoke the role for the grantee
+        _revokeRole(_getChainRole(_chainID, false), _grantee);
     }
 
     /**
@@ -174,16 +199,6 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
         for (uint256 i = _startChainID; i <= _stopChainID; i++) {
             _grantChainIDIrrevocable(_grantee, i);
         }
-    }
-
-    /**
-     * @notice Checks if an address is a grantee for a specific chain ID
-     * @param _grantee The address to check
-     * @param _chainID The chain ID to check for
-     * @return bool True if the address is a grantee for the chain ID, false otherwise
-     */
-    function isGrantee(address _grantee, uint256 _chainID) external view returns (bool) {
-        return _isGrantee(_grantee, _chainID);
     }
 
     /**
@@ -223,6 +238,26 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
     }
 
     /**
+     * @notice Checks if an address is a grantee for a specific chain ID
+     * @param _grantee The address to check
+     * @param _chainID The chain ID to check for
+     * @return bool True if the address is a grantee for the chain ID, false otherwise
+     */
+    function isRevocableGrantee(address _grantee, uint256 _chainID) external view returns (bool) {
+        return _isGrantee(_grantee, _chainID);
+    }
+
+    /**
+     * @notice Checks if an address is an irrevocable grantee for a specific chain ID
+     * @param _grantee The address to check
+     * @param _chainID The chain ID to check for
+     * @return bool True if the address is an irrevocable grantee for the chain ID, false otherwise
+     */
+    function isIrrevocableGrantee(address _grantee, uint256 _chainID) external view returns (bool) {
+        return _isIrrevocableGrantee(_grantee, _chainID);
+    }
+
+    /**
      * @dev Internal function to set an L1 chain configuration
      * @param _chainID The chain ID to set configuration for
      * @param _config The L1 configuration to set
@@ -252,8 +287,7 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
      * @param _chainID The chain ID to grant permissions for
      */
     function _grantChainID(address _grantee, uint256 _chainID) internal isRevocable(_chainID) {
-        bytes32 role = _getChainRole(_chainID);
-        _grantRole(role, _grantee);
+        _grantRole(_getChainRole(_chainID, false), _grantee);
     }
 
     /**
@@ -262,10 +296,9 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
      * @param _chainID The chain ID to grant irrevocable permissions for
      */
     function _grantChainIDIrrevocable(address _grantee, uint256 _chainID) internal isRevocable(_chainID) {
-        BitMaps.set(_irrevocableChainIDBitmap, _chainID);
-        bytes32 role = _getChainRole(_chainID);
+        bytes32 role = _getChainRole(_chainID, true);
+        BitMaps.set(_irrevocableChainIDBitmap, uint256(role));
         _grantRole(role, _grantee);
-        emit NewIrrevocableGrantee(_chainID, _grantee);
     }
 
     /**
@@ -275,16 +308,26 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
      * @return bool True if the address is a grantee for the chain ID, false otherwise
      */
     function _isGrantee(address _grantee, uint256 _chainID) internal view returns (bool) {
-        bytes32 role = _getChainRole(_chainID);
-        return hasRole(role, _grantee);
+        return hasRole(_getChainRole(_chainID, false), _grantee);
+    }
+
+    /**
+     * @dev Internal function to check if an address is a grantee for a specific chain ID
+     * @param _grantee The address to check
+     * @param _chainID The chain ID to check for
+     * @return bool True if the address is a grantee for the chain ID, false otherwise
+     */
+    function _isIrrevocableGrantee(address _grantee, uint256 _chainID) internal view returns (bool) {
+        return hasRole(_getChainRole(_chainID, true), _grantee);
     }
 
     /**
      * @dev Get chain-specific role identifier based on chain ID
      * @param _chainID The chain ID to get the role for
+     * @param irrevocable The chain ID to get the role for
      * @return bytes32 The role identifier for the chain ID
      */
-    function _getChainRole(uint256 _chainID) internal pure returns (bytes32) {
-        return keccak256(abi.encode(_CHAIN_ROLE_PREFIX, _chainID));
+    function _getChainRole(uint256 _chainID, bool irrevocable) internal pure returns (bytes32) {
+        return keccak256(abi.encode(_CHAIN_ROLE_PREFIX, _chainID, irrevocable));
     }
 }
