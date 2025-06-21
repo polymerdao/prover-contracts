@@ -50,11 +50,6 @@ contract OPStackBedrockProver is ISettledStateProver {
     error BlockBeforeFinalityPeriod(uint256 _blockTimeStamp, uint256 _finalityDelayTimeStamp);
 
     /**
-     * @notice Failed storage proof verification
-     */
-    error InvalidStorageProof(bytes _key, bytes _val, bytes[] _proof, bytes32 _root);
-
-    /**
      * @notice Failed account proof verification
      */
     error InvalidAccountProof(bytes _address, bytes _data, bytes[] _proof, bytes32 _root);

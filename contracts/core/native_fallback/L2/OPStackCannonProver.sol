@@ -67,11 +67,6 @@ contract OPStackCannonProver is ISettledStateProver {
     error InvalidAccountProof(bytes _address, bytes _data, bytes[] _proof, bytes32 _root);
 
     /**
-     * @notice Failed storage proof verification
-     */
-    error InvalidStorageProof(bytes _key, bytes _val, bytes[] _proof, bytes32 _root);
-
-    /**
      * @notice RLP encoded block data hash mismatch
      */
     error InvalidRLPEncodedBlock(bytes32 _expectedBlockHash, bytes32 _calculatedBlockHash);
