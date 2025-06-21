@@ -37,5 +37,7 @@ interface IRegistry {
 
     function grantChainIDRangeIrrevocable(address _grantee, uint256 _startChainID, uint256 _stopChainID) external;
 
-    function isGrantee(address _grantee, uint256 _chainID) external view returns (bool);
+    function isRevocableGrantee(address _grantee, uint256 _chainID) external view returns (bool);
+
+    function isIrrevocableGrantee(address _grantee, uint256 _chainID) external view returns (bool);
 }
