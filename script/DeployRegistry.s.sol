@@ -56,7 +56,7 @@ contract DeployRegistryScript is Script {
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
-            l2Type: Type.OPStackCannon
+            l2Type: 2
         });
 
         L2Configuration memory opL2Config = L2Configuration({
@@ -65,7 +65,7 @@ contract DeployRegistryScript is Script {
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
-            l2Type: Type.OPStackCannon
+            l2Type: 2
         });
 
         settlementRegistry.grantChainID(deployerAddr, baseChainId);

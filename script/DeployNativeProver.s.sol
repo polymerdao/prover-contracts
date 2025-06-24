@@ -24,7 +24,7 @@ contract DeployNativeProverScript is DeployRegistryScript {
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
-            l2Type: Type.OPStackCannon
+            l2Type: 2
         });
 
         L2Configuration memory opL2Config = L2Configuration({
@@ -33,7 +33,7 @@ contract DeployNativeProverScript is DeployRegistryScript {
             storageSlots: storageSlots(),
             versionNumber: 0,
             finalityDelaySeconds: 0,
-            l2Type: Type.OPStackCannon
+            l2Type: 2
         });
 
         // // Create empty array for initial L2 configurations

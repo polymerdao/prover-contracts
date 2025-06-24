@@ -3,7 +3,7 @@ pragma solidity 0.8.15;
 
 import {Test} from "forge-std/Test.sol";
 import {Registry} from "../../contracts/core/native_fallback/L1/Registry.sol";
-import {L2Configuration, L1Configuration, Type} from "../../contracts/libs/RegistryTypes.sol";
+import {L2Configuration, L1Configuration} from "../../contracts/libs/RegistryTypes.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract RegistryTest is Test {
@@ -39,7 +39,7 @@ contract RegistryTest is Test {
             storageSlots: storageSlots,
             versionNumber: 1,
             finalityDelaySeconds: 3600,
-            l2Type: Type.OPStackBedrock
+            l2Type: 1
         });
 
         l1Config = L1Configuration({
@@ -139,7 +139,7 @@ contract RegistryTest is Test {
             storageSlots: newStorageSlots,
             versionNumber: 2,
             finalityDelaySeconds: 7200,
-            l2Type: Type.OPStackBedrock
+            l2Type: 1
         });
 
         // Calculate expected role hash
@@ -182,7 +182,7 @@ contract RegistryTest is Test {
             storageSlots: initialStorageSlots,
             versionNumber: 1,
             finalityDelaySeconds: 3600,
-            l2Type: Type.OPStackBedrock
+            l2Type: 1
         });
 
         // Setup updated configuration
@@ -200,7 +200,7 @@ contract RegistryTest is Test {
             storageSlots: updatedStorageSlots,
             versionNumber: 2,
             finalityDelaySeconds: 7200,
-            l2Type: Type.OPStackBedrock
+            l2Type: 1
         });
 
         // Calculate expected role hash
@@ -265,7 +265,7 @@ contract RegistryTest is Test {
             storageSlots: updatedStorageSlots,
             versionNumber: 3,
             finalityDelaySeconds: 10_800,
-            l2Type: Type.OPStackBedrock
+            l2Type: 1
         });
 
         bytes32 finalConfigHash = keccak256(abi.encode(finalConfig));
@@ -295,7 +295,7 @@ contract RegistryTest is Test {
             storageSlots: newStorageSlots,
             versionNumber: 2,
             finalityDelaySeconds: 7200,
-            l2Type: Type.OPStackBedrock
+            l2Type: 1
         });
 
         // Try to update without permission

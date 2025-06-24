@@ -9,7 +9,6 @@ import {OPStackCannonProver} from "../../contracts/core/native_fallback/L2/OPSta
 import {
     L2Configuration,
     L1Configuration,
-    Type,
     ProveScalarArgs,
     ProveL1ScalarArgs,
     UpdateL2ConfigArgs
@@ -139,7 +138,7 @@ contract IntegrationTest is Test {
             storageSlots: updatedBedrockSlots,
             versionNumber: 1, // Updated version
             finalityDelaySeconds: 3600, // Updated delay
-            l2Type: Type.OPStackBedrock
+            l2Type: 1
         });
 
         // Calculate expected role hash for bedrock chain ID
@@ -246,7 +245,7 @@ contract IntegrationTest is Test {
             storageSlots: bedrockSlots,
             versionNumber: 0,
             finalityDelaySeconds: 7200,
-            l2Type: Type.OPStackBedrock
+            l2Type: 1
         });
 
         // STEP 3: Test when ISettledStateProver.proveSettledState returns false
@@ -562,7 +561,7 @@ contract IntegrationTest is Test {
             storageSlots: bedrockSlots,
             versionNumber: 0,
             finalityDelaySeconds: 7200,
-            l2Type: Type.OPStackBedrock
+            l2Type: 1
         });
 
         vm.mockCall(

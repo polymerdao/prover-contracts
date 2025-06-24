@@ -19,7 +19,7 @@ pragma solidity 0.8.15;
 
 import {BitMaps} from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import {IRegistry} from "../../../interfaces/IRegistry.sol";
-import {L2Configuration, L1Configuration, Type} from "../../../libs/RegistryTypes.sol";
+import {L2Configuration, L1Configuration} from "../../../libs/RegistryTypes.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
@@ -224,7 +224,7 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
      * @param _chainID The chain ID to get configuration for
      * @return Type The L2 type from the configuration
      */
-    function getL2ConfigType(uint256 _chainID) external view returns (Type) {
+    function getL2ConfigType(uint256 _chainID) external view returns (uint8) {
         return l2ChainConfigurations[_chainID].l2Type;
     }
 

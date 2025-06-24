@@ -3,7 +3,7 @@ pragma solidity 0.8.15;
 
 import {Test} from "forge-std/Test.sol";
 import {OPStackCannonProver} from "../../contracts/core/native_fallback/L2/OPStackCannonProver.sol";
-import {L2Configuration, Type} from "../../contracts/libs/RegistryTypes.sol";
+import {L2Configuration} from "../../contracts/libs/RegistryTypes.sol";
 import {RLPReader} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPReader.sol";
 import {RLPWriter} from "@eth-optimism/contracts-bedrock/src/libraries/rlp/RLPWriter.sol";
 
@@ -33,7 +33,7 @@ contract OPStackCannonProverTest is Test {
             storageSlots: storageSlots,
             versionNumber: 0, // Typical OP Stack version
             finalityDelaySeconds: 0, // Not used in Cannon prover
-            l2Type: Type.OPStackCannon
+            l2Type: 2
         });
 
         // Mock state roots
@@ -255,7 +255,7 @@ contract OPStackCannonProverTest is Test {
                 storageSlots: storageSlots,
                 versionNumber: 0,
                 finalityDelaySeconds: 0,
-                l2Type: Type(2)
+                l2Type: 2
             }),
             hex"a92068fe36abde003800f795cd9031b737822f0305600d5aceaf65b0649de5a0",
             hex"f90270a035c63718f42b670aafbb4cf69e3452692ed0c8ad87d4b4e07a4db862ef7ca7eda01dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347944200000000000000000000000000000000000011a0a92068fe36abde003800f795cd9031b737822f0305600d5aceaf65b0649de5a0a070b74fe64cccb25023ce74131f58dd14c4e6f289d2ff8065c89813c85fc0efc0a00126ea794e7f49ca8965be6518059711401bdecb07bec4b718a763a461824754b901008400200000000000000000048000000200000022104020200000040000060088080012002400000204080020080008080201000500021000041114000024008400000061000200000080002b8120008000000000010560402000002004004000010800000200000040280009114848000004002001000041002040100201000042008040000010044004008000910001000004a100000108000400000000000002200050100000404001010000008001001000800008408200000000000000444400000248020008080803040000004000400000080000040804048900006400001000001000000000000004000501000000108480c000000010000000100000808401a0ffe58402625a008401214c9d846818db768900000000fa00000002a061e3a77036a83dd65642eefecdcc147cc39cfae3408699369157380f009329fc8800000000000000008403fdd4c1a0ec38eee6b7b945dc10e44e3e86af2f5ace867d290ab98a9edb98635c208035a78080a093138babd74e17e8fc2ec10f7f089e147c3e7e54d0881854b55600f3fc184c19a0e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
