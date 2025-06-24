@@ -161,7 +161,7 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
         return _grantChainIDIrrevocable(_grantee, _chainID);
     }
 
-    function revokeChainID(address _grantee, uint256 _chainID) external onlyOwner isRevocable(_chainID) {
+    function revokeChainID(address _grantee, uint256 _chainID) external onlyOwner {
         // Revoke the role for the grantee
         _revokeRole(_getChainRole(_chainID, false), _grantee);
     }
