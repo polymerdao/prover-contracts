@@ -161,8 +161,14 @@ contract Registry is IRegistry, Ownable, Pausable, AccessControl {
         return _grantChainIDIrrevocable(_grantee, _chainID);
     }
 
+    /**
+     * @notice Revokes _grantee's revocable role for chainID
+     * @dev Can only be called by the contract owner, and can only remove revocable roles
+     * @param _grantee The address to revoke permissions from
+     * @param _chainID The chain ID to revoke permissions for
+     */
     function revokeChainID(address _grantee, uint256 _chainID) external onlyOwner {
-        // Revoke the role for the grantee
+        // Revoke the revocable role for the grantee
         _revokeRole(_getChainRole(_chainID, false), _grantee);
     }
 
