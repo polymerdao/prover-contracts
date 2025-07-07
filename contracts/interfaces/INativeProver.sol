@@ -51,5 +51,14 @@ interface INativeProver {
         bytes[] calldata _l1StorageProof,
         bytes calldata _rlpEncodedContractAccount,
         bytes[] calldata _l1AccountProof
-    ) external view returns (uint256 chainId, address storingContract, uint256 srcBlockNumber, bytes32 storageSlot, bytes32 storageValue);
+    )
+        external
+        view
+        returns (
+            uint256 chainId,
+            address storingContract,
+            uint256 srcBlockNumber,
+            bytes32 storageSlot,
+            bytes32 storageValue
+        );
 }
