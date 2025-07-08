@@ -26,16 +26,16 @@ import {ICrossL2ProverV2} from "../../interfaces/ICrossL2ProverV2.sol";
  */
 contract CrossL2Executor {
     ICrossL2ProverV2 public immutable prover;
-    
+
     event ValidationSuccess(uint32 chainId, address emittingContract, bytes topics, bytes unindexedData);
     event Ping();
-    
+
     error TopicsDoNotMatch(bytes expected, bytes actual);
-    
+
     constructor(address _prover) {
         prover = ICrossL2ProverV2(_prover);
     }
-    
+
     /**
      * @notice Execute validateEvent with topic comparison
      * @param proof The proof bytes to validate
@@ -43,18 +43,18 @@ contract CrossL2Executor {
      * @dev Calls validateEvent on the prover contract and compares returned topics with expectedTopics
      *      If topics match, emits ValidationSuccess event. If not, reverts with TopicsDoNotMatch.
      */
-    function executeValidateEvent(bytes calldata proof, bytes calldata expectedTopics) 
-        external {
-        (uint32 chainId, address emittingContract, bytes memory topics, bytes memory unindexedData) = prover.validateEvent(proof);
-        
+    function executeValidateEvent(bytes calldata proof, bytes calldata expectedTopics) external {
+        (uint32 chainId, address emittingContract, bytes memory topics, bytes memory unindexedData) =
+            prover.validateEvent(proof);
+
         // Compare topics
         if (keccak256(topics) != keccak256(expectedTopics)) {
             revert TopicsDoNotMatch(expectedTopics, topics);
         }
-        
+
         emit ValidationSuccess(chainId, emittingContract, topics, unindexedData);
     }
-    
+
     /**
      * @notice Simple ping function to emit success event
      * @dev Can be used for basic E2E testing without topic comparison
