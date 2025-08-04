@@ -10,7 +10,7 @@ export default defineConfig({
     "src/utils/io.ts",
     "src/utils/constants.ts",
     "src/evm/chain.ts",
-    "src/evm/contracts/*.ts",
+    "src/evm/contracts/index.ts",
     "src/evm/schemas/*.ts",
     "src/scripts/update-contracts-script.ts",
     "src/scripts/verify-contract-script.ts",
