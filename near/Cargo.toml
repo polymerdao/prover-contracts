@@ -1,0 +1,34 @@
+[package]
+name = "cross-l2-prover-near"
+version = "0.1.0"
+authors = ["Polymer Labs"]
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+near-sdk = "5.5.0"
+
+# Cryptographic dependencies
+sha2 = "0.10"
+sha3 = "0.10"
+k256 = { version = "0.13", default-features = false, features = ["ecdsa", "std"] }
+hex = "0.4"
+
+# Pin base64ct to avoid edition2024 requirement
+base64ct = "=1.6.0"
+
+[dev-dependencies]
+near-sdk = { version = "5.5.0", features = ["unit-testing"] }
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true
+
+[profile.dev]
+panic = "abort"
