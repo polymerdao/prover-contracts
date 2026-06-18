@@ -55,7 +55,7 @@ contract RegistryTest is Test {
         Registry.InitialL1Configuration[] memory initialL1Configs = new Registry.InitialL1Configuration[](1);
         initialL1Configs[0] = Registry.InitialL1Configuration({chainID: chainID, config: l1Config});
 
-        vm.prank(owner);
+        // No prank needed: Registry sets its owner from the constructor arg, not msg.sender.
         registry = new Registry(owner, initialL2Configs, initialL1Configs);
     }
 
