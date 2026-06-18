@@ -24,6 +24,12 @@ CONTRACT_JSON_FILES = $(filter-out $(CONTRACT_ABI_FILES),$(CONTRACT_BOTH_FILES))
 test:
 	forge test
 
+# Deep fuzz + invariant campaign. Runs the full suite with cranked run counts; used on every PR
+# (Foundry CI workflow) and locally. ~40s total, so no separate nightly job needed.
+.PHONY: fuzz
+fuzz:
+	FOUNDRY_FUZZ_RUNS=50000 FOUNDRY_INVARIANT_RUNS=5000 FOUNDRY_INVARIANT_DEPTH=200 forge test -vvv
+
 .PHONY: build-contracts
 build-contracts:
 	echo "Building contracts"; \
@@ -40,7 +46,7 @@ build-contracts:
 # of other contract methods and thus bindings for them do not need to be generated
 # as they are not publicly exposed, but rather used within the contract itself.
 #
-# 	ABIGen issue ref: https://github.com/ethereum/solidity/issues/9278
+#	ABIGen issue ref: https://github.com/ethereum/solidity/issues/9278
 .PHONY: bindings-gen-go
 bindings-gen-go: build-contracts
 	echo "Generating Go Prover Contracts bindings..."; \
