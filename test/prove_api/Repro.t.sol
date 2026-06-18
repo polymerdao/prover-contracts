@@ -38,7 +38,6 @@ contract ContractDebugReproTest is Test {
 
     function test_devnet_repro() public {
         vm.skip(true); // Comment this out when running tests!
-        SequencerSignatureVerifier sigVerifier = new SequencerSignatureVerifier(devnetSigner, devnetPeptideClientId);
 
         CrossL2ProverV2 crossProver = new CrossL2ProverV2("proof_api", devnetSigner, devnetPeptideClientId);
         // Do event call using proof
@@ -47,9 +46,6 @@ contract ContractDebugReproTest is Test {
 
     function test_testnet_repro() public {
         vm.skip(true); // Comment this out when running tests!
-
-        // Comment below out
-        SequencerSignatureVerifier sigVerifier = new SequencerSignatureVerifier(testnetSigner, testnetPeptideClientId);
 
         CrossL2ProverV2 crossProver = new CrossL2ProverV2("proof_api", testnetSigner, testnetPeptideClientId);
         // Do event call using proof
