@@ -48,7 +48,7 @@ contract RegistryInvariantTest is Test {
         Registry.InitialL2Configuration[] memory l2 = new Registry.InitialL2Configuration[](0);
         Registry.InitialL1Configuration[] memory l1 = new Registry.InitialL1Configuration[](0);
 
-        vm.prank(OWNER);
+        // No prank needed: Registry sets its owner from the constructor arg, not msg.sender.
         registry = new Registry(OWNER, l2, l1);
 
         vm.prank(OWNER);
