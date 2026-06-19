@@ -20,22 +20,28 @@ CONTRACT_ABI_FILES = $(foreach pattern,$(CONTRACT_ABI_PATTERNS),$(wildcard $(pat
 CONTRACT_BOTH_FILES = $(foreach pattern,$(CONTRACT_JSON_PATTERNS),$(wildcard $(pattern)))
 CONTRACT_JSON_FILES = $(filter-out $(CONTRACT_ABI_FILES),$(CONTRACT_BOTH_FILES))
 
+# Two profiles: default (deploy recipe, via_ir=false) covers prove_api; native (via_ir=true) covers
+# native_fallback. Run BOTH so nothing is missed -- neither profile compiles the whole repo alone.
 .PHONY: test
 test:
 	forge test
+	FOUNDRY_PROFILE=native forge test
 
-# Deep fuzz + invariant campaign. Runs the full suite with cranked run counts; used on every PR
-# (Foundry CI workflow) and locally. ~40s total, so no separate nightly job needed.
+# Deep fuzz + invariant campaign. Runs the full suite with cranked run counts under both profiles;
+# used on every PR (Foundry CI workflow) and locally. No separate nightly job needed.
 .PHONY: fuzz
 fuzz:
 	FOUNDRY_FUZZ_RUNS=50000 FOUNDRY_INVARIANT_RUNS=5000 FOUNDRY_INVARIANT_DEPTH=200 forge test -vvv
+	FOUNDRY_PROFILE=native FOUNDRY_FUZZ_RUNS=50000 FOUNDRY_INVARIANT_RUNS=5000 FOUNDRY_INVARIANT_DEPTH=200 forge test -vvv
 
+# Bindings need every ABI, so build under the native profile (via_ir=true compiles all contracts;
+# the default profile can't compile native_fallback).
 .PHONY: build-contracts
 build-contracts:
 	echo "Building contracts"; \
 	rm -frd ./out; \
 	forge install; \
-	forge build --skip test script -C contracts \
+	FOUNDRY_PROFILE=native forge build --skip test script -C contracts \
 		--lib-paths lib \
 		--extra-output-files abi --force
 

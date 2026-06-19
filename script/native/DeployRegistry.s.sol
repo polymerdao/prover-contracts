@@ -2,9 +2,9 @@
 pragma solidity 0.8.15;
 
 import "forge-std/Script.sol";
-import "../contracts/core/native_fallback/L2/NativeProver.sol";
-import "../contracts/core/native_fallback/L1/Registry.sol";
-import "../contracts/libs/RegistryTypes.sol";
+import "../../contracts/core/native_fallback/L2/NativeProver.sol";
+import "../../contracts/core/native_fallback/L1/Registry.sol";
+import "../../contracts/libs/RegistryTypes.sol";
 
 contract DeployRegistryScript is Script {
     uint256 constant _STARTING_L2_MAPPING_SLOT = 2;
