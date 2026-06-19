@@ -103,6 +103,10 @@ A release for tag `vX.Y.Z` contains, per deployable contract (prover scope — s
   there's no embedded metadata hash, so explorers verify from the standard-JSON source rather than
   by an automatic metadata match.
 - `manifest.json` — see below.
+- `deploy.sh` — the **self-contained** CREATE2 deploy script, shipped *with* the release so each
+  version deploys exactly as it did when cut (no repo checkout, no script drift). It reads the
+  `creationCode.hex` next to it.
+- `SHA256SUMS` — download-integrity checksums over all of the above.
 
 `manifest.json` (env-independent; **no addresses**, since salt + args are runtime inputs):
 
@@ -145,21 +149,31 @@ changes the source of truth.
 
 ## Deploy workflow (`deploy vX.Y.Z → chain`)
 
-Bytes-in, no recompile:
+The deploy logic ships *inside* the release as `deploy.sh`, so infra never checks out this repo —
+it downloads the release for `vX.Y.Z` and runs that version's own script:
 
-1. Download the release artifact for `vX.Y.Z`; verify against `SHA256SUMS`.
-2. Build `initCode = creationCode ++ abi.encode("proof_api", $SEQUENCER, $PEPTIDE_CHAIN_ID)`.
-3. Compute predicted address `keccak256(0xff ++ factory ++ $CREATE2_SALT ++ keccak256(initCode))`.
-   If `$EXPECTED_ADDRESS` is provided, **assert it matches** and abort otherwise.
-4. **Factory presence:** require the canonical CREATE2 factory `0x4e59…4956C` on the chain
-   (the Arachnid deployer, `code.length == 69`). If absent, deploy it first (its keyless
-   pre-signed tx) — never silently fall back to a nonce-based `new` (that yields a different,
-   non-deterministic address).
-5. If code already exists at the predicted address, skip.
-6. Deploy by sending `$CREATE2_SALT ++ initCode` to the factory
-   (`cast send 0x4e59…4956C 0x<salt><initCode>`), **not** via a recompiling `forge script`.
-7. Assert deployed address == predicted; verify on the chain's explorer using the bundled
-   standard-JSON.
+```sh
+gh release download vX.Y.Z -D release
+(cd release && sha256sum -c SHA256SUMS)            # verify integrity
+RPC_URL=… SEQUENCER_PUB_KEY=… PEPTIDE_CHAIN_ID=… CREATE2_SALT=… \
+  DEPLOYER_PRIVATE_KEY=… EXPECTED_ADDRESS=… bash release/deploy.sh
+```
+
+`release/deploy.sh` (bytes-in, never recompiles):
+
+1. Reads the frozen `creationCode.hex` next to it; builds
+   `initCode = creationCode ++ abi.encode("proof_api", $SEQUENCER_PUB_KEY, $PEPTIDE_CHAIN_ID)`.
+2. Computes the predicted CREATE2 address; if `$EXPECTED_ADDRESS` is set, asserts it matches and
+   aborts otherwise.
+3. **Hard-stops** if the canonical factory `0x4e59…4956C` is absent — never falls back to a
+   nonce-based deploy (which would yield a different, non-deterministic address). Deploy the factory
+   first (its keyless pre-signed tx) on chains that lack it.
+4. Skips if code already exists at the predicted address.
+5. Deploys via `cast send <factory> <salt ++ initCode>` and asserts code landed at the predicted
+   address. Verify on the chain's explorer using the bundled standard-JSON.
+
+Because the script is versioned with the artifact, an old release keeps deploying the same way even
+as `main` evolves.
 
 ## Inputs (env contract between infra and this repo)
 
