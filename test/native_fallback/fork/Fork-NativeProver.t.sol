@@ -5,7 +5,7 @@ import "forge-std/Script.sol";
 import {Test} from "forge-std/Test.sol";
 import "../../../contracts/core/native_fallback/L2/NativeProver.sol";
 import "../../../contracts/libs/RegistryTypes.sol";
-import "../../../script/DeployRegistry.s.sol";
+import "../../../script/native/DeployRegistry.s.sol";
 
 contract DeployNativeProverScript is DeployRegistryScript, Test {
     NativeProver nativeProver;

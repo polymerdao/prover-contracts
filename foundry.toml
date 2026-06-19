@@ -1,5 +1,20 @@
+# Default profile is the metadata-free deploy recipe for the going-forward release line (matches
+# infra/contract-deploys-v2 / ProverV2): bytecode_hash="none" + cbor_metadata=false strip the
+# source hash from the bytecode, so comments/formatting NEVER change the CREATE2 address -- only a
+# real logic (opcode) change does. These settings are part of the deployed artifact; changing any
+# of them moves every future address, so don't touch them without a deliberate re-verify.
+# NOTE: the existing v1 addresses (0x85e9…, 0x95cc…) were deployed with bytecode_hash="ipfs" and are
+# NOT reproduced by this profile. Adopting this recipe is a deliberate one-time relaunch (TBD).
+# native_fallback contracts need via_ir and build/test under [profile.native]; `make test` /
+# `make fuzz` cover both.
 [profile.default]
-auto_detect_solc = true
+solc = "0.8.15"
+via_ir = false
+optimizer = true
+optimizer_runs = 200
+evm_version = "london"
+bytecode_hash = "none"
+cbor_metadata = false
 src = 'contracts'
 out = 'out'
 libs = ['lib']
@@ -7,11 +22,23 @@ test = 'test'
 cache_path  = 'forge-cache'
 gas_reports = ['*']
 fs_permissions = [{ access = 'read', path = './test/prove_api/payload'}, { access = 'read', path = './out'}]
-via_ir = true
-optimizer = true
-optimizer_runs = 200
-# Suppress warnings from specific files
+skip = [
+    "contracts/core/native_fallback/**",
+    "contracts/libs/ProverHelpers.sol",
+    "test/native_fallback/**",
+    "script/native/**", # native deploy scripts target native_fallback contracts (need via_ir)
+]
+# Suppress warnings from specific files (applies under [profile.native], which compiles Registry)
 ignored_warnings_from = ["contracts/core/native_fallback/L1/Registry.sol"]
+
+# native_fallback contracts (NativeProver, Registry, OPStack provers) require via_ir to compile.
+# Inherits every setting from [profile.default] and only flips via_ir on, so the compile recipe is
+# otherwise identical. Built/tested via FOUNDRY_PROFILE=native (see Makefile).
+[profile.native]
+via_ir = true
+# Compiles all contracts (so `make build-contracts` can emit every ABI), but only runs the
+# native_fallback tests -- prove_api tests run under [profile.default].
+skip = ["test/prove_api/**"]
 
 # Fast defaults for local `make test`. The deep campaign (`make fuzz`, run on every PR) overrides
 # these run counts via FOUNDRY_FUZZ_RUNS / FOUNDRY_INVARIANT_RUNS env vars -- see the Makefile.
