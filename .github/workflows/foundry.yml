@@ -24,10 +24,10 @@ jobs:
           version: stable
 
       - name: Check contract sizes (prove_api, default profile)
-        run: forge build contracts/core/prove_api --sizes --deny-warnings
+        run: make build-prover
 
       - name: Check contract sizes (native_fallback, native profile)
-        run: FOUNDRY_PROFILE=native forge build contracts/core/native_fallback --sizes --deny-warnings
+        run: make build-native
 
       - name: Tests (incl. deep fuzz + invariant campaign, both profiles)
         run: make fuzz

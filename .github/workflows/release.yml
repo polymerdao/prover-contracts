@@ -1,6 +1,7 @@
 name: Release
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'v*.*.*'
@@ -22,24 +23,19 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      # Note: run this before we generate artifacts, otherwise the release will include redundant contracts. 
-      - name: Contract Unit Tests
-        run: forge test
+      - name: Contract unit tests (both profiles)
+        run: make test
 
-      - name: Check contract sizes
-        run: rm -rf out release-artifacts && forge build --force contracts/core --sizes --deny-warnings
-
-      - name: Save compiled contracts and ABIs
-        if: success()
-        run: |
-          mkdir -p release-artifacts
-          cp -r out release-artifacts
+      - name: Build & package deploy artifacts
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: make release
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: compiled-contracts
-          path: release-artifacts
+          name: deploy-artifacts
+          path: release
 
   release:
     runs-on: ubuntu-latest
@@ -57,17 +53,17 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: compiled-contracts
-          path: ./release-artifacts
+          name: deploy-artifacts
+          path: ./release
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: release-artifacts/**
+          files: release/**
           generate_release_notes: true
           draft: false
-          prerelease: false
+          prerelease: true
           token: ${{ secrets.RELEASE_TOKEN }}
 
   registries:
