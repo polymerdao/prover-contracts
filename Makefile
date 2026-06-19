@@ -34,6 +34,18 @@ fuzz:
 	FOUNDRY_FUZZ_RUNS=50000 FOUNDRY_INVARIANT_RUNS=5000 FOUNDRY_INVARIANT_DEPTH=200 forge test -vvv
 	FOUNDRY_PROFILE=native FOUNDRY_FUZZ_RUNS=50000 FOUNDRY_INVARIANT_RUNS=5000 FOUNDRY_INVARIANT_DEPTH=200 forge test -vvv
 
+.PHONY: build-prover
+build-prover:
+	forge build --force contracts/core/prove_api --sizes --deny warnings
+
+.PHONY: build-native
+build-native:
+	FOUNDRY_PROFILE=native forge build contracts/core/native_fallback --sizes --deny warnings
+
+.PHONY: release
+release: build-prover
+	./script/package-release.sh
+
 # Bindings need every ABI, so build under the native profile (via_ir=true compiles all contracts;
 # the default profile can't compile native_fallback).
 .PHONY: build-contracts
