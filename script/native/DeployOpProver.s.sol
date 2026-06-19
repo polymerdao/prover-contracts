@@ -2,7 +2,7 @@
 pragma solidity 0.8.15;
 
 import "forge-std/Script.sol";
-import "../contracts/core/native_fallback/L2/OPStackCannonProver.sol";
+import "../../contracts/core/native_fallback/L2/OPStackCannonProver.sol";
 
 contract DeployNativeProverScript is Script {
     function run() external returns (address nativeProver) {

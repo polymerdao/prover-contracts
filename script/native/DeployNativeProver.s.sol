@@ -2,8 +2,8 @@
 pragma solidity 0.8.15;
 
 import "forge-std/Script.sol";
-import "../contracts/core/native_fallback/L2/NativeProver.sol";
-import "../contracts/libs/RegistryTypes.sol";
+import "../../contracts/core/native_fallback/L2/NativeProver.sol";
+import "../../contracts/libs/RegistryTypes.sol";
 import "./DeployRegistry.s.sol";
 
 contract DeployNativeProverScript is DeployRegistryScript {
