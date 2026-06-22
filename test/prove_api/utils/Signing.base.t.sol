@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
 import {Base} from "./Base.t.sol";
-import "../../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
 import {RLPWriter} from "optimism/libraries/rlp/RLPWriter.sol";
 
 // The `header` field is a list of RLP encoded L1 header fields. Both stateRoot and number are not
@@ -26,8 +25,6 @@ contract SigningBase is Base {
     bytes32 hashToSign;
     bytes32 domain; // Domain will be empty so we can leave it as initialized to default 0x 32 bytes
 
-    SequencerSignatureVerifier public sigVerifier;
-
     L1Header childl1Block; // Child block, represents the l1 origin of dest chain when peptide catches up to ancestor L1
         // block
     L1Header ancestorL1Block; // Ancestor block, represents the l1 origin of dest chain when peptide wants to submit a
@@ -37,7 +34,6 @@ contract SigningBase is Base {
     constructor() {
         (sequencer, sequencerPkey) = makeAddrAndKey("alice");
         (, notSequencerPkey) = makeAddrAndKey(unicode"bob😈");
-        sigVerifier = new SequencerSignatureVerifier(sequencer, PEPTIDE_CHAIN_ID);
 
         // generate the channel_proof.hex file with the following command:
         // cd test-data-generator && go run ./cmd/ --type l1 > ../test/payload/l1_block_0x4df537.hex

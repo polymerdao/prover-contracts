@@ -4,9 +4,7 @@ pragma solidity ^0.8.0;
 import "forge-std/Test.sol";
 import {SigningBase} from "./utils/Signing.base.t.sol";
 import {CrossL2ProverV2} from "../../contracts/core/prove_api/CrossL2ProverV2.sol";
-import {SequencerSignatureVerifier} from "../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
 import {ReceiptParser} from "../../contracts/libs/ReceiptParser.sol";
-import {ISignatureVerifier} from "../../contracts/interfaces/ISignatureVerifier.sol";
 import {MerkleTrie} from "optimism/libraries/trie/MerkleTrie.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 
