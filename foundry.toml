@@ -51,6 +51,11 @@ runs = 256
 depth = 50
 fail_on_revert = false
 
+[lint]
+# Unused single-file mock export; it re-bundles OpenZeppelin code whose 1<<x shifts and length
+# truncations trip incorrect-shift / unsafe-typecast as false positives. Nothing imports it.
+ignore = ["contracts/mocks/MockCrossL2ProverV2-Flattened.sol"]
+
 [fmt]
 wrap_comments = true
 number_underscore = "thousands"
