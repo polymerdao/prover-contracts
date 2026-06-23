@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import {console2} from "forge-std/Test.sol";
 import {CrossL2ProverV2} from "../../contracts/core/prove_api/CrossL2ProverV2.sol";
 
 // This suite can be used to reproduce any contract-related issues from our live devnet or testnet versions.
