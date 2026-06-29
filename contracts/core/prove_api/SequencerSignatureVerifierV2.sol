@@ -27,7 +27,7 @@ import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
  */
 contract SequencerSignatureVerifierV2 {
     address public immutable SEQUENCER; // The trusted sequencer address that polymer p2p signer holds the private key
-        // to
+    // to
     bytes32 public immutable CHAIN_ID; // Chain ID of the L2 chain for which the sequencer signs over
 
     error InvalidSequencerSignature();
@@ -46,9 +46,9 @@ contract SequencerSignatureVerifierV2 {
     {
         if (
             ECDSA.recover(
-                keccak256(bytes.concat(bytes32(0), CHAIN_ID, keccak256(abi.encodePacked(appHash, peptideHeight)))),
-                bytes(abi.encodePacked(r, s, v))
-            ) != SEQUENCER
+                    keccak256(bytes.concat(bytes32(0), CHAIN_ID, keccak256(abi.encodePacked(appHash, peptideHeight)))),
+                    bytes(abi.encodePacked(r, s, v))
+                ) != SEQUENCER
         ) {
             revert InvalidSequencerSignature();
         }

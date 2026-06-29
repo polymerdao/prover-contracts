@@ -109,16 +109,14 @@ contract OPStackCannonProver is ISettledStateProver {
             FaultDisputeGameProofData memory faultDisputeGameProofData
         ) = abi.decode(_proof, (DisputeGameFactoryProofData, FaultDisputeGameProofData));
 
-        if (
-            !_proveWorldStateCannon(
+        if (!_proveWorldStateCannon(
                 _chainConfig,
                 _l2WorldStateRoot,
                 _rlpEncodedL2Header,
                 disputeGameFactoryProofData,
                 faultDisputeGameProofData,
                 _l1WorldStateRoot
-            )
-        ) {
+            )) {
             revert InvalidCannonProof(_l2WorldStateRoot, _l1WorldStateRoot);
         }
         return true;
@@ -153,7 +151,7 @@ contract OPStackCannonProver is ISettledStateProver {
             _chainConfig.versionNumber,
             _chainConfig.addresses[0], // For OPStackCannon the factory address is stored in the first address slot
             _chainConfig.storageSlots[0], // For OPStackCannon the disputeGameFactoryListSlot is the 1st storage slot in
-                // the config
+            // the config
             _l2WorldStateRoot,
             _disputeGameFactoryProofData,
             _l1WorldStateRoot
@@ -165,7 +163,7 @@ contract OPStackCannonProver is ISettledStateProver {
             _chainConfig.storageSlots[1], // For OPStackCannon faultDisputeGameRootClaimSlot is the 2nd storage slot in
             // the config
             _chainConfig.storageSlots[2], // For OPStackCannon faultDisputeGameStatusSlot is the 3rd storage slot in the
-                // config
+            // config
             _faultDisputeGameProofData,
             _l1WorldStateRoot
         );

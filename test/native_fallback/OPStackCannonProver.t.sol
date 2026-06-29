@@ -45,7 +45,7 @@ contract OPStackCannonProverTest is Test {
 
         // Create a mock RLP encoded L2 header with expected hash
         rlpEncodedL2Header = abi.encodePacked(latestBlockHash); // Simple mock that will pass keccak256(encoded) ==
-            // expected
+        // expected
     }
 
     function _createMockDisputeGameFactoryProofData()
@@ -244,7 +244,7 @@ contract OPStackCannonProverTest is Test {
         uint256[] memory storageSlots = new uint256[](3);
         storageSlots[0] = 104;
         storageSlots[1] =
-            29_102_676_481_673_041_902_632_991_033_461_445_430_619_272_659_676_223_336_789_171_408_008_386_403_025;
+        29_102_676_481_673_041_902_632_991_033_461_445_430_619_272_659_676_223_336_789_171_408_008_386_403_025;
         storageSlots[2] = 0;
 
         address[] memory addresses = new address[](1);

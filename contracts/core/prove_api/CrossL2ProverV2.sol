@@ -31,7 +31,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     event Ping(); // Event to signal the initialization of the chain
 
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
-        // for cheap on-chain use
+    // for cheap on-chain use
 
     string public clientType;
 
@@ -235,6 +235,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         return (bytes32(proof[:32]), uint64(bytes8(proof[101:109])), proof[32:97]);
     }
 
+    // forgefmt: disable-start
     /**
      * @notice Verifies polymer state through an iavl proof. Useful for proving wether a given value exists in an iavl
      * tree of the given root
@@ -260,6 +261,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
         pure
         virtual
     {
+        // forgefmt: disable-end
         uint256 path0start = uint256(uint8(proof[1]));
         // Note: proof[2:path0start] includes both proof leaf prefix and the key length encoded as a protobuf varint
         bytes32 prehash = sha256(abi.encodePacked(proof[2:path0start], key, hex"20", sha256(abi.encodePacked(value))));

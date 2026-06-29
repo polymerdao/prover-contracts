@@ -26,7 +26,7 @@ contract SigningBase is Base {
     bytes32 domain; // Domain will be empty so we can leave it as initialized to default 0x 32 bytes
 
     L1Header childl1Block; // Child block, represents the l1 origin of dest chain when peptide catches up to ancestor L1
-        // block
+    // block
     L1Header ancestorL1Block; // Ancestor block, represents the l1 origin of dest chain when peptide wants to submit a
 
     // client update but is behind, so we need to checkpoint this block

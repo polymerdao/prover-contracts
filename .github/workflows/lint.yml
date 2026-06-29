@@ -25,6 +25,8 @@ jobs:
 
       - name: Setup Foundry
         uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
 
       - name: Install ABIGen
         run: |
