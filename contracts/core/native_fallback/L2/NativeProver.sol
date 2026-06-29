@@ -136,16 +136,14 @@ contract NativeProver is Ownable, INativeProver {
         bytes32 _l1StateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
 
         // Use the L1 state root to prove the L2 configuration
-        if (
-            !_proveL2Configuration(
+        if (!_proveL2Configuration(
                 _proveArgs.chainID,
                 _updateArgs.config,
                 _updateArgs.l1StorageProof,
                 _updateArgs.rlpEncodedRegistryAccountData,
                 _updateArgs.l1RegistryProof,
                 _l1StateRoot
-            )
-        ) {
+            )) {
             revert InvalidL2ConfigurationProof(_proveArgs.chainID, _updateArgs.config);
         }
 
@@ -237,11 +235,9 @@ contract NativeProver is Ownable, INativeProver {
         bytes calldata _rlpEncodedL1Header
     ) external {
         bytes32 l1WorldStateRoot = _validateL1BlockAndGetStateRoot(_rlpEncodedL1Header);
-        if (
-            !_proveL1Configuration(
+        if (!_proveL1Configuration(
                 _config, _l1StorageProof, _rlpEncodedRegistryAccountData, _l1RegistryProof, l1WorldStateRoot
-            )
-        ) {
+            )) {
             revert InvalidL1ConfigurationProof(_config);
         }
         L1_CONFIGURATION = _config;
@@ -352,11 +348,9 @@ contract NativeProver is Ownable, INativeProver {
         bytes memory _settledStateProof
     ) internal view {
         // Call out to the configured prover to verify proof of the settled L2 state root
-        if (
-            !ISettledStateProver(conf.prover).proveSettledState(
-                conf, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _settledStateProof
-            )
-        ) {
+        if (!ISettledStateProver(conf.prover)
+                .proveSettledState(conf, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _settledStateProof))
+        {
             revert InvalidSettledStateProof(_chainID, _l2WorldStateRoot);
         }
     }
@@ -370,11 +364,10 @@ contract NativeProver is Ownable, INativeProver {
         bytes memory _settledStateProof
     ) internal view {
         // Call out to the configured prover to verify proof of the settled L2 state root
-        if (
-            !ISettledStateProver(_conf.prover).proveSettledState(
-                _conf, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _settledStateProof
-            )
-        ) {
+        if (!ISettledStateProver(_conf.prover)
+                .proveSettledState(
+                    _conf, _l2WorldStateRoot, _rlpEncodedL2Header, _l1WorldStateRoot, _settledStateProof
+                )) {
             revert InvalidSettledStateProof(_chainID, _l2WorldStateRoot);
         }
     }

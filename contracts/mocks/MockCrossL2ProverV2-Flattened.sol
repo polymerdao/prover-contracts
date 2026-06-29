@@ -25,8 +25,7 @@ enum LightClientType {
     SequencerLightClient, // Our native sequencer light client, which does not check l1 origin check to cut down on
     // latency
     ReOrgResistantSequencerLightClient // Our native sequencer light client, which checks for l1 origin checks to be
-        // re-org resistant
-
+    // re-org resistant
 }
 
 interface IClientUpdates {
@@ -118,7 +117,6 @@ library Math {
         Down, // Toward negative infinity
         Up, // Toward infinity
         Zero // Toward zero
-
     }
 
     /**
@@ -707,8 +705,7 @@ library RLPReader {
             // We don't need to check itemCount < out.length explicitly because Solidity already
             // handles this check on our behalf, we'd just be wasting gas.
             out_[itemCount] = RLPItem({
-                length: itemLength + itemOffset,
-                ptr: MemoryPointer.wrap(MemoryPointer.unwrap(_in.ptr) + offset)
+                length: itemLength + itemOffset, ptr: MemoryPointer.wrap(MemoryPointer.unwrap(_in.ptr) + offset)
             });
 
             itemCount += 1;
@@ -1162,7 +1159,6 @@ library ECDSA {
         InvalidSignatureLength,
         InvalidSignatureS,
         InvalidSignatureV // Deprecated in v4.8
-
     }
 
     function _throwError(RecoverError error) private pure {
@@ -1387,7 +1383,7 @@ library ECDSA {
  */
 contract SequencerSignatureVerifierV2 {
     address public immutable SEQUENCER; // The trusted sequencer address that polymer p2p signer holds the private key
-        // to
+    // to
     bytes32 public immutable CHAIN_ID; // Chain ID of the L2 chain for which the sequencer signs over
 
     error InvalidSequencerSignature();
@@ -1406,9 +1402,9 @@ contract SequencerSignatureVerifierV2 {
     {
         if (
             ECDSA.recover(
-                keccak256(bytes.concat(bytes32(0), CHAIN_ID, keccak256(abi.encodePacked(appHash, peptideHeight)))),
-                bytes(abi.encodePacked(r, s, v))
-            ) != SEQUENCER
+                    keccak256(bytes.concat(bytes32(0), CHAIN_ID, keccak256(abi.encodePacked(appHash, peptideHeight)))),
+                    bytes(abi.encodePacked(r, s, v))
+                ) != SEQUENCER
         ) {
             revert InvalidSequencerSignature();
         }
@@ -1435,7 +1431,7 @@ contract SequencerSignatureVerifierV2 {
 
 contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     LightClientType public constant LIGHT_CLIENT_TYPE = LightClientType.SequencerLightClient; // Stored as a constant
-        // for cheap on-chain use
+    // for cheap on-chain use
 
     string public clientType;
 
@@ -1533,11 +1529,7 @@ contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     layer-0: prefix, varint(key.length), key, varint(hash(value).length), hash(value)
     path-n: [header: suffix start (rel) (1B), suffix end (rel) (1B)],  path[n].prefix, path[n].suffix
     */
-    function verifyMembership(bytes32 root, bytes memory key, bytes32 value, bytes calldata proof)
-        public
-        pure
-        virtual
-    {
+    function verifyMembership(bytes32 root, bytes memory key, bytes32 value, bytes calldata proof) public pure virtual {
         uint256 path0start = uint256(uint8(proof[1]));
         bytes32 prehash = sha256(abi.encodePacked(proof[2:path0start], key, hex"20", sha256(abi.encodePacked(value))));
         uint256 offset = path0start;
