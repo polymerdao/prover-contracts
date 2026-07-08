@@ -44,10 +44,15 @@ export function CommaOrWhitespaceStrs(value: string) {
  * Arg/Opt: an integer. NaN causes error.
  */
 export function Int(value: string) {
-  const parsed = parseInt(value);
-  if (isNaN(parsed)) {
+  if (!/^-?\d+$/.test(value)) {
     throw new InvalidArgumentError(`invalid integer: ${value}`);
   }
+
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed)) {
+    throw new InvalidArgumentError(`invalid integer: ${value}`);
+  }
+
   return parsed;
 }
 
