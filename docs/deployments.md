@@ -197,10 +197,6 @@ what keeps the canonical address stable and predictable. This repo never hardcod
   `default` profile). Freeze and publish both.
 - **Deploy (v1):** `CrossL2ProverV2` only. The executor artifact ships in the release but its
   deployment is deferred (TBD).
-- **Out of scope (for now):** native_fallback contracts (`NativeProver`, `Registry`, OPStack
-  provers). They need `via_ir` (the `native` profile) and there's a chance they're removed.
-  TBD. If kept, they need their own parity verification (their deployed recipe is unconfirmed)
-  before joining the release.
 
 ## Migration from infra
 
@@ -223,8 +219,6 @@ what keeps the canonical address stable and predictable. This repo never hardcod
 ## Still TBD
 
 1. **Executor deployment** — when/whether to deploy it (its artifact is already frozen per release).
-2. **Native_fallback** — keep or remove; if kept, parity-verify the deployed recipe and add the
-   `native` profile to the release build.
-3. **Non-canonical chains** (MEGAETH, REDBELLY, TRON) — policy for chains lacking the canonical
+2. **Non-canonical chains** (MEGAETH, REDBELLY, TRON) — policy for chains lacking the canonical
    factory: deploy the factory first to land the canonical address, or keep deliberate per-chain
    overrides in infra.

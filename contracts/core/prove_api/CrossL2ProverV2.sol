@@ -25,7 +25,6 @@ import {SequencerSignatureVerifierV2} from "./SequencerSignatureVerifierV2.sol";
 /**
  * @title CrossL2ProverV2
  * @notice A contract that validates cross-chain event proofs from Polymer's prove API
- * @notice Use NativeProver as a fallback.
  */
 contract CrossL2ProverV2 is SequencerSignatureVerifierV2, ICrossL2ProverV2 {
     event Ping(); // Event to signal the initialization of the chain

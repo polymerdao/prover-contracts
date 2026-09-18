@@ -23,11 +23,8 @@ jobs:
         with:
           version: v1.8.3
 
-      - name: Check contract sizes (prove_api, default profile)
+      - name: Check contract sizes (prove_api)
         run: make build-prover
 
-      - name: Check contract sizes (native_fallback, native profile)
-        run: make build-native
-
-      - name: Tests (incl. deep fuzz + invariant campaign, both profiles)
+      - name: Tests (incl. deep fuzz + invariant campaign)
         run: make fuzz
