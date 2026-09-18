@@ -21,7 +21,7 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: stable
+          version: v1.8.3
 
       - name: Check contract sizes (prove_api, default profile)
         run: make build-prover
