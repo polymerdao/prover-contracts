@@ -1,9 +1,6 @@
 # specific to npm package
 deployments
 
-# Auto generated code Go bindings 
-bindings/go
-
 .coderabit.yml
 node_modules
 .env

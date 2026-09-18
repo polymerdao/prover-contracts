@@ -10,7 +10,6 @@ reviews:
   collapse_walkthrough: false
   path_filters:
     - '!dist/**'
-    - '!bindings/**'
   auto_review:
     enabled: true
     drafts: false
