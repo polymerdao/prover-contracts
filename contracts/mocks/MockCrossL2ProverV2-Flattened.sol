@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity =0.8.15 ^0.8.0 ^0.8.8;
+pragma solidity 0.8.37;
 
 // contracts/interfaces/IClientUpdates.sol
 

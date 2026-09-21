@@ -68,8 +68,8 @@ jq -n \
   '{
      tag: $tag, commit: $commit, factory: $factory,
      compiler: {
-       solc: "0.8.15", profile: "default", via_ir: false,
-       optimizer: true, optimizer_runs: 200, evm_version: "london",
+       solc: "0.8.37", profile: "default", via_ir: true,
+       optimizer: true, optimizer_runs: 1000000, evm_version: "cancun",
        bytecode_hash: "none", cbor_metadata: false
      },
      contracts: $contracts
