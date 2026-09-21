@@ -115,10 +115,10 @@ A release for tag `vX.Y.Z` contains, per deployable contract (prover scope — s
   "tag": "vX.Y.Z",
   "commit": "<sha>",
   "compiler": {
-    "solc": "0.8.15",
+    "solc": "0.8.37",
     "profile": "default",
-    "via_ir": false, "optimizer": true, "optimizer_runs": 200,
-    "evm_version": "london", "bytecode_hash": "none", "cbor_metadata": false
+    "via_ir": true, "optimizer": true, "optimizer_runs": 1000000,
+    "evm_version": "cancun", "bytecode_hash": "none", "cbor_metadata": false
   },
   "factory": "0x4e59b44847b379578588920cA78FbF26c0B4956C",
   "contracts": {

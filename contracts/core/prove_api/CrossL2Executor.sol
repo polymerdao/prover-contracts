@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-pragma solidity 0.8.15;
+pragma solidity 0.8.37;
 
 import {ICrossL2ProverV2} from "../../interfaces/ICrossL2ProverV2.sol";
 

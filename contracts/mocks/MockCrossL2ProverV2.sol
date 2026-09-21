@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-pragma solidity 0.8.15;
+pragma solidity 0.8.37;
 
 import {CrossL2ProverV2} from "../core/prove_api/CrossL2ProverV2.sol";
 
