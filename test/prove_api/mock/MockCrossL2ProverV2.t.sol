@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import {stdStorage, StdStorage} from "forge-std/Test.sol";
 import {MockCrossL2ProverV2} from "../../../contracts/mocks/MockCrossL2ProverV2.sol";
 
 contract TestMockCrossL2ProverV2 is Test {
@@ -22,8 +21,9 @@ contract TestMockCrossL2ProverV2 is Test {
         topics.push(keccak256("topic 1"));
 
         // Test that the mocked proof will return the original chain id & topics
-        bytes memory mockProof =
-            mockProver.generateAndEmitProof(1, vm.addr(uint256(1231)), topics, abi.encode(unicode"💃🏻🧱🫡🔥"));
+        bytes memory mockProof = mockProver.generateAndEmitProof(
+            1, vm.addr(uint256(1231)), topics, abi.encode(unicode"💃🏻🧱🫡🔥")
+        );
 
         (uint32 chainId, address emittingContract, bytes memory emittedTopics, bytes memory unindexedData) =
             mockProver.validateEvent(mockProof);
@@ -39,7 +39,8 @@ contract TestMockCrossL2ProverV2 is Test {
         topics.push(keccak256("topic 1"));
 
         vm.expectRevert();
-        (uint32 chainId, address emittingContract, bytes memory emittedTopics, bytes memory unindexedData) =
-            mockProver.validateEvent(abi.encode(1, vm.addr(uint256(1231)), topics, abi.encode(unicode"💃🏻🧱🫡🔥")));
+        mockProver.validateEvent(
+            abi.encode(1, vm.addr(uint256(1231)), topics, abi.encode(unicode"💃🏻🧱🫡🔥"))
+        );
     }
 }
