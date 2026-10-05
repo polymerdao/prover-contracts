@@ -14,7 +14,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@commander-js/extra-typings": "^13.1.0",
+    "@commander-js/extra-typings": "^14.0.0",
     "@safe-global/api-kit": "^2.5.2",
     "@safe-global/protocol-kit": "^5.2.2",
     "@safe-global/safe-core-sdk-types": "^5.1.0",
@@ -41,7 +41,7 @@
     "chai": "^5.1.1",
     "eslint": "^9.20.0",
     "globals": "^15.9.0",
-    "solidity-coverage": "^0.8.12",
+    "solidity-coverage": "^0.8.17",
     "tslib": "^2.7.0",
     "tsup": "^8.3.0",
     "typescript": "^5.9.3",
@@ -50,7 +50,7 @@
   "scripts": {
     "lint": "solhint contracts/**/*.sol",
     "test": "forge test",
-    "build": "make bindings-gen-go bindings-gen-ts && tsup",
+    "build": "make bindings-gen-ts && tsup",
     "build-contracts": "make build-contracts",
     "deploy-contracts": "npm run build && node dist/deploy.js",
     "deploy-simple": "node dist/deploy.js",
