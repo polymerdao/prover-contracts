@@ -2,9 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import {console2} from "forge-std/Test.sol";
 import {CrossL2ProverV2} from "../../contracts/core/prove_api/CrossL2ProverV2.sol";
-import {SequencerSignatureVerifier} from "../../contracts/core/prove_api/SequencerSignatureVerifier.sol";
 
 // This suite can be used to reproduce any contract-related issues from our live devnet or testnet versions.
 // This is useful for debugging because it enables things like being able to directly modify contracts easily and
@@ -38,7 +36,6 @@ contract ContractDebugReproTest is Test {
 
     function test_devnet_repro() public {
         vm.skip(true); // Comment this out when running tests!
-        SequencerSignatureVerifier sigVerifier = new SequencerSignatureVerifier(devnetSigner, devnetPeptideClientId);
 
         CrossL2ProverV2 crossProver = new CrossL2ProverV2("proof_api", devnetSigner, devnetPeptideClientId);
         // Do event call using proof
@@ -47,9 +44,6 @@ contract ContractDebugReproTest is Test {
 
     function test_testnet_repro() public {
         vm.skip(true); // Comment this out when running tests!
-
-        // Comment below out
-        SequencerSignatureVerifier sigVerifier = new SequencerSignatureVerifier(testnetSigner, testnetPeptideClientId);
 
         CrossL2ProverV2 crossProver = new CrossL2ProverV2("proof_api", testnetSigner, testnetPeptideClientId);
         // Do event call using proof

@@ -22,8 +22,7 @@ enum LightClientType {
     SequencerLightClient, // Our native sequencer light client, which does not check l1 origin check to cut down on
     // latency
     ReOrgResistantSequencerLightClient // Our native sequencer light client, which checks for l1 origin checks to be
-        // re-org resistant
-
+    // re-org resistant
 }
 
 interface IClientUpdates {

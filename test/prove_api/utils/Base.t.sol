@@ -23,7 +23,9 @@ contract Base is Test {
     {
         // this loads the app hash we got from the testing data into the consensus state manager internals
         // at the height it's supposed to go. That is, a block less than where the proof was generated from.
-        stdstore.target(proverContract).sig("peptideAppHashes(uint256)").with_key((height - 1) % ringBufferLength)
+        stdstore.target(proverContract)
+            .sig("peptideAppHashes(uint256)")
+            .with_key((height - 1) % ringBufferLength)
             .checked_write(appHash);
     }
 

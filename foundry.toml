@@ -1,5 +1,19 @@
+# Default profile is the metadata-free deploy recipe for the going-forward release line (matches
+# infra/contract-deploys-v2 / ProverV2): bytecode_hash="none" + cbor_metadata=false strip the
+# source hash from the bytecode, so comments/formatting NEVER change the CREATE2 address -- only a
+# real logic (opcode) change does. These settings are part of the deployed artifact; changing any
+# of them moves every future address, so don't touch them without a deliberate re-verify.
+# NOTE: the existing v1 addresses (0x85e9…, 0x95cc…) were deployed with bytecode_hash="ipfs" and are
+# NOT reproduced by this profile. Adopting this recipe is a deliberate one-time relaunch (TBD).
 [profile.default]
-auto_detect_solc = true
+solc = "0.8.37"
+via_ir = true
+optimizer = true
+optimizer_runs = 1_000_000
+evm_version = "cancun"
+bytecode_hash = "none"
+cbor_metadata = false
+ignored_warnings_from = ["lib"]
 src = 'contracts'
 out = 'out'
 libs = ['lib']
@@ -7,11 +21,17 @@ test = 'test'
 cache_path  = 'forge-cache'
 gas_reports = ['*']
 fs_permissions = [{ access = 'read', path = './test/prove_api/payload'}, { access = 'read', path = './out'}]
-via_ir = true
-optimizer = true
-optimizer_runs = 200
-# Suppress warnings from specific files
-ignored_warnings_from = ["contracts/core/native_fallback/L1/Registry.sol"]
+
+# Fast defaults for local `make test`. The deep campaign (`make fuzz`, run on every PR) overrides
+# these run counts via FOUNDRY_FUZZ_RUNS / FOUNDRY_INVARIANT_RUNS env vars -- see the Makefile.
+[fuzz]
+runs = 256
+max_test_rejects = 65_536
+
+[invariant]
+runs = 256
+depth = 50
+fail_on_revert = false
 
 [fmt]
 wrap_comments = true
