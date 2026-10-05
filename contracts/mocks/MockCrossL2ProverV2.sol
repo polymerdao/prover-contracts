@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-pragma solidity 0.8.15;
+pragma solidity 0.8.37;
 
 import {CrossL2ProverV2} from "../core/prove_api/CrossL2ProverV2.sol";
 
@@ -155,6 +155,7 @@ contract MockCrossL2ProverV2 is CrossL2ProverV2 {
         proof[120] = bytes1(numTopics);
 
         // eventDataEnd (2 bytes)
+        // forge-lint: disable-next-line(unsafe-typecast) -- test builder; eventEnd fits in uint16 by construction
         bytes2 eventEndBytes = bytes2(uint16(eventEnd));
         proof[121] = eventEndBytes[0];
         proof[122] = eventEndBytes[1];
