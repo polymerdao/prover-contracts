@@ -18,7 +18,7 @@ export function loadContractUpdateRegistry(
   const parsed = config.map((c: any) => {
     const parsed = UpdateContractConfigSchema.safeParse(c);
     if (!parsed.success) {
-      throw new Error(`Invalid contract update config: ${parsed.error.errors}`);
+      throw new Error(`Invalid contract update config: ${parsed.error.message}`);
     }
     return parsed.data;
   });

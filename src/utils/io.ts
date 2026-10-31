@@ -413,7 +413,7 @@ export async function parseArgsFromCLI() {
     deploymentEnvironment,
   });
   if (!chainParse.success) {
-    throw new Error(`failed to parse chain config: ${chainParse.error.errors}`);
+    throw new Error(`failed to parse chain config: ${chainParse.error.message}`);
   }
 
   const accountConfigFromYaml = {
@@ -499,7 +499,7 @@ export const parseVerifyArgsFromCLI = async () => {
 
   if (!chainFolderParse.success) {
     throw new Error(
-      `failed to parse chain config: ${chainFolderParse.error.errors}`
+      `failed to parse chain config: ${chainFolderParse.error.message}`
     );
   }
 
