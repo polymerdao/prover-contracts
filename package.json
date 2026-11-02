@@ -38,7 +38,7 @@
     "@types/yargs": "^17.0.33",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.11.0",
-    "chai": "^5.1.1",
+    "chai": "^6.3.0",
     "eslint": "^10.13.0",
     "globals": "^17.13.0",
     "solidity-coverage": "^0.8.17",
